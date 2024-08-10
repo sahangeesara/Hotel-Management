@@ -1,0 +1,103 @@
+<div>
+  <h3> <strong><em> Guest Add Form </em> </strong></h3>
+  <form cForm [formGroup]="guestForm" (ngSubmit)="onSubmit()">
+    <c-row>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputName-1">Guest Name: </label>
+          <input cFormControl id="inputName-1" type="text" sizing="sm" name="name" formControlName="name">
+          <div cFormText>
+            ex: Kasun Dilruwan
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputEmail-1">Guest Email address</label>
+          <input cFormControl id="inputEmail-1" type="email" sizing="sm" formControlName="email" name="email">
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputAddress-1">Guest Address</label>
+          <input cFormControl id="inputAddress-1" type="text" name="address" formControlName="address" sizing="sm">
+          <div cFormText>
+            ex: 228 Panchikawatte Road, 10
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputCity-1">Guest City</label>
+          <input cFormControl id="inputCity-1" type="text" name="city" formControlName="city" sizing="sm">
+          <div cFormText>
+            ex: Colombo
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputNic-1">Guest Nic:</label>
+          <input cFormControl id="inputNic-1" type="text" name="nic" formControlName="nic" sizing="sm">
+          <div cFormText>
+            ex: 992404545V
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputCountry-1">Guide Country</label>
+          <input cFormControl id="inputCountry-1" type="text" name="country" formControlName="country" sizing="sm">
+          <div cFormText>
+            ex: Sri Lanka
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputTel_no-1">Guest tel no:</label>
+          <input cFormControl id="inputTel_no-1" type="text" name="tel_no" formControlName="tel_no" sizing="sm">
+          <div cFormText>
+            ex: 078654545
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputGuestType-1">Guest Type:</label>
+          <input cFormControl id="inputGuestType-1" type="text" name="guest_type" formControlName="guest_type" sizing="sm">
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel>Guest Gender:</label>
+
+          <select aria-label="Select Guest Gender" cSelect name="gender_id" formControlName="gender_id">
+            <option selected="selected">Select Guest Gender</option>
+            <option *ngFor="let gender of guestGenders" [value]="gender.id">
+              {{ gender.name }}
+            </option>
+          </select>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel>Guide:</label>
+
+          <select aria-label="Select Guide" cSelect name="guide_id" formControlName="guide_id">
+            <option selected="selected">Select Guide</option>
+            <option *ngFor="let guide of guides" [value]="guide.id">
+              {{ guide.name }}
+            </option>
+          </select>
+        </div>
+      </c-col>
+      <div  class="mb-3">
+        <input cButton color="primary" type="submit">&ngsp;
+        <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">
+      </div>
+    </c-row>
+  </form>
+
+</div>
+

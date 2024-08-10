@@ -1,0 +1,42 @@
+<h3>
+  <strong>
+    <em>
+
+      Guest view Table
+    </em>
+  </strong>
+
+</h3>
+<table [striped]="true" cTable>
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Guest Name</th>
+    <th scope="col">Guest Gender</th>
+    <th scope="col">Guest Address</th>
+    <th scope="col">Guest Email</th>
+    <th scope="col">Guest City</th>
+    <th scope="col">Guest Nic</th>
+    <th scope="col">Guest Tel No</th>
+    <th scope="col">Guest Guide Name</th>
+    <th scope="col">Guest Country</th>
+  </tr>
+  </thead>
+  <tbody *ngIf="guests">
+  @for (guest of guests; track guest; let key = $index) {
+  <tr>
+    <th scope="row">{{key + 1}}</th>
+      <td>{{ guest.name }}</td>
+      <td>{{ guest.gender.name }}</td>
+      <td>{{ guest.address }}</td>
+      <td>{{ guest.email }}</td>
+      <td>{{ guest.city }}</td>
+      <td>{{ guest.nic }}</td>
+      <td>{{ guest.tel_no }}</td>
+      <td>{{ guest.guide.name }}</td>
+      <td>{{ guest.country }}</td>
+    </tr>
+  }
+  </tbody>
+</table>
+

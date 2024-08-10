@@ -1,0 +1,34 @@
+<div>
+
+  <form cForm [formGroup]="roomForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label cLabel for="inputNumber-1">Room Number: </label>
+      <input cFormControl id="inputNumber-1" type="text" sizing="sm" name="r_no" formControlName="r_no">
+      <div cFormText>
+        ex: RN0021
+      </div>
+    </div>
+    <div class="mb-3">
+      <label cLabel for="inputCost-1">Room Cost: </label>
+      <input cFormControl id="inputCost-1" type="text" sizing="sm" formControlName="r_cost" name="r_cost">
+      <div cFormText>
+        ex: Rs.29000.00
+      </div>
+    </div>
+    <div class="mb-3">
+      <label cLabel for="inputCost-1">Room Category: </label>
+
+      <select aria-label="Select Rooms Category " cSelect name="r_category_id" formControlName="r_category_id">
+        <option selected="selected">Select Rooms Category</option>
+        <option *ngFor="let type of roomsCategories" [value]="type.id">
+          {{ type.name }}
+        </option>
+      </select>
+    </div>
+    <div  class="mb-3">
+      <input cButton color="primary" type="submit">&ngsp;
+      <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">
+    </div>
+  </form>
+
+</div>

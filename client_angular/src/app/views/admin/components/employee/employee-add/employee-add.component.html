@@ -1,0 +1,87 @@
+<div>
+<h3> <strong><em> Employee Add Form </em> </strong></h3>
+  <form cForm [formGroup]="empForm" (ngSubmit)="onSubmit()">
+    <c-row>
+      <c-col [xs]="6">
+    <div class="mb-3">
+      <label cLabel for="inputName-1">Employee Name: </label>
+      <input cFormControl id="inputName-1" type="text" sizing="sm" name="name" formControlName="name">
+      <div cFormText>
+        ex: Kasun Dilruwan
+      </div>
+    </div>
+      </c-col>
+      <c-col [xs]="6">
+    <div class="mb-3">
+      <label cLabel for="inputEmail-1">Employee Email address</label>
+      <input cFormControl id="inputEmail-1" type="email" sizing="sm" formControlName="email" name="email">
+    </div>
+      </c-col>
+      <c-col [xs]="6">
+    <div class="mb-3">
+      <label cLabel for="inputAddress-1">Employee Address</label>
+      <input cFormControl id="inputAddress-1" type="text" name="address" formControlName="address" sizing="sm">
+      <div cFormText>
+        ex: 228 Panchikawatte Road, 10
+      </div>
+    </div>
+      </c-col>
+      <c-col [xs]="6">
+    <div class="mb-3">
+      <label cLabel for="inputCity-1">Employee City</label>
+      <input cFormControl id="inputCity-1" type="text" name="city" formControlName="city" sizing="sm">
+      <div cFormText>
+        ex: Colombo
+      </div>
+    </div>
+      </c-col>
+      <c-col [xs]="6">
+    <div class="mb-3">
+      <label cLabel for="inputNic-1">Employee Nic:</label>
+      <input cFormControl id="inputNic-1" type="text" name="nic" formControlName="nic" sizing="sm">
+      <div cFormText>
+        ex: 992404545V
+      </div>
+    </div>
+      </c-col>
+      <c-col [xs]="6">
+    <div class="mb-3">
+      <label cLabel for="inputTel_no-1">Employee tel no:</label>
+      <input cFormControl id="inputTel_no-1" type="text" name="tel_no" formControlName="tel_no" sizing="sm">
+      <div cFormText>
+        ex: 078654545
+      </div>
+    </div>
+      </c-col>
+      <c-col [xs]="6">
+    <div class="mb-3">
+      <label cLabel>Employee Type:</label>
+
+    <select aria-label="Select Employee Type" cSelect name="employee_type_id" formControlName="employee_type_id">
+      <option selected="selected">Select Employee Type</option>
+      <option *ngFor="let type of employeeTypes" [value]="type.id">
+        {{ type.name }}
+      </option>
+    </select>
+    </div>
+      </c-col>
+      <c-col [xs]="6">
+    <div class="mb-3">
+      <label cLabel>Employee Gender:</label>
+
+    <select aria-label="Select Employee Gender" cSelect name="gender_id" formControlName="gender_id">
+      <option selected="selected">Select Employee Gender</option>
+      <option *ngFor="let gender of employeeGenders" [value]="gender.id">
+        {{ gender.name }}
+      </option>
+    </select>
+    </div>
+      </c-col>
+    <div  class="mb-3">
+      <input cButton color="primary" type="submit">&ngsp;
+      <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">
+    </div>
+    </c-row>
+  </form>
+
+</div>

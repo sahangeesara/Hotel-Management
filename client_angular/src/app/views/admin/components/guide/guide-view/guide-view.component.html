@@ -1,0 +1,38 @@
+<h3>
+  <strong>
+    <em>
+      Guide view Table
+    </em>
+  </strong>
+
+</h3>
+<table [striped]="true" cTable>
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Guide Name</th>
+    <th scope="col">Guide Gender</th>
+    <th scope="col">Guide Address</th>
+    <th scope="col">Guide Email</th>
+    <th scope="col">Guide City</th>
+    <th scope="col">Guide Nic</th>
+    <th scope="col">Guide Tel No</th>
+  </tr>
+  </thead>
+  <tbody>
+  @for (guide of guides; track guide; let key = $index) {
+  <tr>
+    <th scope="row">{{key + 1}}</th>
+      <td>{{ guide.name }}</td>
+      <td>{{ guide.gender.name }}</td>
+      <td>{{ guide.address }}</td>
+      <td>{{ guide.email }}</td>
+      <td>{{ guide.city }}</td>
+      <td>{{ guide.nic }}</td>
+      <td>{{ guide.tel_no }}</td>
+    </tr>
+  }
+  </tbody>
+</table>
+
+

@@ -1,0 +1,37 @@
+<h3>
+  <strong>
+    <em>
+
+      Employee view Table
+    </em>
+  </strong>
+
+</h3>
+<table [striped]="true" cTable>
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Employee Name</th>
+    <th scope="col">Employee Gender</th>
+    <th scope="col">Employee Address</th>
+    <th scope="col">Employee Email</th>
+    <th scope="col">Employee City</th>
+    <th scope="col">Employee Nic</th>
+    <th scope="col">Employee Tel No</th>
+  </tr>
+  </thead>
+  <tbody>
+  @for (employee of employees; track employee; let key = $index) {
+  <tr>
+    <th scope="row">{{key + 1}}</th>
+      <td>{{ employee.name }}</td>
+      <td>{{ employee.gender.name }}</td>
+      <td>{{ employee.address }}</td>
+      <td>{{ employee.email }}</td>
+      <td>{{ employee.city }}</td>
+      <td>{{ employee.nic }}</td>
+      <td>{{ employee.tel_no }}</td>
+    </tr>
+  }
+  </tbody>
+</table>

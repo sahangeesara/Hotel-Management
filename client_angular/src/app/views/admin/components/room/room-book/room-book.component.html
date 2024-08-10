@@ -1,0 +1,89 @@
+<h3> <strong> <em> Room Book Form </em> </strong></h3>
+<form cForm [formGroup]="rmBookForm" (ngSubmit)="onSubmit()">
+  <c-row>
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel for="inputRNo-1">Room No:</label>
+        <select id="inputRNo-1" aria-label="Select Room No" cSelect name="r_id" formControlName="r_id">
+          <option selected="selected">Select Room No</option>
+          <option *ngFor="let room of rooms" [value]="room.id">
+            {{ room.r_no }}
+          </option>
+        </select>
+      </div>
+    </c-col>
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel for="inputGuest-1">Guest:</label>
+        <select id="inputGuest-1" aria-label="Select Guest" cSelect name="guest_id" formControlName="guest_id">
+          <option selected="selected">Select Guest</option>
+          <option *ngFor="let guest of guests" [value]="guest.id">
+            {{ guest.nic }}
+          </option>
+        </select>
+      </div>
+    </c-col>
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel for="inputRBook-1">Room Booking:</label>
+        <select id="inputRBook-1" aria-label="Select Book" cSelect name="r_book" formControlName="r_book">
+          <option selected="selected">Select Book</option>
+          <option value="1"> Booking </option>
+          <option value="0"> Canceling </option>
+        </select>
+      </div>
+    </c-col>
+    <c-col [xs]="6">
+      <label cLabel>Room Booking Date:</label>
+
+      <input
+        class="form-control"
+        placeholder="yyyy-mm-dd"
+        name="booking_Date" formControlName="booking_Date"
+        ngbDatepicker
+        #d="ngbDatepicker"
+      />
+      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
+    </c-col>
+    <c-col [xs]="6">
+      <label cLabel>Room Cancel Date:</label>
+
+      <input
+        class="form-control"
+        placeholder="yyyy-mm-dd"
+        name="cancel_Date" formControlName="cancel_Date"
+        ngbDatepicker
+        #x="ngbDatepicker"
+      />
+      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="x.toggle()" type="button"></button>
+    </c-col>
+  </c-row>
+  <div  class="mb-3">
+    <input cButton color="primary" type="submit">&ngsp;
+    <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">
+  </div>
+</form>
+
+<h3> <strong><em>Room Book Table</em></strong> </h3>
+<table [striped]="true" cTable style="width:500px" >
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Room No</th>
+    <th scope="col">Guest Name</th>
+    <th scope="col">Guest Nic</th>
+    <th scope="col">Action</th>
+  </tr>
+  </thead>
+  <tbody *ngIf="roomsBooks">
+  <tr  *ngFor="let book of objectValues(roomsBooks); let i = index">
+    <th scope="row">{{i + 1}}</th>
+      <td>{{ book.room.r_no }}</td>
+      <td>{{ book.guest.name }}</td>
+      <td>{{ book.guest.nic }}</td>
+      <td></td>
+    </tr>
+
+  </tbody>
+</table>
+
