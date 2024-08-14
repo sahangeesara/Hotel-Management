@@ -1,1 +1,66 @@
-<p>user works!</p>
+<div>
+
+  <h3> <strong><em> User Add Form </em> </strong></h3>
+  <form cForm   [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <input autoComplete="id" type="hidden" name="id" cFormControl placeholder="id" formControlName="id"  />
+
+    <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  <svg cIcon name="cilUser"></svg>
+                </span>
+      <input autoComplete="name" name="name" cFormControl placeholder="Username" formControlName="name"  required  />
+    </c-input-group>
+    <c-input-group class="mb-3">
+      <span cInputGroupText>&#64;</span>
+      <input autoComplete="email" name="email" cFormControl placeholder="Email" formControlName="email"  required  />
+    </c-input-group>
+    <c-input-group class="mb-3">
+                <span cInputGroupText>
+                  <svg cIcon name="cilLockLocked"></svg>
+                </span>
+      <input autoComplete="new-password" name="password" cFormControl placeholder="Password" type="password" formControlName="password"  required  />
+    </c-input-group>
+    <c-input-group class="mb-4">
+                <span cInputGroupText>
+                  <svg cIcon name="cilLockLocked"></svg>
+                </span>
+      <input autoComplete="new-password" name="password_confirmation" cFormControl placeholder="Repeat password" type="password" formControlName="password_confirmation"   required />
+    </c-input-group>
+    <div class="mb-3">
+      <button type="submit" cButton color="primary" [disabled]="userForm.invalid"> Submit</button> &ngsp;
+      <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">&ngsp;
+      <input cButton color="secondary" style="color: white" type="button" (click)="updateUser()" value="Update">
+    </div>
+  </form>
+</div>
+<hr />
+<div>
+  <h3> <strong><em> User Table </em> </strong></h3>
+  <table [striped]="true" cTable>
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">User Name</th>
+      <th scope="col">User Email</th>
+      <th scope="col">Action</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    @for (user of users;track user ; let key = $index) {
+    <tr>
+      <th scope="row">{{key + 1}}</th>
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
+      <td>
+        <button (click)="getUserById(user.id)" cButton>
+          <svg cIcon name="cil-task" size="lg" aria-label="Numbered List Icon" title="Numbered List Icon"></svg>
+    </button>&ngsp;
+    <button type="button" (click)="userDelete(user.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
+      </td>
+</tr>
+    }
+    </tbody>
+  </table>
+
+</div>

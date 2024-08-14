@@ -14,6 +14,7 @@ import {ToastrService} from "ngx-toastr";
 import {RoomBook} from "../../../../../entities/roomBook";
 import { NgForOf, NgIf} from "@angular/common";
 import {NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
+import {IconDirective} from "@coreui/icons-angular";
 
 
 
@@ -35,6 +36,7 @@ import {NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
     NgIf,
     TemplateIdDirective,
     NgbInputDatepicker,
+    IconDirective,
   ],
   templateUrl: './room-book.component.html',
   styleUrl: './room-book.component.scss'
@@ -63,7 +65,7 @@ export class RoomBookComponent {
       guest_id: ['', [Validators.required]],
       r_book: ['', [Validators.required]],
       booking_Date: ['', [Validators.required]],
-      cancel_Date: [''],
+      cancel_Date: ['',[Validators.required]],
     });
 
   }
@@ -100,10 +102,8 @@ export class RoomBookComponent {
       rmBook.r_book= this.rmBookField.value;
       rmBook.r_id= this.rmBookRIdField.value;
       rmBook.guest_id= this.rmBookGIdField.value;
-      rmBook.cancel_Date = this.rmBookCancelDateField.value;
-      rmBook.booking_Date = this.rmBookDateField.value;
-
-      console.log(rmBook)
+      rmBook.cancel_Date = this.formatDate(this.rmBookCancelDateField.value);
+      rmBook.booking_Date = this.formatDate(this.rmBookDateField.value);
 
       this.formData.append('form', JSON.stringify(rmBook));
       await this.allServe.submitRoomsBook(this.formData);
@@ -113,7 +113,9 @@ export class RoomBookComponent {
     }
   }
 
-
+formatDate(obj:any){
+    return obj['year']+'-'+obj['month']+'-'+obj['day']
+}
   getGuest() {
     this.allServe.getGuests().subscribe(
       (response: any) => {
@@ -126,8 +128,8 @@ export class RoomBookComponent {
   }
   getRm() {
     this.allServe.getRoom().subscribe(
-      (data: any) => {
-        this.rooms = data;
+      (response: any) => {
+        this.rooms = response.data;
       },
       (error) => {
         console.error('Error fetching rooms:', error);
@@ -135,6 +137,18 @@ export class RoomBookComponent {
     );
   }
 
+
+
+  deleteRmBook(id:any) {
+    this.allServe.deleteRoomBook(id).subscribe(
+      (data: any) => {
+        this.getRmBook();
+      },
+      (error) => {
+        console.error('Error fetching room Book:', error);
+      }
+    );
+  }
   getRmBook() {
     this.allServe.getRoomBook().subscribe(
       (response: any) => {
@@ -144,6 +158,27 @@ export class RoomBookComponent {
         console.error('Error fetching rooms Book:', error);
       }
     );
+  }
+  getRmBookById(id:any) {
+    this.allServe.getRoomBookById(id).subscribe(
+      (response: any) => {
+        console.log(response);
+        this.rmBookField.setValue(response.r_book);
+        this.rmBookRIdField.setValue(response.r_id);
+        this.rmBookGIdField.setValue(response.guest_id);
+        this.rmBookCancelDateField.setValue(this.formatDate(response.cancel_Date));
+        this.rmBookDateField.setValue(this.formatDate(response.booking_Date));
+
+        // this.roomsBooks = response.data;
+      },
+      (error) => {
+        console.error('Error fetching rooms Book:', error);
+      }
+    );
+  }
+
+  updateRmBook(){
+
   }
 
   ngOnInit() {

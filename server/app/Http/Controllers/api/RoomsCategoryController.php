@@ -15,11 +15,10 @@ class RoomsCategoryController extends Controller
     public function index()
     {
         try {
-            $roomsCategories = Rooms_category::paginate(20);
-            $activeGuests = $roomsCategories->filter(function ($roomsCategory) {
-                return $roomsCategory->is_active == 1;
-            });
-            return response()->json($activeGuests);
+            $roomsCategories = Rooms_category::where('is_active',1)
+                                                ->paginate(20);
+
+            return response()->json($roomsCategories);
 
         } catch (\Exception $e) {
             // Log the error and return an appropriate response

@@ -13,11 +13,14 @@ import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
 import {EmployeeType} from "../../../../../entities/employeeTypee";
 import {RoomsCategory} from "../../../../../entities/roomsCategory";
+import { IconDirective } from '@coreui/icons-angular';
+import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-rooms-category',
   standalone: true,
   imports: [
+    IconDirective,
     ButtonDirective,
     ColComponent,
     FormControlDirective,
@@ -26,7 +29,9 @@ import {RoomsCategory} from "../../../../../entities/roomsCategory";
     FormsModule,
     ReactiveFormsModule,
     RowComponent,
-    TableDirective
+    TableDirective,
+    NgIf,
+    NgForOf
   ],
   templateUrl: './rooms-category.component.html',
   styleUrl: './rooms-category.component.scss'
@@ -45,11 +50,15 @@ export class RoomsCategoryComponent {
 
     this.rmCategoryForm = this.fb.group({
 
+      id: ['', [Validators.required]],
       name: ['', [Validators.required]],
     });
 
   }
 
+  get rmCateIdField(): FormControl {
+    return this.rmCategoryForm.controls['name'] as FormControl;
+  }
   get rmCateNameField(): FormControl {
     return this.rmCategoryForm.controls['name'] as FormControl;
   }
@@ -73,10 +82,25 @@ export class RoomsCategoryComponent {
       this.toastr.success("Rooms Category Successfully submit ");
     }
   }
-  getRmCate() {
-    this.allServe.getRoomsCategory().subscribe(
+
+  rmCateDelete(id:any){
+    this.allServe.RoomCategoryDelete(id).subscribe(
       (data: any) => {
-        this.roomsCategories = data;
+        this.getRmCate();
+      },
+      (error) => {
+        console.error('Error fetching employee:', error);
+      }
+    );
+
+  }
+
+  getRmCateById(id:any) {
+    this.allServe.getRoomCategoryById(id).subscribe(
+      (roomCategory:any) => {
+
+        this.rmCateIdField.setValue(roomCategory.id);
+        this.rmCateNameField.setValue(roomCategory.name);
       },
       (error) => {
         console.error('Error fetching employee types:', error);
@@ -84,6 +108,21 @@ export class RoomsCategoryComponent {
     );
   }
 
+  getRmCate() {
+    this.allServe.getRoomsCategory().subscribe(
+      (response: any) => {
+        this.roomsCategories = response.data;
+      },
+      (error) => {
+        console.error('Error fetching employee types:', error);
+      }
+    );
+  }
+
+
+  updateRmCategory(){
+
+  }
 
   ngOnInit() {
     this.getRmCate();

@@ -1,3 +1,4 @@
+<div>
 <h3> <strong> <em> Room Book Form </em> </strong></h3>
 <form cForm [formGroup]="rmBookForm" (ngSubmit)="onSubmit()">
   <c-row>
@@ -28,8 +29,8 @@
         <label cLabel for="inputRBook-1">Room Booking:</label>
         <select id="inputRBook-1" aria-label="Select Book" cSelect name="r_book" formControlName="r_book">
           <option selected="selected">Select Book</option>
-          <option value="1"> Booking </option>
-          <option value="0"> Canceling </option>
+          <option value="Booking"> Booking </option>
+          <option value="Canceling"> Canceling </option>
         </select>
       </div>
     </c-col>
@@ -60,30 +61,38 @@
   </c-row>
   <div  class="mb-3">
     <input cButton color="primary" type="submit">&ngsp;
-    <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">
+    <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear"> &ngsp;
+    <input cButton color="secondary" style="color: white" type="button" (click)="updateRmBook()" value="Update">
   </div>
 </form>
-
-<h3> <strong><em>Room Book Table</em></strong> </h3>
-<table [striped]="true" cTable style="width:500px" >
-  <thead>
-  <tr>
-    <th scope="col">#</th>
-    <th scope="col">Room No</th>
-    <th scope="col">Guest Name</th>
-    <th scope="col">Guest Nic</th>
-    <th scope="col">Action</th>
-  </tr>
-  </thead>
-  <tbody *ngIf="roomsBooks">
-  <tr  *ngFor="let book of objectValues(roomsBooks); let i = index">
-    <th scope="row">{{i + 1}}</th>
+</div>
+<hr />
+<div>
+  <h3> <strong><em>Room Book Table</em></strong> </h3>
+  <table cTable style="width:800px" >
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Room No</th>
+      <th scope="col">Guest Name</th>
+      <th scope="col">Guest Nic</th>
+      <th scope="col"> Booking / Canceling </th>
+      <th scope="col">Action</th>
+    </tr>
+    </thead>
+    <tbody *ngIf="roomsBooks">
+    <tr  *ngFor="let book of objectValues(roomsBooks); let i = index">
+      <th scope="row">{{i + 1}}</th>
       <td>{{ book.room.r_no }}</td>
       <td>{{ book.guest.name }}</td>
       <td>{{ book.guest.nic }}</td>
-      <td></td>
+      <td>{{ book.r_book }}</td>
+      <td>
+        <button (click)="getRmBookById(book.id)" cButton><svg cIcon name="cil-task" size="lg" title="Numbered List Icon"></svg></button>&ngsp;&ngsp;
+
+        <button type="button" (click)="deleteRmBook(book.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
+      </td>
     </tr>
-
-  </tbody>
-</table>
-
+    </tbody>
+  </table>
+</div>

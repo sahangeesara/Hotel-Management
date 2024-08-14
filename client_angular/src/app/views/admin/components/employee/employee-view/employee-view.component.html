@@ -18,9 +18,10 @@
     <th scope="col">Employee City</th>
     <th scope="col">Employee Nic</th>
     <th scope="col">Employee Tel No</th>
+    <th scope="col">Action</th>
   </tr>
   </thead>
-  <tbody>
+  <tbody *ngIf="employees">
   @for (employee of employees; track employee; let key = $index) {
   <tr>
     <th scope="row">{{key + 1}}</th>
@@ -31,7 +32,24 @@
       <td>{{ employee.city }}</td>
       <td>{{ employee.nic }}</td>
       <td>{{ employee.tel_no }}</td>
-    </tr>
+       <td>
+      <button type="button" (click)="getShow(employee.id)" cButton>  <svg cIcon name="cil-task" size="lg" title="Numbered List Icon" ></svg></button>
+       <button type="button" (click)="empDelete(employee.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
+       </td>
+</tr>
   }
   </tbody>
 </table>
+
+<c-modal id="liveDemoModal" [visible]="visible" (visibleChange)="handleLiveDemoChange($event)">
+  <c-modal-header>
+    <h5 cModalTitle> Employee Update Form</h5>
+
+  </c-modal-header>
+  <c-modal-body><app-employee-update></app-employee-update></c-modal-body>
+  <c-modal-footer>
+    <button (click)="toggleLiveDemo()" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal>

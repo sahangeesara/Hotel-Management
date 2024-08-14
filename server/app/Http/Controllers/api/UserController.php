@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class UserController extends Controller
 {
@@ -15,11 +16,10 @@ class UserController extends Controller
     public function index()
     {
         try {
-            $users = User::paginate(20);
-            $activeUsers = $users->filter(function ($user) {
-                return $user->is_active == 1;
-            });
-            return response()->json($activeUsers);
+            $users = User::where('is_active',1)
+                            ->paginate(20);
+
+            return response()->json($users);
 
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
@@ -37,7 +37,13 @@ class UserController extends Controller
         $user = User::create($data);
         return json_encode($user);
     }
+    private function changePassword(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $user= User::whereEmail($request->email)->first();
+        $user->update(['password'=>$request->password]);
+        return response()->json(['data'=>'password Successfully Change'],ResponseAlias::HTTP_CREATED);
 
+    }
     /**
      * Display the specified resource.
      */

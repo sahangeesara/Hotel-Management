@@ -20,6 +20,7 @@
     <th scope="col">Guest Tel No</th>
     <th scope="col">Guest Guide Name</th>
     <th scope="col">Guest Country</th>
+    <th scope="col">Action</th>
   </tr>
   </thead>
   <tbody *ngIf="guests">
@@ -35,8 +36,25 @@
       <td>{{ guest.tel_no }}</td>
       <td>{{ guest.guide.name }}</td>
       <td>{{ guest.country }}</td>
-    </tr>
+      <td>
+        <button type="button" (click)="getShow(guest.id)" cButton>  <svg cIcon name="cil-task" size="lg" title="Numbered List Icon" ></svg></button>
+       <button type="button" (click)="guestDelete(guest.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
+      </td>
+</tr>
   }
   </tbody>
 </table>
+
+<c-modal id="liveDemoModal" [visible]="visible" (visibleChange)="handleLiveDemoChange($event)">
+  <c-modal-header>
+    <h5 cModalTitle> Guest Update Form</h5>
+
+  </c-modal-header>
+  <c-modal-body><app-guest-update></app-guest-update></c-modal-body>
+  <c-modal-footer>
+    <button (click)="toggleLiveDemo()" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal>
 

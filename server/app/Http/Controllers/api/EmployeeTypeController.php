@@ -15,11 +15,9 @@ class EmployeeTypeController extends Controller
     public function index()
     {
         try {
-            $employeeTypes = Employee_type::paginate(20);
-            $activeEmployeeType= $employeeTypes->filter(function ($employeeType) {
-                return $employeeType->is_active == 1;
-            });
-            return response()->json($activeEmployeeType);
+            $employeeTypes = Employee_type::where('is_active', 1)
+                                            ->paginate(20);
+            return response()->json($employeeTypes);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
@@ -57,10 +55,11 @@ class EmployeeTypeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $employeeType = Employee_type::findOrFail($id);
-        $employeeType->update($request->all());
-
-        return json_encode($employeeType);
+        info('type'.$request->all());
+//        $employeeType = Employee_type::findOrFail($id);
+//        $employeeType->update($request->all());
+//
+//        return json_encode($employeeType);
     }
 
     /**

@@ -40,7 +40,7 @@ Route::group([
     Route::post('me', [AuthController::class,'me']);
     Route::post('sendPasswordResetLink', [ResetPasswordController::class,'sendEmail']);
     Route::post('resetPassword', [ChangePasswordController::class,'process']);
-    Route::put('passwordReset', [ChangePasswordController::class,'changePassword']);
+    Route::put('passwordReset', [UserController::class,'changePassword']);
 });
 Route::apiResources([
     'user' => UserController::class ,

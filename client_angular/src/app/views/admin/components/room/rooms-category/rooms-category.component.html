@@ -1,3 +1,4 @@
+<div>
 <h3> <strong> <em> Room Category Form </em> </strong></h3>
 <form cForm [formGroup]="rmCategoryForm" (ngSubmit)="onSubmit()">
   <c-row>
@@ -10,26 +11,35 @@
   </c-row>
   <div  class="mb-3">
     <input cButton color="primary" type="submit">&ngsp;
-    <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">
+    <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">&ngsp;
+    <input cButton color="secondary" style="color: white" type="button" (click)="updateRmCategory()" value="Update">
   </div>
 </form>
-
-<h3> <strong> <em> Room Category Table </em> </strong></h3>
-<table [striped]="true" cTable style="width:300px" >
-  <thead>
-  <tr>
-    <th scope="col">#</th>
-    <th scope="col">Room Category Name</th>
-    <th scope="col">Action</th>
-  </tr>
-  </thead>
-  <tbody>
-  @for (category of roomsCategories; track category; let key = $index) {
-  <tr>
-    <th scope="row">{{key + 1}}</th>
-      <td>{{ category.name }}</td>
-      <td></td>
+</div>
+<hr />
+<div>
+  <h3> <strong> <em> Room Category Table </em> </strong></h3>
+  <table [striped]="true" cTable style="width:500px" >
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Room Category Name</th>
+      <th scope="col">Action</th>
     </tr>
-  }
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+    @for (category of roomsCategories;track category ; let key = $index) {
+
+    <tr>
+      <th scope="row">{{key + 1}}</th>
+      <td>{{ category.name }}</td>
+      <td>
+      <button (click)="getRmCateById(category.id)" cButton><svg cIcon name="cil-task" size="lg" title="Numbered List Icon"></svg></button>&ngsp;&ngsp;
+    <button type="button" (click)="rmCateDelete(category.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
+
+    </td>
+  </tr>
+}
+    </tbody>
+  </table>
+</div>

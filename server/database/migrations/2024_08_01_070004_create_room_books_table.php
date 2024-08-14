@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('r_id');
             $table->unsignedBigInteger('guest_id');
-            $table->boolean('r_book');
+            $table->string('r_book');
             $table->dateTime('booking_Date');
             $table->dateTime('cancel_Date')->nullable();
             $table->boolean('is_active')->default(1);

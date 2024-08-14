@@ -120,8 +120,8 @@ export class EmployeeAddComponent {
   }
   getEmpType() {
     this.allServe.getEmployeeTypes().subscribe(
-      (data: any) => {
-        this.employeeTypes = data;
+      (response: any) => {
+        this.employeeTypes = response.data;
       },
       (error) => {
         console.error('Error fetching employee types:', error);

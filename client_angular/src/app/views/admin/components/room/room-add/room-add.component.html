@@ -1,6 +1,8 @@
 <div>
+  <h3> <strong><em> Room Form </em> </strong></h3>
 
   <form cForm [formGroup]="roomForm" (ngSubmit)="onSubmit()">
+    <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
     <div class="mb-3">
       <label cLabel for="inputNumber-1">Room Number: </label>
       <input cFormControl id="inputNumber-1" type="text" sizing="sm" name="r_no" formControlName="r_no">
@@ -27,8 +29,48 @@
     </div>
     <div  class="mb-3">
       <input cButton color="primary" type="submit">&ngsp;
-      <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">
+      <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">&ngsp;
+      <input cButton color="secondary" style="color: white" type="button" (click)="updateRoom()" value="Update">
     </div>
   </form>
+
+</div>
+<div>
+
+  <h3>
+    <strong>
+      <em>
+        Room view Table
+      </em>
+    </strong>
+
+  </h3>
+  <table [striped]="true" cTable>
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Room Number</th>
+      <th scope="col">Room Cost</th>
+      <th scope="col">Room Category</th>
+      <th scope="col">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @for (room of rooms;track room ; let key = $index) {
+
+    <tr>
+
+      <th scope="row">{{key + 1}}</th>
+      <td>{{ room.r_no }}</td>
+      <td>{{ room.r_cost }}</td>
+      <td>{{ room.room_category.name }}</td>
+      <td>
+       <button (click)="getRoomById(room.id)" cButton><svg cIcon name="cil-task" size="lg" title="Numbered List Icon"></svg></button>&ngsp;&ngsp;
+    <button type="button" (click)="deleteRoom(room.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>    </td>
+     </tr>
+}
+    </tbody>
+  </table>
+
 
 </div>

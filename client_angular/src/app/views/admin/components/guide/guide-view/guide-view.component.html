@@ -17,6 +17,8 @@
     <th scope="col">Guide City</th>
     <th scope="col">Guide Nic</th>
     <th scope="col">Guide Tel No</th>
+    <th scope="col">Action</th>
+
   </tr>
   </thead>
   <tbody>
@@ -30,9 +32,26 @@
       <td>{{ guide.city }}</td>
       <td>{{ guide.nic }}</td>
       <td>{{ guide.tel_no }}</td>
-    </tr>
+      <td>
+       <button type="button" (click)="getShow(guide.id)" cButton>  <svg cIcon name="cil-task" size="lg" title="Numbered List Icon" ></svg></button>
+       <button type="button" (click)="guideDelete(guide.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
+      </td>
+</tr>
   }
   </tbody>
 </table>
 
+
+<c-modal id="liveDemoModal" [visible]="visible" (visibleChange)="handleLiveDemoChange($event)">
+  <c-modal-header>
+    <h5 cModalTitle> Guide Update Form</h5>
+
+  </c-modal-header>
+  <c-modal-body><app-guide-update></app-guide-update></c-modal-body>
+  <c-modal-footer>
+    <button (click)="toggleLiveDemo()" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal>
 

@@ -16,11 +16,10 @@ class EmployeeController extends Controller
     {
         try {
             $employees = Employees::with('employeeType','gender')
+                                    ->where('is_active',1)
                                     ->paginate(20);
-            $activeEmployees = $employees->filter(function ($employee) {
-                return $employee->is_active == 1;
-            });
-            return response()->json($activeEmployees);
+
+            return response()->json($employees);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
@@ -59,8 +58,12 @@ class EmployeeController extends Controller
     public function update(Request $request, string $id)
     {
 
+//        info($request->request->all());
+//        info($id);
+
+        $data = json_decode($request->form, true);
         $employee = Employees::findOrFail($id);
-        $employee->update($request->all());
+        $employee->update($data);
 
         return json_encode($employee);
     }

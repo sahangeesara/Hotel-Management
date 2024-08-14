@@ -19,11 +19,7 @@ class RoomBookController extends Controller
                 ->where('is_active', 1)
                 ->paginate(20);
 
-//            $formattedRoomBooks = $roomBooks->map(function ($roomBook) {
-//                $roomBookArray = $roomBook->toArray();
-//                $roomBookArray['guest'] = $roomBook->guest;
-//                return $roomBookArray;
-//            });
+
             return response()->json($roomBooks);
 
         } catch (\Exception $e) {
@@ -38,8 +34,8 @@ class RoomBookController extends Controller
      */
     public function store(Request $request)
     {
-        info($request->form);
         $data = json_decode($request->form, true);
+
         $roomBook = RoomBook::create($data);
         return json_encode($roomBook);
     }

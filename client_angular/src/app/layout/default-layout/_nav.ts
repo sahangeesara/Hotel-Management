@@ -20,13 +20,8 @@ export const navItems: INavData[] = [
     iconComponent: { name: 'cil-location-pin' },
     children: [
       {
-        name: 'Room Add',
+        name: 'Rooms View',
         url: '/room/room_add',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Room view',
-        url: '/room/room_view',
         icon: 'nav-icon-bullet'
       },
       {

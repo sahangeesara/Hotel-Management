@@ -1,0 +1,73 @@
+<div>
+  <form cForm [formGroup]="guideUpdateForm">
+    <c-row>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputName-1">Guide Name: </label>
+          <input cFormControl id="inputName-1" type="text" sizing="sm" name="name" formControlName="name">
+          <div cFormText>
+            ex: Kasun Dilruwan
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputEmail-1">Guide Email address</label>
+          <input cFormControl id="inputEmail-1" type="email" sizing="sm" formControlName="email" name="email">
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputAddress-1">Guide Address</label>
+          <input cFormControl id="inputAddress-1" type="text" name="address" formControlName="address" sizing="sm">
+          <div cFormText>
+            ex: 228 Panchikawatte Road, 10
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputCity-1">Guide City</label>
+          <input cFormControl id="inputCity-1" type="text" name="city" formControlName="city" sizing="sm">
+          <div cFormText>
+            ex: Colombo
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputNic-1">Guide Nic:</label>
+          <input cFormControl id="inputNic-1" type="text" name="nic" formControlName="nic" sizing="sm">
+          <div cFormText>
+            ex: 992404545V
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputTel_no-1">Guide tel no:</label>
+          <input cFormControl id="inputTel_no-1" type="text" name="tel_no" formControlName="tel_no" sizing="sm">
+          <div cFormText>
+            ex: 078654545
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel>Guide Gender:</label>
+
+          <select aria-label="Select Guide Gender" cSelect name="gender_id" formControlName="gender_id">
+            <option selected="selected">Select Guide Gender</option>
+            <option *ngFor="let gender of guideGenders" [value]="gender.id">
+              {{ gender.name }}
+            </option>
+          </select>
+        </div>
+      </c-col>
+      <div  class="mb-3">
+        <input cButton type="button" color="primary" value="update">&ngsp;
+      </div>
+    </c-row>
+  </form>
+
+</div>
