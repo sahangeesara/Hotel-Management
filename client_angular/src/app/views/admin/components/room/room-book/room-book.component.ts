@@ -107,9 +107,10 @@ export class RoomBookComponent {
 
       this.formData.append('form', JSON.stringify(rmBook));
       await this.allServe.submitRoomsBook(this.formData);
+      this.getRm();
       this.getRmBook();
       this.clearForm();
-      this.toastr.success("Rooms Category Successfully submit ");
+      this.toastr.success("Rooms Category Successfully submit");
     }
   }
 
@@ -127,9 +128,9 @@ formatDate(obj:any){
     );
   }
   getRm() {
-    this.allServe.getRoom().subscribe(
-      (response: any) => {
-        this.rooms = response.data;
+    this.allServe.getRoomByBooking().subscribe(
+      (data: any) => {
+          this.rooms = data;
       },
       (error) => {
         console.error('Error fetching rooms:', error);
@@ -143,6 +144,7 @@ formatDate(obj:any){
     this.allServe.deleteRoomBook(id).subscribe(
       (data: any) => {
         this.getRmBook();
+        this.getRm();
       },
       (error) => {
         console.error('Error fetching room Book:', error);

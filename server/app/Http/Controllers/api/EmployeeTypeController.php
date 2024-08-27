@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee_type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class EmployeeTypeController extends Controller
 {
@@ -55,11 +56,20 @@ class EmployeeTypeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        info('type'.$request->all());
-//        $employeeType = Employee_type::findOrFail($id);
-//        $employeeType->update($request->all());
-//
-//        return json_encode($employeeType);
+      info($request->form);
+        $data = json_decode($request->form, true);
+        $validatedData = Validator::make($data, [
+
+            'name' => 'required|max:255',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+        $employeeType = Employee_type::findOrFail($id);
+        $employeeType->name = $data['name'];
+        $employeeType->save();
+
+        return json_encode($employeeType);
     }
 
     /**

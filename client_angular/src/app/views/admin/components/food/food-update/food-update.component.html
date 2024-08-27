@@ -1,0 +1,67 @@
+<div>
+  <h3> <strong><em> Food Item Add Form </em> </strong></h3>
+  <form cForm [formGroup]="foodUpdateForm">
+    <c-row>
+      <input cFormControl id="inputId-1" type="hidden" name="id" formControlName="id" sizing="sm">
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputName-1">Food Name: </label>
+          <input cFormControl id="inputName-1" type="text" sizing="sm" name="name" formControlName="name">
+          <div cFormText>
+            ex: chicken Kottu
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputQuantity-1">Food Quantity:</label>
+          <input cFormControl id="inputQuantity-1" type="text" sizing="sm" formControlName="quantity" name="quantity">
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputFoodAmount-1">Food Amount:</label>
+          <input cFormControl id="inputFoodAmount-1" type="text" name="food_amount" formControlName="food_amount" sizing="sm">
+          <div cFormText>
+            ex: Lkr.700.00
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputImage-1">Food Image: </label>
+          <input cFormControl id="inputImage-1" (change)="selectImage($event)" name="image" formControlName="image" sizing="sm" type="file" />
+
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel>Item Category:</label>
+
+          <select aria-label="Select Item Category" cSelect name="item_category_id" formControlName="item_category_id">
+            <option selected="selected">Select Item Category: </option>
+            <option *ngFor="let category of itemCategories" [value]="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel>Food Status:</label>
+
+          <select aria-label="Select Food Status" cSelect name="food_status_id" formControlName="food_status_id">
+            <option selected="selected">Select Food Status: </option>
+            <option *ngFor="let status of foodStatus" [value]="status.id">
+              {{ status.name }}
+            </option>
+          </select>
+        </div>
+      </c-col>
+      <div  class="mb-3">
+        <input cButton color="primary" type="button" [disabled]="foodUpdateForm.invalid" (click)="foodUpdate()" value="Update"> &ngsp;
+      </div>
+    </c-row>
+  </form>
+
+</div>

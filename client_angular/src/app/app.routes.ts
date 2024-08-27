@@ -35,6 +35,10 @@ export const routes: Routes = [
         loadChildren: () => import('./views/admin/components/guide/routes').then((m) => m.routes)
       },
       {
+        path: 'order',
+        loadChildren: () => import('./views/admin/components/order/routes').then((m) => m.routes)
+      },
+      {
         path: 'user',
         loadChildren: () => import('./views/admin/components/routes').then((m) => m.routes)
       },
@@ -42,10 +46,10 @@ export const routes: Routes = [
         path: 'change_password',
         loadChildren: () => import('./views/admin/components/password/routes').then((m) => m.routes)
       },
-      // {
-      //   path: 'room_book',
-      //   loadChildren: () => import('./views/components/routes').then((m) => m.routes)
-      // },
+      {
+        path: 'food',
+        loadChildren: () => import('./views/admin/components/food/routes').then((m) => m.routes)
+      },
       // {
       //   path: 'room_category',
       //   loadChildren: () => import('./views/components/routes').then((m) => m.routes)

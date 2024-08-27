@@ -47,7 +47,7 @@ export class EmployeeTypeComponent {
 
     this.empTypeForm = this.fb.group({
 
-      id: ['', [Validators.required]],
+      id: [''],
       name: ['', [Validators.required]],
     });
 
@@ -82,7 +82,7 @@ export class EmployeeTypeComponent {
     }
   }
 
-  updateEmpType() {
+  async updateEmpType() {
     this.formData = new FormData();
     let $id;
     if (this.empTypeForm.valid) {
@@ -91,12 +91,13 @@ export class EmployeeTypeComponent {
 
       $id = this.empTypeIdField.value;
 
+      empType.id = this.empTypeIdField.value;
       empType.name = this.empTypeNameField.value;
 
       console.log(empType,$id)
       this.formData.append('form', JSON.stringify(empType));
       console.log(this.formData)
-      this.allServe.updateEmployeeType(this.formData, $id);
+     await this.allServe.updateEmployeeType(this.formData, $id);
 
       this.getEmpType();
       this.toastr.success("Employee Successfully submit ");

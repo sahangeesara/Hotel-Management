@@ -141,9 +141,9 @@ export class GuestAddComponent {
     );
   }
   getGuide() {
-    this.allServe.getGuide().subscribe(
-      (response: any) => {
-        this.guides = response.data;
+    this.allServe.getGuideByAssign().subscribe(
+      (data: any) => {
+        this.guides = data;
       },
       (error) => {
         console.error('Error fetching guide:', error);

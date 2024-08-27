@@ -25,11 +25,6 @@ export const navItems: INavData[] = [
         icon: 'nav-icon-bullet'
       },
       {
-        name: 'Room Category',
-        url: '/room/room_category_view',
-        icon: 'nav-icon-bullet'
-      },
-      {
         name: 'Room Book',
         url: '/room/room_book_view',
         icon: 'nav-icon-bullet'
@@ -51,11 +46,6 @@ export const navItems: INavData[] = [
         url: '/employee/employee_view',
         icon: 'nav-icon-bullet'
       },
-      {
-        name: 'Employee Type',
-        url: '/employee/employee_type',
-        icon: 'nav-icon-bullet'
-      }
     ]
   },
   {
@@ -93,6 +83,73 @@ export const navItems: INavData[] = [
     ]
   },
   {
+    name: 'Order',
+    url: '/order',
+    iconComponent: { name: 'cil-bell' },
+    children: [
+      {
+        name: 'Order Add',
+        url: '/order/order_add',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Order View',
+        url: '/order/order_view',
+        icon: 'nav-icon-bullet'
+      },
+    ]
+  },
+  {
+    name: 'Food',
+    url: '/food',
+    iconComponent: { name: 'cil-bell' },
+    children: [
+      {
+        name: 'Food Add',
+        url: '/food/food_add',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Food View',
+        url: '/food/food_view',
+        icon: 'nav-icon-bullet'
+      },
+    ]
+  },
+  {
+    name: 'Status/Category',
+    title: true
+  },
+  {
+    name: 'Room Category',
+    url: '/room/room_category_view',
+    icon: 'nav-icon-bullet'
+  },
+  {
+    name: 'Employee Type',
+    url: '/employee/employee_type',
+    icon: 'nav-icon-bullet'
+  },
+  {
+    name: 'Order Status',
+    url: '/order/order_status',
+    icon: 'nav-icon-bullet'
+  },
+  {
+    name: 'Food Status',
+    url: '/food/food_status',
+    icon: 'nav-icon-bullet'
+  },
+  {
+    name: 'Item Category',
+    url: '/food/item_category',
+    icon: 'nav-icon-bullet'
+  },
+  {
+    name: 'Report',
+    title: true
+  },
+  {
     name: 'Setting',
     title: true
   },
@@ -106,108 +163,108 @@ export const navItems: INavData[] = [
     iconComponent: { name: 'cil-user' },
     url: '/change_password/password_chang'
   },
-  // {
-  //   name: 'Icons',
-  //   iconComponent: { name: 'cil-star' },
-  //   url: '/icons',
-  //   children: [
-  //     {
-  //       name: 'CoreUI Free',
-  //       url: '/icons/coreui-icons',
-  //       icon: 'nav-icon-bullet',
-  //       badge: {
-  //         color: 'success',
-  //         text: 'FREE'
-  //       }
-  //     },
-  //     {
-  //       name: 'CoreUI Flags',
-  //       url: '/icons/flags',
-  //       icon: 'nav-icon-bullet'
-  //     },
-  //     {
-  //       name: 'CoreUI Brands',
-  //       url: '/icons/brands',
-  //       icon: 'nav-icon-bullet'
-  //     }
-  //   ]
-  // },
-  // {
-  //   name: 'Notifications',
-  //   url: '/notifications',
-  //   iconComponent: { name: 'cil-bell' },
-  //   children: [
-  //     {
-  //       name: 'Alerts',
-  //       url: '/notifications/alerts',
-  //       icon: 'nav-icon-bullet'
-  //     },
-  //     {
-  //       name: 'Badges',
-  //       url: '/notifications/badges',
-  //       icon: 'nav-icon-bullet'
-  //     },
-  //     {
-  //       name: 'Modal',
-  //       url: '/notifications/modal',
-  //       icon: 'nav-icon-bullet'
-  //     },
-  //     {
-  //       name: 'Toast',
-  //       url: '/notifications/toasts',
-  //       icon: 'nav-icon-bullet'
-  //     }
-  //   ]
-  // },
-  // {
-  //   name: 'Widgets',
-  //   url: '/widgets',
-  //   iconComponent: { name: 'cil-calculator' },
-  //   badge: {
-  //     color: 'info',
-  //     text: 'NEW'
-  //   }
-  // },
-  // {
-  //   title: true,
-  //   name: 'Extras'
-  // },
-  // {
-  //   name: 'Pages',
-  //   url: '/login',
-  //   iconComponent: { name: 'cil-star' },
-  //   children: [
-  //     {
-  //       name: 'Login',
-  //       url: '/login',
-  //       icon: 'nav-icon-bullet'
-  //     },
-  //     {
-  //       name: 'Register',
-  //       url: '/register',
-  //       icon: 'nav-icon-bullet'
-  //     },
-  //     {
-  //       name: 'Error 404',
-  //       url: '/404',
-  //       icon: 'nav-icon-bullet'
-  //     },
-  //     {
-  //       name: 'Error 500',
-  //       url: '/500',
-  //       icon: 'nav-icon-bullet'
-  //     }
-  //   ]
-  // },
-  // {
-  //   title: true,
-  //   name: 'Links',
-  //   class: 'mt-auto'
-  // },
-  // {
-  //   name: 'Docs',
-  //   url: 'https://coreui.io/angular/docs/5.x/',
-  //   iconComponent: { name: 'cil-description' },
-  //   attributes: { target: '_blank' }
-  // }
+  // // {
+  // //   name: 'Icons',
+  // //   iconComponent: { name: 'cil-star' },
+  // //   url: '/icons',
+  // //   children: [
+  // //     {
+  // //       name: 'CoreUI Free',
+  // //       url: '/icons/coreui-icons',
+  // //       icon: 'nav-icon-bullet',
+  // //       badge: {
+  // //         color: 'success',
+  // //         text: 'FREE'
+  // //       }
+  // //     },
+  // //     {
+  // //       name: 'CoreUI Flags',
+  // //       url: '/icons/flags',
+  // //       icon: 'nav-icon-bullet'
+  // //     },
+  // //     {
+  // //       name: 'CoreUI Brands',
+  // //       url: '/icons/brands',
+  // //       icon: 'nav-icon-bullet'
+  // //     }
+  // //   ]
+  // // },
+  // // {
+  // //   name: 'Notifications',
+  // //   url: '/notifications',
+  // //   iconComponent: { name: 'cil-bell' },
+  // //   children: [
+  // //     {
+  // //       name: 'Alerts',
+  // //       url: '/notifications/alerts',
+  // //       icon: 'nav-icon-bullet'
+  // //     },
+  // //     {
+  // //       name: 'Badges',
+  // //       url: '/notifications/badges',
+  // //       icon: 'nav-icon-bullet'
+  // //     },
+  // //     {
+  // //       name: 'Modal',
+  // //       url: '/notifications/modal',
+  // //       icon: 'nav-icon-bullet'
+  // //     },
+  // //     {
+  // //       name: 'Toast',
+  // //       url: '/notifications/toasts',
+  // //       icon: 'nav-icon-bullet'
+  // //     }
+  // //   ]
+  // // },
+  // // {
+  // //   name: 'Widgets',
+  // //   url: '/widgets',
+  // //   iconComponent: { name: 'cil-calculator' },
+  // //   badge: {
+  // //     color: 'info',
+  // //     text: 'NEW'
+  // //   }
+  // // },
+  // // {
+  // //   title: true,
+  // //   name: 'Extras'
+  // // },
+  // // {
+  // //   name: 'Pages',
+  // //   url: '/login',
+  // //   iconComponent: { name: 'cil-star' },
+  // //   children: [
+  // //     {
+  // //       name: 'Login',
+  // //       url: '/login',
+  // //       icon: 'nav-icon-bullet'
+  // //     },
+  // //     {
+  // //       name: 'Register',
+  // //       url: '/register',
+  // //       icon: 'nav-icon-bullet'
+  // //     },
+  // //     {
+  // //       name: 'Error 404',
+  // //       url: '/404',
+  // //       icon: 'nav-icon-bullet'
+  // //     },
+  // //     {
+  // //       name: 'Error 500',
+  // //       url: '/500',
+  // //       icon: 'nav-icon-bullet'
+  // //     }
+  // //   ]
+  // // },
+  // // {
+  // //   title: true,
+  // //   name: 'Links',
+  // //   class: 'mt-auto'
+  // // },
+  // // {
+  // //   name: 'Docs',
+  // //   url: 'https://coreui.io/angular/docs/5.x/',
+  // //   iconComponent: { name: 'cil-description' },
+  // //   attributes: { target: '_blank' }
+  // // }
 ];

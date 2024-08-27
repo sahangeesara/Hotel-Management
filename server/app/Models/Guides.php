@@ -16,6 +16,7 @@ class Guides extends Model
         'address',
         'email',
         'city',
+        'guide_status',
         'nic',
         'tel_no',
         'gender_id',

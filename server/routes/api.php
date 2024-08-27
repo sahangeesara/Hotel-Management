@@ -2,9 +2,14 @@
 
 use App\Http\Controllers\api\EmployeeController;
 use App\Http\Controllers\api\EmployeeTypeController;
+use App\Http\Controllers\api\FoodItemController;
+use App\Http\Controllers\api\FoodStatusController;
 use App\Http\Controllers\api\GenderController;
 use App\Http\Controllers\api\GuestController;
 use App\Http\Controllers\api\GuideController;
+use App\Http\Controllers\api\ItemCategoryController;
+use App\Http\Controllers\api\OrderController;
+use App\Http\Controllers\api\OrderStatusController;
 use App\Http\Controllers\api\RoomBookController;
 use App\Http\Controllers\api\RoomsCategoryController;
 use App\Http\Controllers\api\RoomsController;
@@ -41,11 +46,20 @@ Route::group([
     Route::post('sendPasswordResetLink', [ResetPasswordController::class,'sendEmail']);
     Route::post('resetPassword', [ChangePasswordController::class,'process']);
     Route::put('passwordReset', [UserController::class,'changePassword']);
+    Route::get('foodsByItemCateId/{id}', [FoodItemController::class,'foodsByItemCateId']);
+    Route::get('getRoom', [RoomBookController::class,'getRoom']);
+    Route::get('getGuide', [GuestController::class,'getGuide']);
+
 });
 Route::apiResources([
-    'user' => UserController::class ,
+    'user' => UserController::class,
     'employees' => EmployeeController::class,
+    'foodItems' => FoodItemController::class,
+    'foodStatus' => FoodStatusController::class,
+    'orderStatus' => OrderStatusController::class,
+    'itemCategory' => ItemCategoryController::class,
     'employeeTypes' => EmployeeTypeController::class,
+    'Orders' => OrderController::class,
     'guests' => GuestController::class,
     'guides' => GuideController::class,
     'roomBook' => RoomBookController::class,

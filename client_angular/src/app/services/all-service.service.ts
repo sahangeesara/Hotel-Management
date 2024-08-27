@@ -8,6 +8,9 @@ import {RoomBook} from "../entities/roomBook";
 import {Guest} from "../entities/guest";
 import {Guide} from "../entities/guide";
 import {User} from "../entities/user";
+import {OrderStatus} from "../entities/OrderStatus";
+import {FoodStatus} from "../entities/foodStatus";
+import {Food} from "../entities/food";
 
 @Injectable({
   providedIn: 'root'
@@ -55,6 +58,9 @@ export class AllServiceService {
   }
   getRoomBook(){
     return this.http.get(`${this.besUrl}/roomBook`);
+  }
+  getRoomByBooking(){
+    return this.http.get(`${this.besUrl}/getRoom`);
   }
   getRoomBookById(data:any){
     return this.http.get(`${this.besUrl}/roomBook/`+data);
@@ -109,18 +115,18 @@ export class AllServiceService {
     return this.http.delete(`${this.besUrl}/employeeTypes/`+ data);
 
   }
-  updateEmployee(data:any, id:any){
+  async updateEmployee(data:any, id:any){
     console.log(data);
     console.log(`${this.besUrl}/employees/${id}`);
     console.log('all-Ser')
-    return this.http.patch(`${this.besUrl}/employees/${id}`,data);
+    return this.http.put(`${this.besUrl}/employees/${id}`,data).toPromise();
   }
 
-  updateEmployeeType(data:any, id:any){
+  async updateEmployeeType(data:any, id:any){
     console.log(data);
     console.log(`${this.besUrl}/employeeTypes/${id}`);
     console.log('all-Ser')
-    return this.http.patch(`${this.besUrl}/employeeTypes/${id}`,data);
+    return this.http.put(`${this.besUrl}/employeeTypes/${id}`,data).toPromise();
   }
 
   getEmployeeTypeById(data:any){
@@ -168,6 +174,10 @@ export class AllServiceService {
   async submitGuide(data:any){
     return this.http.post<Guide[]>(`${this.besUrl}/guides`,data).toPromise();
   }
+  getGuideByAssign(){
+    return this.http.get(`${this.besUrl}/getGuide`);
+  }
+
   updateGuide(data:any, id:any){
     console.log(data);
     console.log(`${this.besUrl}/guides/${id}`);
@@ -195,6 +205,93 @@ export class AllServiceService {
     console.log('all-Ser')
     return this.http.patch(`${this.besUrl}/user/${id}`,data);
   }
+  //order Status
+
+  getOrderStatus(){
+    return this.http.get(`${this.besUrl}/orderStatus`);
+  }
+  getOrderStatusById(data:any){
+    return this.http.get(`${this.besUrl}/orderStatus/`+data);
+  }
+  deleteOrderStatus(data:any){
+    return this.http.delete(`${this.besUrl}/orderStatus/`+data);
+  }
+  async submitOrderStatus(data:any){
+    return this.http.post<OrderStatus[]>(`${this.besUrl}/orderStatus`,data).toPromise();
+  }
+  updateOrderStatus(data:any, id:any){
+    console.log(data);
+    console.log(`${this.besUrl}/orderStatus/${id}`);
+    console.log('all-Ser')
+    return this.http.patch<OrderStatus>(`${this.besUrl}/orderStatus/${id}`,data);
+  }
+//Food Status
+
+  getFoodStatus(){
+    return this.http.get(`${this.besUrl}/foodStatus`);
+  }
+  getFoodStatusById(data:any){
+    return this.http.get(`${this.besUrl}/foodStatus/`+data);
+  }
+  deleteFoodStatus(data:any){
+    return this.http.delete(`${this.besUrl}/foodStatus/`+data);
+  }
+  async submitFoodStatus(data:any){
+    return this.http.post<FoodStatus[]>(`${this.besUrl}/foodStatus`,data).toPromise();
+  }
+ async updateFoodStatus(data:any, id:any){
+    console.log(data);
+    console.log(`${this.besUrl}/foodStatus/${id}`);
+    console.log('all-Ser')
+    return this.http.patch<FoodStatus>(`${this.besUrl}/foodStatus/${id}`,data);
+  }
+
+  //Item Category
+
+  getItemCategory(){
+    return this.http.get(`${this.besUrl}/itemCategory`);
+  }
+  getItemCategoryById(data:any){
+    return this.http.get(`${this.besUrl}/itemCategory/`+data);
+  }
+  deleteItemCategory(data:any){
+    return this.http.delete(`${this.besUrl}/itemCategory/`+data);
+  }
+  async submitItemCategory(data:any){
+    return this.http.post<FoodStatus[]>(`${this.besUrl}/itemCategory`,data).toPromise();
+  }
+ updateItemCategory(data:any, id:any){
+    console.log(data);
+    console.log(`${this.besUrl}/itemCategory/${id}`);
+    console.log('all-Ser')
+    return this.http.patch<FoodStatus>(`${this.besUrl}/itemCategory/${id}`,data);
+  }
+  //Food
+
+  getFood(){
+    return this.http.get(`${this.besUrl}/foodItems`);
+  }
+  getFoodById(data:any){
+    return this.http.get(`${this.besUrl}/foodItems/`+data);
+  }
+  getFoodByItemCateId(data:any){
+    return this.http.get(`${this.besUrl}/foodsByItemCateId/`+data);
+  }
+  deleteFood(data:any){
+    return this.http.delete(`${this.besUrl}/foodItems/`+data);
+  }
+  async submitFood(data:any){
+    return this.http.post<Food[]>(`${this.besUrl}/foodItems`,data).toPromise();
+  }
+ async updateFood(data:any, id:any){
+    console.log(data);
+    console.log(`${this.besUrl}/foodItems/${id}`);
+    console.log('all-Ser')
+    return this.http.put<Food>(`${this.besUrl}/foodItems/${id}`,data).toPromise();
+  }
+
+
+
 }
 
 

@@ -1,0 +1,51 @@
+<h3>
+  <strong>
+    <em>
+
+      Food view Table
+    </em>
+  </strong>
+
+</h3>
+<table [striped]="true" cTable>
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Food Name</th>
+    <th scope="col">Food Quantity</th>
+    <th scope="col">Food Amount</th>
+    <th scope="col">Food Status</th>
+    <th scope="col">Item Category</th>
+    <th scope="col">Action</th>
+  </tr>
+  </thead>
+  <tbody *ngIf="foodItems">
+  @for (food of foodItems; track food; let key = $index) {
+  <tr>
+    <th scope="row">{{key + 1}}</th>
+      <td>{{ food.name }}</td>
+      <td>{{ food.quantity }}</td>
+      <td>{{ food.food_amount }}</td>
+      <td>{{ food.food_status.name }}</td>
+      <td>{{ food.item_category.name }}</td>
+        <td>
+      <button type="button" (click)="getShow(food.id)" cButton>  <svg cIcon name="cil-task" size="lg" title="Numbered List Icon" ></svg></button>&ngsp;
+       <button type="button" (click)="foodDelete(food.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
+       </td>
+</tr>
+  }
+  </tbody>
+</table>
+
+<c-modal id="liveDemoModal" [visible]="visible" (visibleChange)="handleLiveDemoChange($event)">
+  <c-modal-header>
+    <h5 cModalTitle> Food Update Form</h5>
+
+  </c-modal-header>
+  <c-modal-body><app-food-update></app-food-update></c-modal-body>
+  <c-modal-footer>
+    <button (click)="toggleLiveDemo()" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal>

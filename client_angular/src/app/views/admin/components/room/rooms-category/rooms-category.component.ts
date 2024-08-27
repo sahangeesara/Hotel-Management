@@ -50,7 +50,7 @@ export class RoomsCategoryComponent {
 
     this.rmCategoryForm = this.fb.group({
 
-      id: ['', [Validators.required]],
+      id: [''],
       name: ['', [Validators.required]],
     });
 

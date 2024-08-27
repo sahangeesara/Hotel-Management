@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Employees;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class EmployeeController extends Controller
 {
@@ -58,12 +59,37 @@ class EmployeeController extends Controller
     public function update(Request $request, string $id)
     {
 
-//        info($request->request->all());
-//        info($id);
+        info($request->form);
+        info($id);
 
         $data = json_decode($request->form, true);
+        $validatedData = Validator::make($data, [
+
+            'name' => 'required|max:255',
+            'address' => 'required',
+            'email' => 'required',
+            'city' => 'required',
+            'nic' => 'required',
+            'tel_no' => 'required',
+            'employee_type_id' => 'required',
+            'gender_id' => 'required',
+
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
         $employee = Employees::findOrFail($id);
-        $employee->update($data);
+
+        $employee->name = $data['name'];
+        $employee->address = $data['address'];
+        $employee->email = $data['email'];
+        $employee->city = $data['city'];
+        $employee->nic = $data['nic'];
+        $employee->tel_no = $data['tel_no'];
+        $employee->employee_type_id = $data['employee_type_id'];
+        $employee->gender_id = $data['gender_id'];
+
+        $employee->save();
 
         return json_encode($employee);
     }
@@ -74,9 +100,9 @@ class EmployeeController extends Controller
     public function destroy(string $id)
     {
         try {
-            $employeeType = Employees::findOrFail($id);
-            $employeeType->is_active = false;
-            $employeeType->save();
+            $employee = Employees::findOrFail($id);
+            $employee->is_active = false;
+            $employee->save();
 
             return response()->json(['message' => 'Employee deactivated successfully.'], 200);
         } catch (\Exception $e) {

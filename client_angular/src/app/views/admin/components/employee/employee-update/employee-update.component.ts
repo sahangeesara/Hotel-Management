@@ -117,7 +117,7 @@ export class EmployeeUpdateComponent {
         this.empEmailField.setValue(data.email);
 
     }
-   empUpdate(){
+   async empUpdate(){
     this.formData = new FormData();
     let id;
     if (this.updateForm.valid) {
@@ -136,30 +136,10 @@ export class EmployeeUpdateComponent {
       emp.gender_id = this.empGenField.value;
       emp.email = this.empEmailField.value;
 
-      // const empId = this.empIdField.value;
-      // const empName = this.empNameField.value;
-      // const empAddress = this.empAddressField.value;
-      // const empNic = this.empNicField.value;
-      // const empCity = this.empCityField.value;
-      // const empTel_no = this.empTelNoField.value;
-      // const empEmployee_type_id = this.empTypeField.value;
-      // const empGender_id = this.empGenField.value;
-      // const empEmail = this.empEmailField.value;
-
-      // this.formData.append('id', empId);
-      // this.formData.append('name', empName);
-      // this.formData.append('address', empAddress);
-      // this.formData.append('nic', empNic);
-      // this.formData.append('city', empCity);
-      // this.formData.append('tel_no', empTel_no);
-      // this.formData.append('employee_type_id', empEmployee_type_id);
-      // this.formData.append('gender_id', empGender_id);
-      // this.formData.append('email', empEmail);
-
       console.log(emp)
       this.formData.append('form', JSON.stringify(emp));
       console.log(this.formData);
-      this.allServe.updateEmployee(this.formData, id);
+      await this.allServe.updateEmployee(this.formData, id);
       this.toastr.success("Employee Successfully submit ");
 
     }

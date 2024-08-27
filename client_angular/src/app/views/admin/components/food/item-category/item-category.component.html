@@ -1,0 +1,48 @@
+<div>
+  <h3> <strong> <em> Item Category Form </em> </strong></h3>
+  <form cForm [formGroup]="itemCategoryForm" (ngSubmit)="onSubmit()">
+    <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
+    <c-row>
+      <c-col [xs]="3">
+        <div class="mb-3">
+          <label cLabel for="inputName-1"> Item Category Name: </label>
+          <input cFormControl id="inputName-1" type="text" sizing="sm" name="name" formControlName="name">
+        </div>
+      </c-col>
+    </c-row>
+    <div  class="mb-3">
+      <input cButton color="primary" type="submit">&ngsp;
+      <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">&ngsp;
+      <input cButton color="secondary" style="color: white" type="button" (click)="itemCategoryUpdate()" value="Update">
+    </div>
+  </form>
+</div>
+
+<hr />
+<div>
+  <h3> <strong> <em> Item Category Table </em> </strong></h3>
+  <table [striped]="true" cTable>
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Item Category Name</th>
+      <th scope="col">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @for (category of itemCategories; track category; let key = $index) {
+    <tr>
+      <th scope="row">{{key + 1}}</th>
+    <td>{{ category.name }}</td>
+    <td>
+    <button (click)="getItemCateById(category.id)" cButton>
+          <svg cIcon name="cil-task" size="lg" aria-label="Numbered List Icon" title="Numbered List Icon"></svg>
+    </button>&ngsp;
+    <button type="button" (click)="itemCategoryDelete(category.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
+    </td>
+  </tr>
+    }
+    </tbody>
+  </table>
+
+</div>

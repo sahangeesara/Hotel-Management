@@ -1,0 +1,129 @@
+<h3> <strong><em> Order Form </em> </strong></h3>
+<form cForm [formGroup]="orderForm" (ngSubmit)="onSubmit()">
+  <c-row>
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel for="inputRNo-1">Room No:</label>
+        <select id="inputRNo-1" aria-label="Select Room No" cSelect name="r_id" formControlName="r_id">
+          <option selected="selected">Select Room No</option>
+          <option *ngFor="let room of rooms" [value]="room.id">
+            {{ room.r_no }}
+          </option>
+        </select>
+      </div>
+    </c-col>
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel for="inputGuest-1">Guest:</label>
+        <select id="inputGuest-1" aria-label="Select Guest" cSelect name="guest_id" formControlName="guest_id">
+          <option selected="selected">Select Guest</option>
+          <option *ngFor="let guest of guests" [value]="guest.id">
+            {{ guest.nic }}
+          </option>
+        </select>
+      </div>
+    </c-col>
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel>Order Status:</label>
+         <select aria-label="Select Order Status" cSelect name="oder_status_id" formControlName="oder_status_id">
+          <option selected="selected">Select Order Status: </option>
+          <option *ngFor="let status of orderStatus" [value]="status.id">
+            {{ status.name }}
+          </option>
+        </select>
+      </div>
+    </c-col>
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel for="inputOrderAmount-1">Order Amount:</label>
+        <input cFormControl id="inputOrderAmount-1" type="text" name="order_amount" formControlName="order_amount" sizing="sm">
+        <div cFormText>
+          ex: Lkr.700.00
+        </div>
+      </div>
+    </c-col>
+
+    <c-col [xs]="6">
+      <label cLabel>Order Date:</label>
+
+      <input
+        class="form-control"
+        placeholder="yyyy-mm-dd"
+        name="order_date" formControlName="order_date"
+        ngbDatepicker
+        #d="ngbDatepicker"
+      />
+      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
+    </c-col>
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel>Item Category:</label>
+
+        <select aria-label="Select Item Category" cSelect name="item_category_id" formControlName="item_category_id" (change)="getFoods($any($event).target.value)">
+          <option value="" selected>Select Item Category...</option>
+          <option *ngFor="let category of itemCategories " [value]="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+      </div>
+    </c-col>
+
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel>Foods Item:</label>
+
+        <select aria-label="Select Food Item" cSelect name="food_id" formControlName="food_id" (change)="getFoodsById($any($event).target.value)">
+          <option value="" selected>Select Food Item...</option>
+          <option *ngFor="let food of foods" [value]="food.id">
+            {{ food.name }}
+          </option>
+        </select>
+      </div>
+    </c-col>
+    <hr>
+    <table [striped]="true" cTable>
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Food Name</th>
+        <th scope="col">Food Quantity</th>
+        <th scope="col">Food Amount</th>
+        <th scope="col">Food Status</th>
+        <th scope="col">Item Category</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let food of foodItems; let i = index">
+        <th scope="row">{{ i + 1 }}</th>
+        <td>{{ food.name }}</td>
+        <td>
+          <input
+            cFormControl
+            id="inputQuantity-{{ i }}"
+            type="number"
+            name="quantity"
+            formControlName="quantity"
+            sizing="sm"
+            min="0"
+          >
+        </td>
+        <td>{{ food.food_amount }}</td>
+        <td>
+          <select aria-label="Select Food Status" cSelect name="food_status_id" formControlName="food_status">
+            <option selected="selected">Select Food Status: </option>
+            <option *ngFor="let status of foodStatus" [value]="status">
+              {{ status.name }}
+            </option>
+          </select>
+        </td>
+        <td>{{ food.item_category?.name }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <div  class="mb-3">
+      <input cButton color="primary" type="submit" [disabled]="orderForm.invalid"> &ngsp;
+      <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">
+    </div>
+  </c-row>
+</form>
