@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+
 
 class OrderController extends Controller
 {
@@ -33,7 +35,27 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $data = json_decode($request->form, true);
-        $order = Order::create($data);
+        $validatedData = Validator::make($data, [
+
+            'r_id' => 'required',
+            'guest_id' => 'required',
+            'order_date' => 'required',
+            'order_amount' => 'required',
+            'oder_status_id' => 'required',
+            'food_id' => 'required',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+        $order =new Order();
+        $order->r_id = $data['r_id'];
+        $order->guest_id = $data['guest_id'];
+        $order->order_date = $data['order_date'];
+        $order->order_amount = $data['order_amount'];
+        $order->oder_status_id = $data['oder_status_id'];
+        $order->food_id = $data['food_id'];
+        $order->save();
+
         return json_encode($order);
     }
 
@@ -43,7 +65,8 @@ class OrderController extends Controller
     public function show(string $id)
     {
         try {
-            $orders = Order::findOrFail($id);
+            $orders = Order::with('room','guest','oderStatus','food')
+                            ->findOrFail($id);
             return response()->json($orders);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
@@ -58,12 +81,28 @@ class OrderController extends Controller
     public function update(Request $request, string $id)
     {
 
-//        info($request->request->all());
-//        info($id);
-
         $data = json_decode($request->form, true);
-        $order = Order::findOrFail($id);
-        $order->update($data);
+        $validatedData = Validator::make($data, [
+
+            'r_id' => 'required',
+            'guest_id' => 'required',
+            'order_date' => 'required',
+            'order_amount' => 'required',
+            'oder_status_id' => 'required',
+            'food_id' => 'required',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+        $order =Order::findOrFail($id);
+
+        $order->r_id = $data['r_id'];
+        $order->guest_id = $data['guest_id'];
+        $order->order_date = $data['order_date'];
+        $order->order_amount = $data['order_amount'];
+        $order->oder_status_id = $data['oder_status_id'];
+        $order->food_id = $data['food_id'];
+        $order->save();
 
         return json_encode($order);
     }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order_status;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class OrderStatusController extends Controller
 {
@@ -32,8 +33,18 @@ class OrderStatusController extends Controller
     public function store(Request $request)
     {
         $data = json_decode($request->form, true);
-        $orderStatus = Order_status::create($data);
-        return json_encode($orderStatus);
+        $validatedData = Validator::make($data, [
+            'name' => 'required|max:255',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+
+        $orderStatus =new Order_status();
+        $orderStatus->name=$data['name'];
+        $orderStatus->save();
+
+        return response()->json(['message' => 'Order status Add successfully.',$orderStatus]);
     }
 
     /**
@@ -56,15 +67,18 @@ class OrderStatusController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
-//        info($request->request->all());
-//        info($id);
-
         $data = json_decode($request->form, true);
+        $validatedData = Validator::make($data, [
+            'name' => 'required|max:255',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
         $orderStatus = Order_status::findOrFail($id);
-        $orderStatus->update($data);
+        $orderStatus->name=$data['name'];
+        $orderStatus->save();
 
-        return json_encode($orderStatus);
+        return response()->json(['message' => 'Order status Update successfully.',$orderStatus]);
     }
 
     /**

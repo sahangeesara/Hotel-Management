@@ -21,6 +21,8 @@ import {TokenService} from "../../../../services/token.service";
 import {ToastrService} from "ngx-toastr";
 import {Guest} from "../../../../entities/guest";
 import {User} from "../../../../entities/user";
+import {map} from "rxjs/operators";
+import {catchError, from, throwError} from "rxjs";
 
 @Component({
   selector: 'app-user',
@@ -48,7 +50,7 @@ import {User} from "../../../../entities/user";
 })
 export class UserComponent {
   users: any[] = [];
-
+  public error=null;
   formData = new FormData();
   userForm: FormGroup;
   constructor(private  allServe:AllServiceService,
@@ -83,7 +85,7 @@ export class UserComponent {
   get userPasswordConfirmationField(): FormControl {
     return this.userForm.controls['password_confirmation'] as FormControl;
   }
-  async onSubmit() {
+  onSubmit() {
     this.formData = new FormData();
     if (this.userForm.valid) {
       let user = new User();
@@ -94,11 +96,28 @@ export class UserComponent {
 
 
       this.formData.append('form', JSON.stringify(user));
-      await this.allServe.submitUser(this.formData);
-      this.clearForm();
+      const submissionObservable = from( this.allServe.submitUser(this.formData));
+
+      submissionObservable
+        .pipe(
+          map((data) => {
+            // Handle successful submission here
+            this.getUser();
+            this.clearForm();
+            return data; // If you need to return a value for further processing
+          }),
+          catchError((error) => {
+            // Handle errors here
+            this.handleError(error);
+            return throwError(error); // Re-throw the error if you want to propagate it further
+          })
+        )
+        .subscribe();
     }
   }
-
+  handleError(error: { error: null; }){
+    return  this.error=error.error;
+  }
   getUser() {
     this.allServe.getUser().subscribe(
       (response: any) => {
@@ -143,8 +162,6 @@ export class UserComponent {
       }
     );
   }
-
-
 
 
   ngOnInit() {

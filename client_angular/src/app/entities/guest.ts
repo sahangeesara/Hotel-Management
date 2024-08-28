@@ -13,4 +13,5 @@ export class Guest{
   gender_id?:Gender;
   guide_id?:Guide;
   country?:string;
+  guide_status?:string;
 }

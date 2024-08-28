@@ -13,6 +13,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
 import {Food} from "../../../../../entities/food";
+import {catchError, from, throwError} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-food-update',
@@ -34,7 +36,7 @@ import {Food} from "../../../../../entities/food";
 })
 export class FoodUpdateComponent {
 
-
+  public error=null;
   imageUrl?: string = 'assets/default.png';
   file?: any;
   itemCategories: any[] = [];
@@ -106,7 +108,7 @@ export class FoodUpdateComponent {
     }
 
   }
-  async foodUpdate() {
+  foodUpdate() {
     this.formData = new FormData();
     if (this.foodUpdateForm.valid) {
 
@@ -120,13 +122,29 @@ export class FoodUpdateComponent {
       food.item_category= this.itemCategoryField.value;
       food.food_status= this.foodStatusField.value;
 
-      console.log(food)
       this.formData.append('image', this.file, this.file.name);
+      this.formData.append('_method', 'patch');
       this.formData.append('form', JSON.stringify(food));
-      await this.allServe.updateFood(this.formData,id);
-      this.clearForm();
-      this.toastr.success("Food Item Successfully submit ");
+      const submissionObservable =  from( this.allServe.updateFood(this.formData,id));
+      submissionObservable
+        .pipe(
+          map((data) => {
+            // Handle successful submission here
+            this.clearForm();
+            return data; // If you need to return a value for further processing
+          }),
+          catchError((error) => {
+            // Handle errors here
+            this.handleError(error);
+            return throwError(error); // Re-throw the error if you want to propagate it further
+          })
+        )
+        .subscribe();
     }
+  }
+
+  handleError(error: { error: null; }){
+    return  this.error=error.error;
   }
   getItemCategory() {
     this.allServe.getItemCategory().subscribe(

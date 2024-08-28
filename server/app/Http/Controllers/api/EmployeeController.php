@@ -34,7 +34,33 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         $data = json_decode($request->form, true);
-        $employee = Employees::create($data);
+        $validatedData = Validator::make($data, [
+
+            'name' => 'required|max:255',
+            'address' => 'required',
+            'email' => 'required',
+            'city' => 'required',
+            'nic' => 'required',
+            'tel_no' => 'required',
+            'employee_type_id' => 'required',
+            'gender_id' => 'required',
+
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+        $employee =new Employees();
+
+        $employee->name = $data['name'];
+        $employee->address = $data['address'];
+        $employee->email = $data['email'];
+        $employee->city = $data['city'];
+        $employee->nic = $data['nic'];
+        $employee->tel_no = $data['tel_no'];
+        $employee->employee_type_id = $data['employee_type_id'];
+        $employee->gender_id = $data['gender_id'];
+
+        $employee->save();
         return json_encode($employee);
     }
 
@@ -44,7 +70,8 @@ class EmployeeController extends Controller
     public function show(string $id)
     {
         try {
-            $employees = Employees::findOrFail($id);
+            $employees = Employees::with('employeeType','gender')
+                                    ->findOrFail($id);
             return response()->json($employees);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
@@ -58,9 +85,6 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
-        info($request->form);
-        info($id);
 
         $data = json_decode($request->form, true);
         $validatedData = Validator::make($data, [

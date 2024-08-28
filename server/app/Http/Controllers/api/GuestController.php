@@ -86,7 +86,8 @@ class GuestController extends Controller
     public function show(string $id)
     {
         try {
-            $guests = Guest::findOrFail($id);
+            $guests = Guest::with('guide','gender')
+                            ->findOrFail($id);
             return response()->json($guests);
 
         } catch (\Exception $e) {
@@ -116,10 +117,50 @@ class GuestController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $guest = Guest::findOrFail($id);
-        $guest->update($request->all());
+        $data = json_decode($request->form, true);
+        $validatedData = Validator::make($data, [
 
-        return json_encode($guest);
+            'name' => 'required|max:255',
+            'address' => 'required',
+            'email' => 'required',
+            'city' => 'required',
+            'nic' => 'required',
+            'tel_no' => 'required',
+            'guide_id' => 'required',
+            'gender_id' => 'required',
+            'country' => 'required',
+            'guest_type' => 'required',
+            'guide_status' => 'required',
+
+        ]);
+        if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
+
+        // Check if the guest_id and r_book combination already exists
+        $existingBooking = Guest::where('guide_id', $data['guide_id'])
+            ->where('is_active', true)
+            ->first();
+        // If the booking exists, return an error message or handle the situation as needed
+        if ($existingBooking) {  return response()->json(['error' => 'Guide already exists.']); }
+
+        $guest =  Guest::findOrFail($id);
+        $guest->name = $data['name'];
+        $guest->address = $data['address'];
+        $guest->email = $data['email'];
+        $guest->city = $data['city'];
+        $guest->nic = $data['nic'];
+        $guest->tel_no = $data['tel_no'];
+        $guest->guide_id = $data['guide_id'];
+        $guest->gender_id = $data['gender_id'];
+        $guest->guest_type = $data['guest_type'];
+        $guest->country = $data['country'];
+
+        $guest->save();
+
+        $guides = Guides::findOrFail($guest->guide_id);
+        $guides->guide_status =$data['guide_status'];;
+        $guides->save();
+
+        return response()->json(['massage' => 'Successfully Update.', $guest]);
     }
 
     /**

@@ -47,7 +47,7 @@ Route::group([
     Route::post('resetPassword', [ChangePasswordController::class,'process']);
     Route::put('passwordReset', [UserController::class,'changePassword']);
     Route::get('foodsByItemCateId/{id}', [FoodItemController::class,'foodsByItemCateId']);
-    Route::get('getRoom', [RoomBookController::class,'getRoom']);
+//    Route::get('getRoom', [RoomBookController::class,'getRoom']);
     Route::get('getGuide', [GuestController::class,'getGuide']);
 
 });

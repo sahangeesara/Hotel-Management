@@ -16,6 +16,8 @@ import {Employee} from "../../../../../entities/employee";
 import {Food} from "../../../../../entities/food";
 import {FoodStatus} from "../../../../../entities/foodStatus";
 import {ItemCategory} from "../../../../../entities/ItemCategory";
+import {catchError, from, throwError} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-food-add',
@@ -44,6 +46,9 @@ export class FoodAddComponent {
   foodStatus: FoodStatus[] = [];
   formData = new FormData();
   foodForm: FormGroup;
+  public error=null;
+
+
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private router:Router,
@@ -104,7 +109,7 @@ export class FoodAddComponent {
     }
 
   }
-  async onSubmit() {
+   onSubmit() {
     this.formData = new FormData();
     if (this.foodForm.valid) {
 
@@ -116,13 +121,29 @@ export class FoodAddComponent {
       food.item_category= this.itemCategoryField.value;
       food.food_status= this.foodStatusField.value;
 
-      console.log(this.file)
       this.formData.append('image', this.file, this.file.name);
       this.formData.append('form', JSON.stringify(food));
-      await this.allServe.submitFood(this.formData);
-      this.clearForm();
-      this.toastr.success("Food Item Successfully submit ");
+
+      const submissionObservable = from( this.allServe.submitFood(this.formData));
+
+      submissionObservable
+        .pipe(
+          map((data) => {
+            // Handle successful submission here
+            this.clearForm();
+            return data; // If you need to return a value for further processing
+          }),
+          catchError((error) => {
+            // Handle errors here
+            this.handleError(error);
+            return throwError(error); // Re-throw the error if you want to propagate it further
+          })
+        )
+        .subscribe();
     }
+  }
+  handleError(error: { error: null; }){
+    return  this.error=error.error;
   }
   getItemCategory() {
     this.allServe.getItemCategory().subscribe(

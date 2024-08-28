@@ -20,6 +20,9 @@ class FoodItemController extends Controller
             $foodItems = FoodItem::with('foodStatus','itemCategory')
                 ->where('is_active',1)
                 ->paginate(20);
+//                $foodItems->each(function($row) {
+//                    $row->append('image_url');
+//                });
 
             return response()->json($foodItems);
         } catch (\Exception $e) {
@@ -39,6 +42,7 @@ class FoodItemController extends Controller
 
             'name' => 'required|max:255',
             'food_amount' => 'required|decimal:2',
+            'quantity' => 'required',
             'item_category' => 'required',
             'food_status' => 'required',
 
@@ -56,16 +60,16 @@ class FoodItemController extends Controller
 
         $foodItem = new FoodItem();
 
-        info($foodItem);
         $foodItem->name = $data['name'];
         $foodItem->food_amount = $data['food_amount'];
         $foodItem->item_category_id = $data['item_category'];
         $foodItem->food_status_id = $data['food_status'];
-        $foodItem->image = $request->file('image')->store('food/images');
+        $foodItem->quantity = $data['quantity'];
+        $foodItem->image = $request->file('image')->store('public/food/images');
 
         $foodItem->save();
 
-        return response()->json(['message' => 'Successful added food item.'], 200);
+        return response()->json(['message' => 'Successful added food item.',$foodItem], 200);
     }
     /**
      * Display the specified resource.
@@ -103,9 +107,6 @@ class FoodItemController extends Controller
     public function update(Request $request, string $id)
     {
 
-        info($request->form);
-        info($id);
-
         $data = json_decode($request->form, true);
         info($data);
         $validatedData = Validator::make($data, [
@@ -113,6 +114,7 @@ class FoodItemController extends Controller
             'name' => 'required|max:255',
             'food_amount' => 'required|decimal:2',
             'item_category' => 'required',
+            'quantity' => 'required',
             'food_status' => 'required',
 
         ]);
@@ -133,6 +135,7 @@ class FoodItemController extends Controller
         $foodItem->food_amount = $data['food_amount'];
         $foodItem->item_category_id = $data['item_category'];
         $foodItem->food_status_id = $data['food_status'];
+        $foodItem->quantity = $data['quantity'];
         if ($request->hasFile('image')) {
             // Delete the existing image if necessary
             if ($foodItem->image) {
@@ -140,7 +143,7 @@ class FoodItemController extends Controller
             }
 
             // Store the new image
-            $foodItem->image = $request->file('image')->store('food/images');
+            $foodItem->image = $request->file('image')->store('public/food/images');
         }
 
         $foodItem->save();

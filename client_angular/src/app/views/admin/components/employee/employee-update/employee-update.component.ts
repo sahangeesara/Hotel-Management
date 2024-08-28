@@ -13,6 +13,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
 import {Employee} from "../../../../../entities/employee";
+import {catchError, from, throwError} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-employee-update',
@@ -37,6 +39,9 @@ export class EmployeeUpdateComponent {
   employeeGenders: any[] = [];
   formData = new FormData();
   updateForm: FormGroup;
+  public error=null;
+
+
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private router:Router,
@@ -136,13 +141,29 @@ export class EmployeeUpdateComponent {
       emp.gender_id = this.empGenField.value;
       emp.email = this.empEmailField.value;
 
-      console.log(emp)
       this.formData.append('form', JSON.stringify(emp));
-      console.log(this.formData);
-      await this.allServe.updateEmployee(this.formData, id);
-      this.toastr.success("Employee Successfully submit ");
+      this.formData.append('_method', 'patch');
+      const submissionObservable =  from( this.allServe.updateEmployee(this.formData,id));
+      submissionObservable
+        .pipe(
+          map((data) => {
+            // Handle successful submission here
+            this.clearForm();
+            return data; // If you need to return a value for further processing
+          }),
+          catchError((error) => {
+            // Handle errors here
+            this.handleError(error);
+            return throwError(error); // Re-throw the error if you want to propagate it further
+          })
+        )
+        .subscribe();
 
     }
+  }
+
+  handleError(error: { error: null; }){
+    return  this.error=error.error;
   }
   clearForm() {
 

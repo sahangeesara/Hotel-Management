@@ -14,6 +14,8 @@ import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
 import {FoodStatus} from "../../../../../entities/foodStatus";
 import {ItemCategory} from "../../../../../entities/ItemCategory";
+import {catchError, from, throwError} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-item-category',
@@ -39,7 +41,7 @@ export class ItemCategoryComponent {
   itemCategories: any[] = [];
   formData = new FormData();
   itemCategoryForm: FormGroup;
-
+  public error=null;
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private router:Router,
@@ -68,41 +70,69 @@ export class ItemCategoryComponent {
     this.itemCateNameField.setValue("");
 
   }
-  async onSubmit() {
+   onSubmit() {
     this.formData = new FormData();
     if (this.itemCategoryForm.valid) {
 
       let itemCate = new ItemCategory();
 
       itemCate.name= this.itemCateNameField.value;
-      console.log(itemCate)
       this.formData.append('form', JSON.stringify(itemCate));
-      console.log(this.formData);
-      await this.allServe.submitItemCategory(this.formData);
-      this.getItemCate();
-      this.clearForm();
-      this.toastr.success("Item Category Successfully submit ");
+      const submissionObservable = from( this.allServe.submitItemCategory(this.formData));
+
+      submissionObservable
+        .pipe(
+          map((data) => {
+            // Handle successful submission here
+            this.getItemCate();
+            this.clearForm();
+            return data; // If you need to return a value for further processing
+          }),
+          catchError((error) => {
+            // Handle errors here
+            this.handleError(error);
+            return throwError(error); // Re-throw the error if you want to propagate it further
+          })
+        )
+        .subscribe();
+
     }
+  }
+  handleError(error: { error: null; }){
+    return  this.error=error.error;
   }
 
   itemCategoryUpdate() {
     this.formData = new FormData();
-    let $id;
+    let id;
     if (this.itemCategoryForm.valid) {
 
       let itemCate = new ItemCategory();
 
-      $id = this.itemCateIdField.value;
+      id = this.itemCateIdField.value;
 
+      itemCate.id = this.itemCateIdField.value;
       itemCate.name = this.itemCateNameField.value;
 
-      console.log(itemCate,$id)
       this.formData.append('form', JSON.stringify(itemCate));
-      console.log(this.formData)
-      this.allServe.updateItemCategory(this.formData, $id);
+      this.formData.append('_method', 'patch');
+      const submissionObservable = from( this.allServe.updateItemCategory(this.formData,id));
 
-      this.getItemCate();
-      this.toastr.success("Item Category Successfully submit ");
+      submissionObservable
+        .pipe(
+          map((data) => {
+            // Handle successful submission here
+            this.getItemCate();
+            this.clearForm();
+            return data; // If you need to return a value for further processing
+          }),
+          catchError((error) => {
+            // Handle errors here
+            this.handleError(error);
+            return throwError(error); // Re-throw the error if you want to propagate it further
+          })
+        )
+        .subscribe();
     }
   }
 

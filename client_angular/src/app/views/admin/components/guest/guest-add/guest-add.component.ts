@@ -14,6 +14,8 @@ import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
 import {Guide} from "../../../../../entities/guide";
 import {Guest} from "../../../../../entities/guest";
+import {catchError, from, throwError} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-guest-add',
@@ -34,6 +36,7 @@ import {Guest} from "../../../../../entities/guest";
   styleUrl: './guest-add.component.scss'
 })
 export class GuestAddComponent {
+  public error=null;
 
   guestGenders: any[] = [];
   guides: any[] = [];
@@ -106,7 +109,7 @@ export class GuestAddComponent {
 
   }
 
-  async onSubmit() {
+   onSubmit() {
     this.formData = new FormData();
     if (this.guestForm.valid) {
 
@@ -124,10 +127,26 @@ export class GuestAddComponent {
       guest.country= this.guestCountryField.value;
 
       this.formData.append('form', JSON.stringify(guest));
-      await this.allServe.submitGuest(this.formData);
-      this.clearForm();
-      this.toastr.success("Guest Successfully submit ");
+      const submissionObservable = from( this.allServe.submitGuest(this.formData));
+
+      submissionObservable
+        .pipe(
+          map((data) => {
+            // Handle successful submission here
+            this.clearForm();
+            return data; // If you need to return a value for further processing
+          }),
+          catchError((error) => {
+            // Handle errors here
+            this.handleError(error);
+            return throwError(error); // Re-throw the error if you want to propagate it further
+          })
+        )
+        .subscribe();
     }
+  }
+  handleError(error: { error: null; }){
+    return  this.error=error.error;
   }
 
   getGuestGen() {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Rooms_category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class RoomsCategoryController extends Controller
 {
@@ -33,7 +34,15 @@ class RoomsCategoryController extends Controller
     public function store(Request $request)
     {
         $data = json_decode($request->form, true);
-        $roomsCategory = Rooms_category::create($data);
+        $validatedData = Validator::make($data, [
+            'name' => 'required|max:255',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+        $roomsCategory =new Rooms_category();
+        $roomsCategory->name = $data['name'];
+        $roomsCategory->save();
         return json_encode($roomsCategory);
     }
 
@@ -57,10 +66,19 @@ class RoomsCategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $roomsCategory = Rooms_category::findOrFail($id);
-        $roomsCategory->update($request->all());
+        $data = json_decode($request->form, true);
+        $validatedData = Validator::make($data, [
 
-        return json_encode($room);
+            'name' => 'required|max:255',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+        $roomsCategory = Rooms_category::findOrFail($id);
+        $roomsCategory->name = $data['name'];
+        $roomsCategory->save();
+
+        return json_encode($roomsCategory);
     }
 
     /**

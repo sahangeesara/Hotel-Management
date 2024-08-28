@@ -14,6 +14,8 @@ import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
 import {Employee} from "../../../../../entities/employee";
 import {Guide} from "../../../../../entities/guide";
+import {catchError, from, throwError} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-guide-add',
@@ -35,9 +37,11 @@ import {Guide} from "../../../../../entities/guide";
 })
 export class GuideAddComponent {
 
+  public error=null;
   guideGenders: any[] = [];
   formData = new FormData();
   guideForm: FormGroup;
+
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private router:Router,
@@ -90,7 +94,7 @@ export class GuideAddComponent {
 
   }
 
-  async onSubmit() {
+  onSubmit() {
     this.formData = new FormData();
     if (this.guideForm.valid) {
 
@@ -106,10 +110,26 @@ export class GuideAddComponent {
 
 
       this.formData.append('form', JSON.stringify(guid));
-      await this.allServe.submitGuide(this.formData);
-      this.clearForm();
-      this.toastr.success("Guide Successfully submit ");
+      const submissionObservable = from( this.allServe.submitGuide(this.formData));
+
+      submissionObservable
+        .pipe(
+          map((data) => {
+            // Handle successful submission here
+            this.clearForm();
+            return data; // If you need to return a value for further processing
+          }),
+          catchError((error) => {
+            // Handle errors here
+            this.handleError(error);
+            return throwError(error); // Re-throw the error if you want to propagate it further
+          })
+        )
+        .subscribe();
     }
+  }
+  handleError(error: { error: null; }){
+    return  this.error=error.error;
   }
 
   getGuideGen() {

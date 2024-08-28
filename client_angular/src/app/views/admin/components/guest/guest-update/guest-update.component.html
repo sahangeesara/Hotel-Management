@@ -2,6 +2,7 @@
   <form cForm [formGroup]="guestUpadeForm">
     <c-row>
       <c-col [xs]="6">
+        <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
         <div class="mb-3">
           <label cLabel for="inputName-1">Guest Name: </label>
           <input cFormControl id="inputName-1" type="text" sizing="sm" name="name" formControlName="name">
@@ -91,8 +92,19 @@
           </select>
         </div>
       </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel>Guide Status:</label>
+
+          <select aria-label="Select Guide Status" cSelect name="guide_status" formControlName="guide_status">
+            <option selected="selected">Select Guide Status</option>
+            <option value="Assign"> Assign </option>
+            <option value="No_Assign"> No Assign </option>
+          </select>
+        </div>
+      </c-col>
       <div  class="mb-3">
-        <input cButton color="primary" type="button" value="update">&ngsp;
+        <input cButton color="primary" type="button" value="update" (click)="guestUpdate()">&ngsp;
       </div>
     </c-row>
   </form>

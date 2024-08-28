@@ -32,7 +32,17 @@ class EmployeeTypeController extends Controller
     public function store(Request $request)
     {
         $data = json_decode($request->form, true);
-        $employeeType = Employee_type::create($data);
+        $validatedData = Validator::make($data, [
+
+            'name' => 'required|max:255',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+        $employeeType =new Employee_type();
+        $employeeType->name = $data['name'];
+        $employeeType->save();
+
         return json_encode($employeeType);
     }
 
@@ -56,7 +66,6 @@ class EmployeeTypeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-      info($request->form);
         $data = json_decode($request->form, true);
         $validatedData = Validator::make($data, [
 

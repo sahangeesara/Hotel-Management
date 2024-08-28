@@ -12,6 +12,8 @@ import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
 import {NgForOf} from "@angular/common";
 import {Employee} from "../../../../../entities/employee";
+import {catchError, from, throwError} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-employee-add',
@@ -35,6 +37,8 @@ import {Employee} from "../../../../../entities/employee";
   styleUrl: './employee-add.component.scss'
 })
 export class EmployeeAddComponent {
+
+  public error=null;
   employeeTypes: any[] = [];
   employeeGenders: any[] = [];
   formData = new FormData();
@@ -96,7 +100,7 @@ export class EmployeeAddComponent {
 
   }
 
-  async onSubmit() {
+   onSubmit() {
     this.formData = new FormData();
     if (this.empForm.valid) {
 
@@ -113,10 +117,25 @@ export class EmployeeAddComponent {
 
 
       this.formData.append('form', JSON.stringify(emp));
-      await this.allServe.submitEmployee(this.formData);
-      this.clearForm();
-      this.toastr.success("Employee Successfully submit ");
+      const submissionObservable =  from( this.allServe.submitEmployee(this.formData));
+      submissionObservable
+        .pipe(
+          map((data) => {
+            // Handle successful submission here
+            this.clearForm();
+            return data; // If you need to return a value for further processing
+          }),
+          catchError((error) => {
+            // Handle errors here
+            this.handleError(error);
+            return throwError(error); // Re-throw the error if you want to propagate it further
+          })
+        )
+        .subscribe();
     }
+  }
+  handleError(error: { error: null; }){
+    return  this.error=error.error;
   }
   getEmpType() {
     this.allServe.getEmployeeTypes().subscribe(

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Rooms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class RoomsController extends Controller
 {
@@ -34,7 +35,20 @@ class RoomsController extends Controller
     public function store(Request $request)
     {
         $data = json_decode($request->form, true);
-        $room = Rooms::create($data);
+        $validatedData = Validator::make($data, [
+
+            'r_no' => 'required',
+            'r_cost' => 'required',
+            'r_category_id' => 'required',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+        $room =new Rooms();
+        $room->r_no = $data['r_no'];
+        $room->r_cost = $data['r_cost'];
+        $room->r_category_id = $data['r_category_id'];
+        $room->save();
         return json_encode($room);
     }
 
@@ -44,7 +58,8 @@ class RoomsController extends Controller
     public function show(string $id)
     {
         try {
-            $rooms = Rooms::findOrFail($id);
+            $rooms = Rooms::with('roomCategory')
+                            ->findOrFail($id);
             return response()->json($rooms);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
@@ -59,10 +74,24 @@ class RoomsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $rooms = Rooms::findOrFail($id);
-        $rooms->update($request->all());
+        $data = json_decode($request->form, true);
+        $validatedData = Validator::make($data, [
 
-        return json_encode($rooms);
+            'r_no' => 'required',
+            'r_cost' => 'required',
+            'r_category_id' => 'required',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+        $room =Rooms::findOrFail($id);
+
+        $room->r_no = $data['r_no'];
+        $room->r_cost = $data['r_cost'];
+        $room->r_category_id = $data['r_category_id'];
+        $room->save();
+
+        return json_encode($room);
     }
 
     /**

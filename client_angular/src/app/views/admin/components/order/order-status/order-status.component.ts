@@ -13,6 +13,8 @@ import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
 import {OrderStatus} from "../../../../../entities/OrderStatus";
 import { IconDirective } from '@coreui/icons-angular';
+import {catchError, from, throwError} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-order-status',
@@ -38,6 +40,7 @@ export class OrderStatusComponent {
   orderStatuses: any[] = [];
   formData = new FormData();
   orderStatusForm: FormGroup;
+  public error=null;
 
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
@@ -67,7 +70,7 @@ export class OrderStatusComponent {
     this.orderStNameField.setValue("");
 
   }
- async onSubmit() {
+ onSubmit() {
     this.formData = new FormData();
     if (this.orderStatusForm.valid) {
 
@@ -76,32 +79,59 @@ export class OrderStatusComponent {
       ordSt.name= this.orderStNameField.value;
       console.log(ordSt)
       this.formData.append('form', JSON.stringify(ordSt));
-      console.log(this.formData);
-      await this.allServe.submitOrderStatus(this.formData);
-      this.getOrdSt();
-      this.clearForm();
-      this.toastr.success("Order status Successfully submit ");
+      const submissionObservable = from( this.allServe.submitOrderStatus(this.formData));
+
+      submissionObservable
+        .pipe(
+          map((data) => {
+            // Handle successful submission here
+            this.getOrdSt();
+            this.clearForm();
+            return data; // If you need to return a value for further processing
+          }),
+          catchError((error) => {
+            // Handle errors here
+            this.handleError(error);
+            return throwError(error); // Re-throw the error if you want to propagate it further
+          })
+        )
+        .subscribe();
     }
   }
-
+  handleError(error: { error: null; }){
+    return  this.error=error.error;
+  }
   orderStatusUpdate() {
     this.formData = new FormData();
-    let $id;
+    let id;
     if (this.orderStatusForm.valid) {
 
       let ordSt = new OrderStatus();
 
-      $id = this.orderStIdField.value;
+      id = this.orderStIdField.value;
 
+      ordSt.name = this.orderStIdField.value;
       ordSt.name = this.orderStNameField.value;
 
-      console.log(ordSt,$id)
       this.formData.append('form', JSON.stringify(ordSt));
-      console.log(this.formData)
-      this.allServe.updateOrderStatus(this.formData, $id);
+      this.formData.append('_method', 'patch');
+      const submissionObservable = from( this.allServe.updateOrderStatus(this.formData,id));
 
-      this.getOrdSt();
-      this.toastr.success("order status Successfully submit ");
+      submissionObservable
+        .pipe(
+          map((data) => {
+            // Handle successful submission here
+            this.getOrdSt();
+            this.clearForm();
+            return data; // If you need to return a value for further processing
+          }),
+          catchError((error) => {
+            // Handle errors here
+            this.handleError(error);
+            return throwError(error); // Re-throw the error if you want to propagate it further
+          })
+        )
+        .subscribe();
     }
   }
 

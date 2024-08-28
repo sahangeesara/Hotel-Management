@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Guides;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class GuideController extends Controller
 {
@@ -33,8 +34,37 @@ class GuideController extends Controller
     public function store(Request $request)
     {
         $data = json_decode($request->form, true);
-        $guide = Guides::create($data);
-        return json_encode($guide);
+        $validatedData = Validator::make($data, [
+
+            'name' => 'required|max:255',
+            'address' => 'required',
+            'email' => 'required',
+            'city' => 'required',
+            'nic' => 'required',
+            'tel_no' => 'required',
+            'gender_id' => 'required',
+        ]);
+        if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
+
+        // Check if the nic already exists
+        $existingBooking = Guides::where('nic', $data['nic'])
+                                ->first();
+        // If the booking exists, return an error message or handle the situation as needed
+        if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
+
+        $guides = new Guides();
+        $guides->name = $data['name'];
+        $guides->address = $data['address'];
+        $guides->email = $data['email'];
+        $guides->city = $data['city'];
+        $guides->nic = $data['nic'];
+        $guides->tel_no = $data['tel_no'];
+        $guides->gender_id = $data['gender_id'];
+        $guides->country = $data['country'];
+
+        $guides->save();
+
+        return response()->json(['massage' => 'Successfully submit.', $guides]);
     }
 
     /**
@@ -43,7 +73,8 @@ class GuideController extends Controller
     public function show(string $id)
     {
         try {
-            $guides = Guides::findOrFail($id);
+            $guides = Guides::with('gender')
+                            ->findOrFail($id);
             return response()->json($guides);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
@@ -57,10 +88,38 @@ class GuideController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $guide = Guides::findOrFail($id);
-        $guide->update($request->all());
+        $data = json_decode($request->form, true);
+        $validatedData = Validator::make($data, [
 
-        return json_encode($guide);
+            'name' => 'required|max:255',
+            'address' => 'required',
+            'email' => 'required',
+            'city' => 'required',
+            'nic' => 'required',
+            'tel_no' => 'required',
+            'gender_id' => 'required',
+        ]);
+        if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
+
+        // Check if the nic already exists
+        $existingBooking = Guides::where('nic', $data['nic'])
+            ->first();
+        // If the booking exists, return an error message or handle the situation as needed
+        if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
+
+        $guides = Guides::findOrFail($id);;
+        $guides->name = $data['name'];
+        $guides->address = $data['address'];
+        $guides->email = $data['email'];
+        $guides->city = $data['city'];
+        $guides->nic = $data['nic'];
+        $guides->tel_no = $data['tel_no'];
+        $guides->gender_id = $data['gender_id'];
+        $guides->country = $data['country'];
+
+        $guides->save();
+
+        return response()->json(['massage' => 'Successfully Update.', $guides]);
     }
 
     /**

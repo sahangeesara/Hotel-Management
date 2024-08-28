@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Food_status;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class FoodStatusController extends Controller
 {
@@ -32,7 +33,18 @@ class FoodStatusController extends Controller
     public function store(Request $request)
     {
         $data = json_decode($request->form, true);
-        $foodStatus = Food_status::create($data);
+        $validatedData = Validator::make($data, [
+
+            'name' => 'required|max:255',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+
+        $foodStatus =new Food_status();
+        $foodStatus->name = $data['name'];
+        $foodStatus->save();
+
         return json_encode($foodStatus);
     }
 
@@ -56,13 +68,18 @@ class FoodStatusController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
-//        info($request->request->all());
-//        info($id);
-
         $data = json_decode($request->form, true);
+        $validatedData = Validator::make($data, [
+
+            'name' => 'required|max:255',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+
         $foodStatus = Food_status::findOrFail($id);
-        $foodStatus->update($data);
+        $foodStatus->name = $data['name'];
+        $foodStatus->save();
 
         return json_encode($foodStatus);
     }

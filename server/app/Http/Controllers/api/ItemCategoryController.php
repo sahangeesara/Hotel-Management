@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Item_Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+
 
 class ItemCategoryController extends Controller
 {
@@ -32,7 +34,15 @@ class ItemCategoryController extends Controller
     public function store(Request $request)
     {
         $data = json_decode($request->form, true);
-        $itemCategory = Item_Category::create($data);
+        $validatedData = Validator::make($data, [
+            'name' => 'required|max:255',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+        $itemCategory =new Item_Category();
+        $itemCategory->name = $data['name'];
+        $itemCategory->save();
         return json_encode($itemCategory);
     }
 
@@ -57,13 +67,17 @@ class ItemCategoryController extends Controller
     public function update(Request $request, string $id)
     {
 
-//        info($request->request->all());
-//        info($id);
-
         $data = json_decode($request->form, true);
-        $itemCategory = Item_Category::findOrFail($id);
-        $itemCategory->update($data);
+        $validatedData = Validator::make($data, [
 
+            'name' => 'required|max:255',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+        $itemCategory = Item_Category::findOrFail($id);
+        $itemCategory->name = $data['name'];
+        $itemCategory->save();
         return json_encode($itemCategory);
     }
 

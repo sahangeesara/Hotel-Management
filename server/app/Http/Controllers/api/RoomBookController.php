@@ -46,10 +46,14 @@ class RoomBookController extends Controller
         if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
         // Check if the guest_id and r_book combination already exists
         $existingBooking = RoomBook::where('guest_id', $data['guest_id'])
-            ->where('r_book',md5("Booking"))
-            ->first();
+                                    ->where('r_book',md5("Booking"))
+                                    ->first();
+
+        $existingBooking2 = RoomBook::where('r_id', $data['r_id'])
+                                    ->where('is_active', true)
+                                    ->first();
         // If the booking exists, return an error message or handle the situation as needed
-        if ($existingBooking) {  return response()->json(['error' => 'Booking already exists for this guest and this guest Booking Room.']); }
+        if ($existingBooking || $existingBooking2) {  return response()->json(['error' => 'Booking already exists Room and Guest and already booking.']); }
         $roomBook =new RoomBook();
         $roomBook->r_id = $data['r_id'];
         $roomBook->guest_id = $data['guest_id'];
@@ -60,7 +64,7 @@ class RoomBookController extends Controller
         $room = Rooms::findOrFail($roomBook->r_id);
         $room->r_book =  $data['r_book'];
         $room->save();
-//
+
         return json_encode([$roomBook,$room]);
     }
 
@@ -70,26 +74,13 @@ class RoomBookController extends Controller
     public function show(string $id)
     {
         try {
-            $roomBook = RoomBook::findOrFail($id);
+            $roomBook = RoomBook::with(['room', 'guest'])
+                                 ->findOrFail($id);
             return response()->json($roomBook);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
             return response()->json(['message' => 'An error occurred while retrieving room book.'], 500);
-        }
-    }
-    public function getRoom(){
-        try {
-            $rooms = Rooms::with('roomCategory')
-                ->where('r_book','NOT LIKE', "Booking")
-                ->get();
-
-            return response()->json($rooms);
-
-        } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving room.'], 500);
         }
     }
 
@@ -98,10 +89,41 @@ class RoomBookController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $roomBook = RoomBook::findOrFail($id);
-        $roomBook->update($request->all());
+        $data = json_decode($request->form, true);
+        $validatedData = Validator::make($data, [
+            'r_id' => 'required',
+            'guest_id' => 'required',
+            'r_book' => 'required',
+            'booking_Date' => 'required',
+            'cancel_Date' => 'required',
+        ]);
+        if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
+        // Check if the guest_id and r_book combination already exists
+        $existingBooking = RoomBook::where('guest_id', $data['guest_id'])
+            ->where('r_book',md5("Booking"))
+            ->first();
 
-        return json_encode($roomBook);
+        $existingBooking2 = RoomBook::where('r_id', $data['r_id'])
+            ->where('is_active', true)
+            ->first();
+
+        // If the booking exists, return an error message or handle the situation as needed
+        if ($existingBooking || $existingBooking2) {  return response()->json(['error' => 'Booking already exists Room and Guest and already booking.']); }
+
+        $roomBook =RoomBook::findOrFail($id);
+
+        $roomBook->r_id = $data['r_id'];
+        $roomBook->guest_id = $data['guest_id'];
+        $roomBook->r_book = $data['r_book'];
+        $roomBook->booking_Date = $data['booking_Date'];
+        $roomBook->cancel_Date = $data['cancel_Date'];
+        $roomBook->save();
+
+        $room = Rooms::findOrFail($roomBook->r_id);
+        $room->r_book =  $data['r_book'];
+        $room->save();
+
+        return json_encode([$roomBook,$room]);
     }
 
     /**

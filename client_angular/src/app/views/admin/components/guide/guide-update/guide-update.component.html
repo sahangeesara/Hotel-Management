@@ -1,6 +1,7 @@
 <div>
   <form cForm [formGroup]="guideUpdateForm">
     <c-row>
+      <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
       <c-col [xs]="6">
         <div class="mb-3">
           <label cLabel for="inputName-1">Guide Name: </label>
@@ -65,7 +66,7 @@
         </div>
       </c-col>
       <div  class="mb-3">
-        <input cButton type="button" color="primary" value="update">&ngsp;
+        <input cButton type="button" color="primary" value="update" (click)="guideUpdate()">&ngsp;
       </div>
     </c-row>
   </form>
