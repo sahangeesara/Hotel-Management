@@ -10,7 +10,7 @@
       <div class="mb-3">
         <label cLabel for="inputRNo-1">Room No:</label>
         <select id="inputRNo-1" aria-label="Select Room No" cSelect name="r_id" formControlName="r_id">
-          <option selected="selected">Select Room No</option>
+          <option selected="selected" value="">Select Room No</option>
           <option *ngFor="let room of rooms" [value]="room.id">
             {{ room.r_no }}
           </option>
@@ -21,7 +21,7 @@
       <div class="mb-3">
         <label cLabel for="inputGuest-1">Guest:</label>
         <select id="inputGuest-1" aria-label="Select Guest" cSelect name="guest_id" formControlName="guest_id">
-          <option selected="selected">Select Guest</option>
+          <option selected="selected" value="">Select Guest</option>
           <option *ngFor="let guest of guests" [value]="guest.id">
             {{ guest.nic }}
           </option>
@@ -32,7 +32,7 @@
       <div class="mb-3">
         <label cLabel for="inputRBook-1">Room Booking:</label>
         <select id="inputRBook-1" aria-label="Select Book" cSelect name="r_book" formControlName="r_book">
-          <option selected="selected">Select Book</option>
+          <option selected="selected" value="">Select Book</option>
           <option value="Booking"> Booking </option>
           <option value="Canceling"> Canceling </option>
         </select>
@@ -71,6 +71,39 @@
 </form>
 </div>
 <hr />
+<h3> <strong><em>Search Booking </em></strong> </h3>
+
+<form cForm [formGroup]="rmSearchBookForm">
+  <c-row>
+<c-col [xs]="4">
+
+  <label cLabel>Room Booking Date:</label>
+
+  <input
+    class="form-control"
+    placeholder="yyyy-mm-dd"
+    name="search_booking_Date" formControlName="search_booking_Date"
+    ngbDatepicker
+    #s="ngbDatepicker"
+  />
+  <button class="btn btn-outline-secondary bi bi-calendar3" (click)="s.toggle()" type="button"></button>
+</c-col>
+  <c-col [xs]="4">
+    <div class="mb-3">
+      <label cLabel for="inputSearchRNo-1">Room No:</label>
+      <select id="inputSearchRNo-1" aria-label="Select Room No" cSelect name="search_r_id" formControlName="search_r_id">
+        <option selected="selected" value="">Select Room No</option>
+        <option *ngFor="let room of rooms" [value]="room.id">
+          {{ room.r_no }}
+        </option>
+      </select>
+    </div>
+  </c-col>
+  </c-row>
+  <input cButton color="success" style="color: white" type="button" (click)="search()" value="Search">&ngsp;
+  <input cButton color="danger" style="color: white" type="button" (click)="clearSearchForm()" value="Clear"> &ngsp;
+</form>
+<hr />
 <div>
   <h3> <strong><em>Room Book Table</em></strong> </h3>
   <table cTable style="width:900px" >
@@ -95,7 +128,6 @@
       <td>{{ book.booking_Date|date:"Y-MM-d" }} - {{ book.cancel_Date|date:"Y-MM-d" }}</td>
       <td>
         <button (click)="getRmBookById(book.id)" cButton><svg cIcon name="cil-task" size="lg" title="Numbered List Icon"></svg></button>&ngsp;&ngsp;
-
         <button type="button" (click)="deleteRmBook(book.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
       </td>
     </tr>

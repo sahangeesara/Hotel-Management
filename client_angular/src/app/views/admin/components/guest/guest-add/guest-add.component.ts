@@ -58,7 +58,7 @@ export class GuestAddComponent {
       city: ['', [Validators.required]],
       tel_no: ['', [Validators.required, Validators.maxLength(10)]],
       gender_id: ['', Validators.required],
-      guide_id: ['', Validators.required],
+      guide_id: [''],
       guest_type: ['', Validators.required],
       country: ['', Validators.required],
     });

@@ -28,9 +28,6 @@
         <svg cIcon class="my-1" name="cilBell" size="lg"></svg>
       </a>
       <a cNavLink>
-        <svg cIcon class="my-1" name="cilList" size="lg"></svg>
-      </a>
-      <a cNavLink>
         <svg cIcon class="my-1" name="cilEnvelopeOpen" size="lg"></svg>
       </a>
     </c-header-nav>
@@ -100,7 +97,7 @@
         <hr cDropdownDivider />
       </li>
       <li>
-        <a cDropdownItem routerLink="/login">
+        <a cDropdownItem (click)="logout()">
           <svg cIcon class="me-2" name="cilAccountLogout"></svg>
           Logout
         </a>

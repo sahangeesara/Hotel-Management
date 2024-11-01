@@ -1,12 +1,20 @@
-import { Routes } from '@angular/router';
+import {PreloadingStrategy, Route, Routes} from '@angular/router';
 import { DefaultLayoutComponent } from './layout';
+import {authGuard} from "./guard/auth.guard";
+import {Observable, of} from "rxjs";
+
+export class CustomPreloadingStrategy implements PreloadingStrategy {
+  preload(route: Route, load: Function): Observable<any> {
+    return route.data && route.data['preload'] ? load() : of(null);
+  }
+}
 
 export const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full'
-  },
+  // {
+  //   path: '',
+  //   redirectTo: 'dashboard',
+  //   pathMatch: 'full'
+  // },
   {
     path: '',
     component: DefaultLayoutComponent,
@@ -16,39 +24,48 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        loadChildren: () => import('./views/admin/dashboard/routes').then((m) => m.routes)
+        loadChildren: () => import('./views/admin/dashboard/routes').then((m) => m.routes),
+        data: { preload: true }
       },
       {
         path: 'room',
-        loadChildren: () => import('./views/admin/components/room/routes').then((m) => m.routes)
+        loadChildren: () => import('./views/admin/components/room/routes').then((m) => m.routes),
+        data: { preload: true }
       },
       {
         path: 'employee',
-        loadChildren: () => import('./views/admin/components/employee/routes').then((m) => m.routes)
+        loadChildren: () => import('./views/admin/components/employee/routes').then((m) => m.routes),
+        data: { preload: true }
       },
       {
         path: 'guest',
-        loadChildren: () => import('./views/admin/components/guest/routes').then((m) => m.routes)
+        loadChildren: () => import('./views/admin/components/guest/routes').then((m) => m.routes),
+        data: { preload: true }
       },
       {
         path: 'guide',
-        loadChildren: () => import('./views/admin/components/guide/routes').then((m) => m.routes)
+        loadChildren: () => import('./views/admin/components/guide/routes').then((m) => m.routes),
+        data: { preload: true }
       },
       {
         path: 'order',
-        loadChildren: () => import('./views/admin/components/order/routes').then((m) => m.routes)
+        loadChildren: () => import('./views/admin/components/order/routes').then((m) => m.routes),
+        data: { preload: true }
       },
       {
         path: 'user',
-        loadChildren: () => import('./views/admin/components/routes').then((m) => m.routes)
+        loadChildren: () => import('./views/admin/components/routes').then((m) => m.routes),
+        data: { preload: true }
       },
       {
         path: 'change_password',
-        loadChildren: () => import('./views/admin/components/password/routes').then((m) => m.routes)
+        loadChildren: () => import('./views/admin/components/password/routes').then((m) => m.routes),
+        data: { preload: true }
       },
       {
         path: 'food',
-        loadChildren: () => import('./views/admin/components/food/routes').then((m) => m.routes)
+        loadChildren: () => import('./views/admin/components/food/routes').then((m) => m.routes),
+        data: { preload: true }
       },
       // {
       //   path: 'room_category',
@@ -60,9 +77,11 @@ export const routes: Routes = [
       // },
       {
         path: 'pages',
-        loadChildren: () => import('./views/pages/routes').then((m) => m.routes)
+        loadChildren: () => import('./views/pages/routes').then((m) => m.routes),
+        data: { preload: true }
       }
     ]
+    ,canActivate:[authGuard]
   },
   {
     path: '404',
@@ -106,5 +125,6 @@ export const routes: Routes = [
       title: 'Response Password Page'
     }
   },
-  { path: '**', redirectTo: 'dashboard' }
+  { path: '**', redirectTo: '404' },
+  {path:'',redirectTo:'login',pathMatch:'full'}
 ];

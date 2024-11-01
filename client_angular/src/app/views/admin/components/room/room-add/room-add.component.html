@@ -21,7 +21,7 @@
       <label cLabel for="inputCost-1">Room Category: </label>
 
       <select aria-label="Select Rooms Category " cSelect name="r_category_id" formControlName="r_category_id">
-        <option selected="selected">Select Rooms Category</option>
+        <option selected="selected" value="">Select Rooms Category</option>
         <option *ngFor="let type of roomsCategories" [value]="type.id">
           {{ type.name }}
         </option>

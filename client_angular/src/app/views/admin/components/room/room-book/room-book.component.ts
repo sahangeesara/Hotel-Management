@@ -17,6 +17,7 @@ import {NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
 import {IconDirective} from "@coreui/icons-angular";
 import {catchError, from, throwError} from "rxjs";
 import {map} from "rxjs/operators";
+import {SearchService} from "../../../../../services/search.service";
 
 
 
@@ -46,16 +47,17 @@ import {map} from "rxjs/operators";
 })
 export class RoomBookComponent {
 
-
   guests: any[] = [];
   rooms: any[] = [];
   roomsBooks: any[] = [];
   public error=null;
   formData = new FormData();
   rmBookForm: FormGroup;
+  rmSearchBookForm: FormGroup;
 
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
+                 private searchServe: SearchService,
                  private router:Router,
                  private toastr: ToastrService,
                  private fb: FormBuilder,
@@ -72,8 +74,13 @@ export class RoomBookComponent {
       cancel_Date: ['',[Validators.required]],
     });
 
-  }
+    this.rmSearchBookForm  = this.fb.group({
+      search_booking_Date: [''],
+      search_r_id: [''],
 
+    });
+  }
+//add or update form
   get rmBookRIdField(): FormControl {
     return this.rmBookForm.controls['r_id'] as FormControl;
   }
@@ -92,6 +99,15 @@ export class RoomBookComponent {
   get rmBookCancelDateField(): FormControl {
     return this.rmBookForm.controls['cancel_Date'] as FormControl;
   }
+
+  //search form
+  get rmBookSearchDateField(): FormControl {
+    return this.rmSearchBookForm.controls['search_booking_Date'] as FormControl;
+  }
+  get rmBookSearchRIdField(): FormControl {
+    return this.rmSearchBookForm.controls['search_r_id'] as FormControl;
+  }
+
   clearForm() {
     this.rmBookField.setValue("");
     this.rmBookRIdField.setValue("Select Room No");
@@ -184,14 +200,63 @@ formatDate(obj:any){
       }
     );
   }
+  search() {
+    let val = this.rmBookSearchDateField.value;
+    let s_r_id = this.rmBookSearchRIdField.value;
+
+    if (val && s_r_id) {
+      let date =this.formatDate(val);
+      // Both date and room ID are provided, use the combined search
+      this.searchServe.getRoomBookByDateAndRoom(s_r_id, date).subscribe(
+        (data: any) => {
+          this.roomsBooks = data;
+        },
+        (error) => {
+          console.error('Error fetching rooms Book:', error);
+        }
+      );
+    } else if (val) {
+      let date =this.formatDate(val);
+      // Only date is provided, use the date-based search
+      this.searchServe.getRoomBookByDate(date).subscribe(
+        (data: any) => {
+          this.roomsBooks = data;
+        },
+        (error) => {
+          console.error('Error fetching rooms Book:', error);
+        }
+      );
+    } else if (s_r_id) {
+      // Only room ID is provided, use the room-based search
+      this.searchServe.getRoomBookByRoom(s_r_id).subscribe(
+        (data: any) => {
+          this.roomsBooks = data;
+        },
+        (error) => {
+          console.error('Error fetching rooms Book:', error);
+        }
+      );
+    } else {
+      // Neither date nor room ID is provided, clear the results
+      console.error('Select search Option');
+      this.roomsBooks = [];
+    }
+  }
+  clearSearchForm() {
+    this.rmBookSearchDateField.setValue("");
+    this.rmBookSearchRIdField.setValue("Select Room No");
+    this.getRmBook();
+  }
+
+
   getRmBookById(id:any) {
     this.allServe.getRoomBookById(id).subscribe(
       (response: any) => {
         this.rmBookField.setValue(response.r_book);
         this.rmBookRIdField.setValue(response.r_id);
         this.rmBookGIdField.setValue(response.guest_id);
-        this.rmBookCancelDateField.setValue(this.formatDate(response.cancel_Date));
-        this.rmBookDateField.setValue(this.formatDate(response.booking_Date));
+        this.rmBookCancelDateField.setValue(response.cancel_Date);
+        this.rmBookDateField.setValue(response.booking_Date);
 
         // this.roomsBooks = response.data;
       },
@@ -251,4 +316,7 @@ formatDate(obj:any){
   objectValues(obj: any): any[] {
     return Object.values(obj);
   }
+
+
+
 }

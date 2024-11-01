@@ -18,6 +18,7 @@ class RoomsController extends Controller
         try {
             $rooms = Rooms::with('roomCategory')
                         ->where('is_active',1)
+                        ->orderBy('created_at',"DESC")
                         ->paginate(20);
 
             return response()->json($rooms);

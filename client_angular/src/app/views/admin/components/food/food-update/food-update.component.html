@@ -29,9 +29,12 @@
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
-          <label cLabel for="inputImage-1">Food Image: </label>
-          <input cFormControl id="inputImage-1" (change)="selectImage($event)" name="image" formControlName="image" sizing="sm" type="file" />
-
+          <img [src]="imageUrl" style="width:50px;height:50px">&ngsp;
+          <input id="inputImage-1" hidden="hidden" (change)="selectImage($event)" Select type="file" formControlName="image" sizing="sm" >
+          <label for="inputImage-1" id="selectbutton">Select</label>
+<!--          <img [src]="imageUrl" alt="Food Image" style="width:50px;height:50px">-->
+<!--          <label cLabel for="inputImage-1">Food Image: </label>-->
+<!--          <input cFormControl id="inputImage-1" (change)="selectImage($event)" name="image" formControlName="image" sizing="sm" type="file" />-->
         </div>
       </c-col>
       <c-col [xs]="6">
@@ -39,7 +42,7 @@
           <label cLabel>Item Category:</label>
 
           <select aria-label="Select Item Category" cSelect name="item_category_id" formControlName="item_category_id">
-            <option selected="selected">Select Item Category: </option>
+            <option selected="selected" value="">Select Item Category </option>
             <option *ngFor="let category of itemCategories" [value]="category.id">
               {{ category.name }}
             </option>
@@ -51,7 +54,7 @@
           <label cLabel>Food Status:</label>
 
           <select aria-label="Select Food Status" cSelect name="food_status_id" formControlName="food_status_id">
-            <option selected="selected">Select Food Status: </option>
+            <option selected="selected" value="">Select Food Status </option>
             <option *ngFor="let status of foodStatus" [value]="status.id">
               {{ status.name }}
             </option>

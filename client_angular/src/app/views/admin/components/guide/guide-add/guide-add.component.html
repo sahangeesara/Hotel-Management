@@ -58,7 +58,7 @@
           <label cLabel>Guide Gender:</label>
 
           <select aria-label="Select Guide Gender" cSelect name="gender_id" formControlName="gender_id">
-            <option selected="selected">Select Guide Gender</option>
+            <option selected="selected" value="">Select Guide Gender</option>
             <option *ngFor="let gender of guideGenders" [value]="gender.id">
               {{ gender.name }}
             </option>

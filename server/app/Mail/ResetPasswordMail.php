@@ -43,7 +43,7 @@ class ResetPasswordMail extends Mailable
             markdown: 'Email.passwordReset',
             with: [
                 'token' => $this->token,
-                'url' => 'http://localhost:4200/#/response-password-reset?token=' . $this->token->token
+                'url' => 'http://localhost:4200/response-password-reset?token=' . $this->token->token
             ]
         );
     }

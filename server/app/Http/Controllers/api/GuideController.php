@@ -18,6 +18,7 @@ class GuideController extends Controller
         try {
             $guides = Guides::with('gender')
                             ->where('is_active', 1)
+                            ->orderBy('created_at',"DESC")
                             ->paginate(20);
             return response()->json($guides);
 
@@ -60,7 +61,6 @@ class GuideController extends Controller
         $guides->nic = $data['nic'];
         $guides->tel_no = $data['tel_no'];
         $guides->gender_id = $data['gender_id'];
-        $guides->country = $data['country'];
 
         $guides->save();
 
@@ -103,7 +103,8 @@ class GuideController extends Controller
 
         // Check if the nic already exists
         $existingBooking = Guides::where('nic', $data['nic'])
-            ->first();
+                                ->where('id', '<>', $id)
+                                ->first();
         // If the booking exists, return an error message or handle the situation as needed
         if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
 

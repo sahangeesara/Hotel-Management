@@ -73,7 +73,7 @@
           <label cLabel>Guest Gender:</label>
 
           <select aria-label="Select Guest Gender" cSelect name="gender_id" formControlName="gender_id">
-            <option selected="selected">Select Guest Gender</option>
+            <option selected="selected" value="">Select Guest Gender</option>
             <option *ngFor="let gender of guestGenders" [value]="gender.id">
               {{ gender.name }}
             </option>
@@ -85,7 +85,7 @@
           <label cLabel>Guide:</label>
 
           <select aria-label="Select Guide" cSelect name="guide_id" formControlName="guide_id">
-            <option selected="selected">Select Guide</option>
+            <option selected="selected" value="">Select Guide</option>
             <option *ngFor="let guide of guides" [value]="guide.id">
               {{ guide.name }}
             </option>
@@ -97,7 +97,7 @@
           <label cLabel>Guide Status:</label>
 
           <select aria-label="Select Guide Status" cSelect name="guide_status" formControlName="guide_status">
-            <option selected="selected">Select Guide Status</option>
+            <option selected="selected" value="">Select Guide Status</option>
             <option value="Assign"> Assign </option>
             <option value="No_Assign"> No Assign </option>
           </select>

@@ -90,7 +90,7 @@ export class FoodUpdateComponent {
     this.foodNameField.setValue("");
     this.foodQuantityField.setValue("");
     this.foodAmountField.setValue("");
-    this.foodImageField.setValue("");
+    this.imageUrl= 'assets/default.png';
     this.itemCategoryField.setValue("Select Item Category");
     this.foodStatusField.setValue("Select Food Status");
 
@@ -180,6 +180,7 @@ export class FoodUpdateComponent {
     this.foodNameField.setValue(data.name);
     this.foodQuantityField.setValue(data.quantity);
     this.foodAmountField.setValue(data.food_amount);
+    this.imageUrl= data.image_url;
     // this.foodImageField.setValue(data.image);
     this.itemCategoryField.setValue(data.item_category_id);
     this.foodStatusField.setValue(data.food_status_id);

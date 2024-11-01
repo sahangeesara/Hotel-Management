@@ -19,6 +19,7 @@ class FoodItemController extends Controller
         try {
             $foodItems = FoodItem::with('foodStatus','itemCategory')
                 ->where('is_active',1)
+                ->orderBy('created_at',"DESC")
                 ->paginate(20);
 //                $foodItems->each(function($row) {
 //                    $row->append('image_url');
@@ -79,6 +80,7 @@ class FoodItemController extends Controller
         try {
             $foodItems = FoodItem::with('foodStatus','itemCategory')
                                     ->findOrFail($id);
+
             return response()->json($foodItems);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
@@ -99,8 +101,6 @@ class FoodItemController extends Controller
             return response()->json(['message' => 'An error occurred while retrieving food item.'], 500);
         }
     }
-
-
     /**
      * Update the specified resource in storage.
      */
@@ -108,7 +108,6 @@ class FoodItemController extends Controller
     {
 
         $data = json_decode($request->form, true);
-        info($data);
         $validatedData = Validator::make($data, [
 
             'name' => 'required|max:255',

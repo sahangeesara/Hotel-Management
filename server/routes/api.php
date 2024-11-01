@@ -47,8 +47,25 @@ Route::group([
     Route::post('resetPassword', [ChangePasswordController::class,'process']);
     Route::put('passwordReset', [UserController::class,'changePassword']);
     Route::get('foodsByItemCateId/{id}', [FoodItemController::class,'foodsByItemCateId']);
-//    Route::get('getRoom', [RoomBookController::class,'getRoom']);
     Route::get('getGuide', [GuestController::class,'getGuide']);
+    Route::get('countGuest', [GuestController::class,'countGuest']);
+
+
+    //Room Booking
+    Route::get('roomBookByDate/{date}', [RoomBookController::class,'searchByDate']);
+    Route::get('roomBookByRoom/{r_id}', [RoomBookController::class,'searchByRoom']);
+    Route::get('roomBookByDateAndRoom/{r_id}/{date}', [RoomBookController::class,'searchByDateAndRoom']);
+    //Employee
+    Route::get('employeesByName/{e_name}', [EmployeeController::class,'searchEmployeeByName']);
+    Route::get('employeesByGender/{gen_id}', [EmployeeController::class,'searchEmployeeByGender']);
+    Route::get('employeesByType/{type_id}', [EmployeeController::class,'searchEmployeeByEmType']);
+    Route::get('employeesByTypeAndGender/{type_id}/{gen_id}', [EmployeeController::class,'searchEmployeeByEmTypeAndGender']);
+    Route::get('employeesByNameAndGender/{e_name}/{gen_id}', [EmployeeController::class,'searchEmployeeByNameAndGender']);
+    Route::get('employeesByNameAndType/{e_name}/{type_id}', [EmployeeController::class,'searchEmployeeByNameAndType']);
+
+    //Guest
+    Route::get('guestByDate/{date}', [GuestController::class,'searchByDate']);
+    Route::get('guestByGender/{gen_id}', [GuestController::class,'searchGuestByGender']);
 
 });
 Route::apiResources([
@@ -59,7 +76,7 @@ Route::apiResources([
     'orderStatus' => OrderStatusController::class,
     'itemCategory' => ItemCategoryController::class,
     'employeeTypes' => EmployeeTypeController::class,
-    'Orders' => OrderController::class,
+    'orders' => OrderController::class,
     'guests' => GuestController::class,
     'guides' => GuideController::class,
     'roomBook' => RoomBookController::class,

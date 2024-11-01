@@ -1,11 +1,50 @@
+<div>
+  <h3>
+    <strong>
+      <em>
+        Guest Search
+      </em>
+    </strong>
+  </h3>
+  <div>
+    <form cForm [formGroup]="searchGuestForm">
+      <c-row>
+        <c-col [xs]="4">
+          <label cLabel>Guest Date:</label>
+          <input
+            class="form-control"
+            placeholder="yyyy-mm-dd"
+            name="search_booking_Date" formControlName="search_Date"
+            ngbDatepicker
+            #s="ngbDatepicker"
+          />
+
+          <button class="btn btn-outline-secondary bi bi-calendar3" (click)="s.toggle()" type="button"></button>
+        </c-col>
+        <c-col [xs]="3">
+          <div class="mb-3">
+            <label cLabel>Guest Gender:</label>
+
+            <select aria-label="Select a Gender " cSelect name="gender_id" formControlName="gender_id">
+              <option selected="selected" value="">Select a Gender </option>
+              <option *ngFor="let gender of guestGenders" [value]="gender.id">
+                {{ gender.name }}
+              </option>
+            </select>
+          </div>
+        </c-col>
+      </c-row>
+      <input cButton color="success" style="color: white" type="button" (click)="search()" value="Search">&ngsp;
+      <input cButton color="danger" style="color: white" type="button" (click)="clearSearchForm()" value="Clear"> &ngsp;
+    </form>
+  </div>
+</div>
 <h3>
   <strong>
     <em>
-
       Guest view Table
     </em>
   </strong>
-
 </h3>
 <table [striped]="true" cTable>
   <thead>
@@ -18,7 +57,7 @@
     <th scope="col">Guest City</th>
     <th scope="col">Guest Nic</th>
     <th scope="col">Guest Tel No</th>
-    <th scope="col">Guest Guide Name</th>
+    <th scope="col">Guide Name</th>
     <th scope="col">Guest Country</th>
     <th scope="col">Action</th>
   </tr>
@@ -34,7 +73,7 @@
       <td>{{ guest.city }}</td>
       <td>{{ guest.nic }}</td>
       <td>{{ guest.tel_no }}</td>
-      <td>{{ guest.guide.name }}</td>
+      <td>{{ guest.guide ? guest.guide.name : 'Not Assign' }}</td>
       <td>{{ guest.country }}</td>
       <td>
         <button type="button" (click)="getShow(guest.id)" cButton>  <svg cIcon name="cil-task" size="lg" title="Numbered List Icon" ></svg></button>

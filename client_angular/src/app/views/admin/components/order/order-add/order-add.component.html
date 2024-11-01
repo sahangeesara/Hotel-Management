@@ -4,8 +4,8 @@
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="inputRNo-1">Room No:</label>
-        <select id="inputRNo-1" aria-label="Select Room No" cSelect name="r_id" formControlName="r_id">
-          <option selected="selected">Select Room No</option>
+        <select id="inputRNo-1" aria-label="Select Room Number" cSelect name="r_id" formControlName="r_id">
+          <option selected="selected">Select Room Number</option>
           <option *ngFor="let room of rooms" [value]="room.id">
             {{ room.r_no }}
           </option>
@@ -70,34 +70,42 @@
     </c-col>
 
     <c-col [xs]="6">
+
       <div class="mb-3">
         <label cLabel>Foods Item:</label>
 
         <select aria-label="Select Food Item" cSelect name="food_id" formControlName="food_id" (change)="getFoodsById($any($event).target.value)">
           <option value="" selected>Select Food Item...</option>
           <option *ngFor="let food of foods" [value]="food.id">
-            {{ food.name }}
+            {{ food.name }}(Available quantity : {{food.quantity}})
           </option>
         </select>
+        <c-col [xs]="4">
+      </c-col>
+
       </div>
+
     </c-col>
     <hr>
     <table [striped]="true" cTable>
       <thead>
       <tr>
         <th scope="col">#</th>
+        <th scope="col" hidden="hidden">Food Id</th>
         <th scope="col">Food Name</th>
         <th scope="col">Food Quantity</th>
         <th scope="col">Food Amount</th>
         <th scope="col">Food Status</th>
         <th scope="col">Item Category</th>
+        <th scope="col"></th>
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let food of foodItems; let i = index">
+      <tr *ngFor="let food of  foodItems; let i = index">
         <th scope="row">{{ i + 1 }}</th>
+        <td hidden="hidden">{{ food.id }}</td>
         <td>{{ food.name }}</td>
-        <td>
+        <td >
           <input
             cFormControl
             id="inputQuantity-{{ i }}"
@@ -106,18 +114,15 @@
             formControlName="quantity"
             sizing="sm"
             min="0"
+            (keyup)="calculateOrderAmount(food.id)"
           >
         </td>
         <td>{{ food.food_amount }}</td>
         <td>
-          <select aria-label="Select Food Status" cSelect name="food_status_id" formControlName="food_status">
-            <option selected="selected">Select Food Status: </option>
-            <option *ngFor="let status of foodStatus" [value]="status">
-              {{ status.name }}
-            </option>
-          </select>
+          {{ food.food_status?.name}}
         </td>
         <td>{{ food.item_category?.name }}</td>
+        <td>  <input cButton color="danger" style="color: white" type="button" value="Remove Food Item" (click)="removeFoodItem(i,food.food_amount)"></td>
       </tr>
       </tbody>
     </table>

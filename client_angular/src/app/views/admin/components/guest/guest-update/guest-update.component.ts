@@ -58,7 +58,7 @@ export class GuestUpdateComponent {
       city: ['', [Validators.required]],
       tel_no: ['', [Validators.required, Validators.maxLength(10)]],
       gender_id: ['', Validators.required],
-      guide_id: ['', Validators.required],
+      guide_id: [''],
       guest_type: ['', Validators.required],
       guide_status: ['', Validators.required],
       country: ['', Validators.required],
@@ -115,7 +115,12 @@ export class GuestUpdateComponent {
     this.guideField.setValue(data.guide_id);
     this.guestTypeField.setValue(data.guest_type);
     this.guestCountryField.setValue(data.country);
-    this.guideStatusField.setValue(data.guide.guide_status);
+    if (data.guide) {
+      this.guideStatusField.setValue(data.guide.guide_status);
+    } else {
+      // Set guideStatusField to a default value (optional)
+      this.guideStatusField.setValue('');
+    }
 
   }
 

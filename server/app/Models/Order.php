@@ -16,8 +16,7 @@ class Order extends Model
         'guest_id',
         'order_date',
         'order_amount',
-        'oder_status_id',
-        'food_id',
+        'order_status_id',
         'is_active',
     ];
 
@@ -27,17 +26,11 @@ class Order extends Model
     }
     public function guest(): BelongsTo
     {
-
         return $this->belongsTo(Guest::class,'guest_id');
     }
-    public function oderStatus(): BelongsTo
+    public function orderStatus(): BelongsTo
     {
-
-        return $this->belongsTo(Order_status::class,'food_id');
+        return $this->belongsTo(Order_status::class,'order_status_id');
     }
-    public function food(): BelongsTo
-    {
 
-        return $this->belongsTo(FoodItem::class,'oder_status_id');
-    }
 }

@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('order_date');
-            $table->unsignedBigInteger('r_id')->nullable();
-            $table->unsignedBigInteger('guest_id');
-            $table->unsignedBigInteger('order_status_id');
+            $table->unsignedBigInteger('order_id')->nullable();
+            $table->unsignedBigInteger('food_id')->nullable();
+            $table->integer('quantity')->default(0);
             $table->decimal('order_amount');
             $table->boolean('is_active')->default(1);
             $table->timestamps();
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('order_items');
     }
 };

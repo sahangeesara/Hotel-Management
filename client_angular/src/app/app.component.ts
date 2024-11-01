@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import {NavigationEnd, NavigationStart, Router, RouterOutlet} from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
 import { IconSetService } from '@coreui/icons-angular';
@@ -7,7 +7,8 @@ import { iconSubset } from './icons/icon-subset';
 
 @Component({
   selector: 'app-root',
-  template: '<router-outlet />',
+  template: '@if(loading){<div  class="loading-spinner">Loading...</div>}\n' +
+    '    <router-outlet></router-outlet>',
   standalone: true,
   imports: [RouterOutlet]
 })
@@ -23,11 +24,14 @@ export class AppComponent implements OnInit {
     // iconSet singleton
     this.iconSetService.icons = { ...iconSubset };
   }
-
+  loading = false;
   ngOnInit(): void {
-    this.router.events.subscribe((evt) => {
-      if (!(evt instanceof NavigationEnd)) {
-        return;
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.loading = true;
+      }
+      if (event instanceof NavigationEnd) {
+        this.loading = false;
       }
     });
   }

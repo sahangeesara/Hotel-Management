@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject} from "rxjs";
 import {TokenService} from "./token.service";
+import {Route, Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,12 @@ export class AuthService {
 
 
   constructor(
-    private token:TokenService
+    private token:TokenService,
+    private router:Router
   ) { }
+
+  logout() {
+    this.token.remove()
+    this.router.navigate(['/login'])
+  }
 }

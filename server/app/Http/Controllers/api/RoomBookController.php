@@ -19,6 +19,7 @@ class RoomBookController extends Controller
         try {
             $roomBooks = RoomBook::with(['room', 'guest'])
                 ->where('is_active', 1)
+                ->orderBy('created_at',"DESC")
                 ->paginate(20);
 
             return response()->json($roomBooks);
@@ -45,15 +46,18 @@ class RoomBookController extends Controller
         ]);
         if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
         // Check if the guest_id and r_book combination already exists
-        $existingBooking = RoomBook::where('guest_id', $data['guest_id'])
-                                    ->where('r_book',md5("Booking"))
-                                    ->first();
+        $existingBooking = RoomBook::where(function($query) use ($data) {
+            $query->where('guest_id', $data['guest_id'])
+                ->where('r_book', md5("Booking"));
+        })->orWhere(function($query) use ($data) {
+            $query->where('r_id', $data['r_id'])
+                ->where('booking_Date', $data['booking_Date'])
+                ->where('is_active', true);
+        })->first();
 
-        $existingBooking2 = RoomBook::where('r_id', $data['r_id'])
-                                    ->where('is_active', true)
-                                    ->first();
+
         // If the booking exists, return an error message or handle the situation as needed
-        if ($existingBooking || $existingBooking2) {  return response()->json(['error' => 'Booking already exists Room and Guest and already booking.']); }
+        if ($existingBooking) {  return response()->json(['error' => 'Booking already exists Room and Guest and already booking.']); }
         $roomBook =new RoomBook();
         $roomBook->r_id = $data['r_id'];
         $roomBook->guest_id = $data['guest_id'];
@@ -83,6 +87,55 @@ class RoomBookController extends Controller
             return response()->json(['message' => 'An error occurred while retrieving room book.'], 500);
         }
     }
+    public function searchByDate(String $rDate){
+
+        try {
+            $roomBook = RoomBook::with(['room', 'guest'])
+                ->where('booking_Date', $rDate)
+                ->where('is_active', true)
+                ->get();
+
+            return response()->json($roomBook);
+
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving room book.'], 500);
+        }
+    }
+
+    public function searchByDateAndRoom(String $r_id,String $rDate){
+
+        try {
+            $roomBook = RoomBook::with(['room', 'guest'])
+                ->where('booking_Date', $rDate)
+                ->where('r_id', $r_id)
+                ->where('is_active', true)
+                ->get();
+
+            return response()->json($roomBook);
+
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving room book.'], 500);
+        }
+    }
+    public function searchByRoom(String $r_id){
+        try {
+            $roomBook = RoomBook::with(['room', 'guest'])
+                ->where('r_id', $r_id)
+                ->where('is_active', true)
+                ->get();
+
+            return response()->json($roomBook);
+
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving room book.'], 500);
+        }
+    }
 
     /**
      * Update the specified resource in storage.
@@ -99,16 +152,22 @@ class RoomBookController extends Controller
         ]);
         if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
         // Check if the guest_id and r_book combination already exists
-        $existingBooking = RoomBook::where('guest_id', $data['guest_id'])
-            ->where('r_book',md5("Booking"))
+        $existingBooking = RoomBook::where('id', '<>', $id)
+            ->where(function($query) use ($data) {
+                $query->where(function($query) use ($data) {
+                    $query->where('guest_id', $data['guest_id'])
+                        ->where('r_book', md5("Booking"));
+                })->orWhere(function($query) use ($data) {
+                    $query->where('r_id', $data['r_id'])
+                        ->where('booking_Date', $data['booking_Date'])
+                        ->where('is_active', true);
+                });
+            })
             ->first();
 
-        $existingBooking2 = RoomBook::where('r_id', $data['r_id'])
-            ->where('is_active', true)
-            ->first();
 
         // If the booking exists, return an error message or handle the situation as needed
-        if ($existingBooking || $existingBooking2) {  return response()->json(['error' => 'Booking already exists Room and Guest and already booking.']); }
+        if ($existingBooking) {  return response()->json(['error' => 'Booking already exists Room and Guest and already booking.']); }
 
         $roomBook =RoomBook::findOrFail($id);
 
@@ -117,6 +176,10 @@ class RoomBookController extends Controller
         $roomBook->r_book = $data['r_book'];
         $roomBook->booking_Date = $data['booking_Date'];
         $roomBook->cancel_Date = $data['cancel_Date'];
+
+        if($data['r_book'] === "Canceling"){
+            $roomBook->is_active = false;
+        }
         $roomBook->save();
 
         $room = Rooms::findOrFail($roomBook->r_id);

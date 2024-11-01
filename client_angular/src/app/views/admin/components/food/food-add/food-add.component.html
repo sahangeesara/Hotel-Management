@@ -38,7 +38,7 @@
           <label cLabel>Item Category:</label>
 
           <select aria-label="Select Item Category" cSelect name="item_category_id" formControlName="item_category_id">
-            <option selected="selected">Select Item Category: </option>
+            <option selected="selected" value="">Select Item Category: </option>
             <option *ngFor="let category of itemCategories" [value]="category.id">
               {{ category.name }}
             </option>
@@ -50,7 +50,7 @@
           <label cLabel>Food Status:</label>
 
           <select aria-label="Select Food Status" cSelect name="food_status_id" formControlName="food_status_id">
-            <option selected="selected">Select Food Status: </option>
+            <option selected="selected" value="">Select Food Status: </option>
             <option *ngFor="let status of foodStatus" [value]="status.id">
               {{ status.name }}
             </option>

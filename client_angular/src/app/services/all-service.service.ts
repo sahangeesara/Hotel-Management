@@ -11,6 +11,7 @@ import {User} from "../entities/user";
 import {OrderStatus} from "../entities/OrderStatus";
 import {FoodStatus} from "../entities/foodStatus";
 import {Food} from "../entities/food";
+import {Order} from "../entities/order";
 
 @Injectable({
   providedIn: 'root'
@@ -260,8 +261,13 @@ export class AllServiceService {
     return this.http.post<Food>(`${this.besUrl}/foodItems/${id}`,data);
   }
 
-
-
+//Order
+  submitOrder(data:any){
+    return this.http.post<Order[]>(`${this.besUrl}/orders`,data);
+  }
+  getOrders(){
+    return this.http.get(`${this.besUrl}/orders`);
+  }
 }
 
 

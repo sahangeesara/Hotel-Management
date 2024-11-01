@@ -12,6 +12,7 @@ import { ChartjsComponent } from '@coreui/angular-chartjs';
 import { RouterLink } from '@angular/router';
 import { IconDirective } from '@coreui/icons-angular';
 import { RowComponent, ColComponent, WidgetStatAComponent, TemplateIdDirective, ThemeDirective, DropdownComponent, ButtonDirective, DropdownToggleDirective, DropdownMenuDirective, DropdownItemDirective, DropdownDividerDirective } from '@coreui/angular';
+import {SearchService} from "../../../services/search.service";
 
 @Component({
     selector: 'app-widgets-dropdown',
@@ -22,10 +23,14 @@ import { RowComponent, ColComponent, WidgetStatAComponent, TemplateIdDirective, 
     imports: [RowComponent, ColComponent, WidgetStatAComponent, TemplateIdDirective, IconDirective, ThemeDirective, DropdownComponent, ButtonDirective, DropdownToggleDirective, DropdownMenuDirective, DropdownItemDirective, RouterLink, DropdownDividerDirective, ChartjsComponent]
 })
 export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
+  countGust: number | undefined;
 
   constructor(
-    private changeDetectorRef: ChangeDetectorRef
-  ) {}
+    private changeDetectorRef: ChangeDetectorRef,
+    private searchServe: SearchService,
+  ) {
+  }
+
 
   data: any[] = [];
   options: any[] = [];
@@ -125,6 +130,18 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
 
   ngOnInit(): void {
     this.setData();
+    this.getCountGuest();
+  }
+
+  getCountGuest() {
+    this.searchServe.getCountGuest().subscribe(
+      (value: any) => {
+        this.countGust = value.guestsCount;
+      },
+      (error) => {
+        console.error('Error fetching rooms Book:', error);
+      }
+    );
   }
 
   ngAfterContentInit(): void {

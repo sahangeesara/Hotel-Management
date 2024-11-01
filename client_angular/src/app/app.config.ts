@@ -1,21 +1,17 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import {
+  PreloadAllModules,
   provideRouter,
   withEnabledBlockingInitialNavigation,
-  withHashLocation,
-  withInMemoryScrolling,
-  withRouterConfig,
-  withViewTransitions
+  withInMemoryScrolling, withPreloading,
+  withRouterConfig, withViewTransitions
 } from '@angular/router';
-
-import { DropdownModule, SidebarModule} from '@coreui/angular';
-import { IconSetService } from '@coreui/icons-angular';
-import { routes } from './app.routes';
-import {provideHttpClient} from "@angular/common/http";
+import {ApplicationConfig, importProvidersFrom} from "@angular/core";
+import {CustomPreloadingStrategy, routes} from "./app.routes";
+import {DropdownModule, SidebarModule} from "@coreui/angular";
 import {ToastrModule} from "ngx-toastr";
-
-
+import {IconSetService} from "@coreui/icons-angular";
+import {provideAnimations} from "@angular/platform-browser/animations";
+import {provideHttpClient} from "@angular/common/http";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -29,11 +25,13 @@ export const appConfig: ApplicationConfig = {
       }),
       withEnabledBlockingInitialNavigation(),
       withViewTransitions(),
-      withHashLocation()
+
+      withPreloading(CustomPreloadingStrategy)
     ),
     importProvidersFrom(SidebarModule, DropdownModule, ToastrModule.forRoot(), ),
     IconSetService,
     provideAnimations(),
     provideHttpClient(),
+    CustomPreloadingStrategy,
   ]
 };
