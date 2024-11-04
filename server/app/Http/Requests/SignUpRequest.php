@@ -23,7 +23,7 @@ class SignUpRequest extends FormRequest
     {
         return [
             'name'=>'required|regex:/^[A-Z][a-z]{2,}.[\\s][A-Z][a-z]{2,}$/',
-            'email' =>'required|email|unique:user',
+            'email' =>'required|email|unique:users',
             'password'=> 'required|confirmed'
         ];
     }
