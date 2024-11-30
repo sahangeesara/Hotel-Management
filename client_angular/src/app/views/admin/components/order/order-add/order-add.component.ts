@@ -51,7 +51,7 @@ import {Order} from "../../../../../entities/order";
 export class OrderAddComponent  implements OnInit{
   public error=null;
 
-
+  notifications: string[] = [];
   itemCategories: ItemCategory[] = [];
   foods: Food[] = [];
   foodStatus: FoodStatus[] = [];
@@ -279,6 +279,8 @@ export class OrderAddComponent  implements OnInit{
           map((data) => {
             // Handle successful submission here
             this.clearForm();
+
+            this.notifications.push('Order submitted successfully!');
             return data; // If you need to return a value for further processing
           }),
           catchError((error) => {
@@ -293,7 +295,7 @@ export class OrderAddComponent  implements OnInit{
     // console.log((this.foodItems))
   }
   handleError(error: { error: null; }){
-    return  this.error=error.error;
+   alert(this.error=error.error);
   }
 
 }

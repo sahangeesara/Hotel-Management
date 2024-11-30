@@ -54,7 +54,7 @@ export class RoomAddComponent {
     this.roomForm = this.fb.group({
 
       id: [''],
-      r_no: ['', [Validators.required]],
+      r_no: [''],
       r_cost: ['', [Validators.required]],
       r_category_id: ['', Validators.required],
     });

@@ -5,9 +5,11 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\RoomBook;
 use App\Models\Rooms;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class RoomBookController extends Controller
 {
@@ -58,18 +60,30 @@ class RoomBookController extends Controller
 
         // If the booking exists, return an error message or handle the situation as needed
         if ($existingBooking) {  return response()->json(['error' => 'Booking already exists Room and Guest and already booking.']); }
-        $roomBook =new RoomBook();
-        $roomBook->r_id = $data['r_id'];
-        $roomBook->guest_id = $data['guest_id'];
-        $roomBook->r_book = $data['r_book'];
-        $roomBook->booking_Date = $data['booking_Date'];
-        $roomBook->cancel_Date = $data['cancel_Date'];
-        $roomBook->save();
-        $room = Rooms::findOrFail($roomBook->r_id);
-        $room->r_book =  $data['r_book'];
-        $room->save();
 
-        return json_encode([$roomBook,$room]);
+        $today = Carbon::now()->format('Y-m-d');
+        $bookingDate = Carbon::parse($data['booking_Date']);
+        $cancelDate = Carbon::parse($data['cancel_Date']);
+        $today = Carbon::parse($today);
+
+        if($bookingDate  >= $today && $bookingDate <= $cancelDate ) {
+
+            $roomBook = new RoomBook();
+            $roomBook->r_id = $data['r_id'];
+            $roomBook->guest_id = $data['guest_id'];
+            $roomBook->r_book = $data['r_book'];
+            $roomBook->booking_Date = $data['booking_Date'];
+            $roomBook->cancel_Date = $data['cancel_Date'];
+            $roomBook->save();
+            $room = Rooms::findOrFail($roomBook->r_id);
+            $room->r_book = $data['r_book'];
+            $room->save();
+
+            return json_encode([$roomBook, $room]);
+
+        }else{
+            return (response()->json(['error' => 'Data not valid.']));
+        }
     }
 
     /**
@@ -169,6 +183,12 @@ class RoomBookController extends Controller
         // If the booking exists, return an error message or handle the situation as needed
         if ($existingBooking) {  return response()->json(['error' => 'Booking already exists Room and Guest and already booking.']); }
 
+        $today = Carbon::now()->format('Y-m-d');
+        $bookingDate = Carbon::parse($data['booking_Date']);
+        $cancelDate = Carbon::parse($data['cancel_Date']);
+        $today = Carbon::parse($today);
+
+        if($bookingDate  >= $today && $bookingDate <= $cancelDate ) {
         $roomBook =RoomBook::findOrFail($id);
 
         $roomBook->r_id = $data['r_id'];
@@ -186,7 +206,10 @@ class RoomBookController extends Controller
         $room->r_book =  $data['r_book'];
         $room->save();
 
-        return json_encode([$roomBook,$room]);
+            return json_encode([$roomBook,$room]);
+        }else{
+            return (response()->json(['error' => 'Data not valid.']));
+        }
     }
 
     /**
@@ -211,4 +234,27 @@ class RoomBookController extends Controller
             return response()->json(['message' => 'An error occurred while deactivating the room book.'], 500);
         }
     }
+
+    public function scheduleBookingCancellation(Schedule $schedule): void
+    {
+        $schedule->call(function () {
+            $today = Carbon::now()->format('Y-m-d');
+
+            $bookingsToCancel = RoomBook::where('cancel_Date', '<', $today)
+                ->where('is_active', true)
+                ->get();
+
+            foreach ($bookingsToCancel as $booking) {
+                $booking->r_book = 'Canceling';
+                $booking->is_active = false;
+                $booking->save();
+
+                $room = Rooms::findOrFail($booking->r_id);
+                $room->r_book = 'Canceling';
+                $room->save();
+            }
+        })->daily();
+    }
+
+
 }

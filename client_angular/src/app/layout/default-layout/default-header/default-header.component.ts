@@ -1,4 +1,6 @@
 import { Component, computed, DestroyRef, inject, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
 import {
   AvatarComponent,
   BadgeComponent,
@@ -20,7 +22,7 @@ import {
   ProgressComponent,
   SidebarToggleDirective,
   TextColorDirective,
-  ThemeDirective
+  ThemeDirective,
 } from '@coreui/angular';
 import { NgStyle, NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
@@ -28,12 +30,13 @@ import { IconDirective } from '@coreui/icons-angular';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { delay, filter, map, tap } from 'rxjs/operators';
 import {AuthService} from "../../../services/auth.service";
+import {NotificationService} from "../../../services/notification.service";
 
 @Component({
   selector: 'app-default-header',
   templateUrl: './default-header.component.html',
   standalone: true,
-  imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavItemComponent, NavLinkDirective, RouterLink, RouterLinkActive, NgTemplateOutlet, BreadcrumbRouterComponent, ThemeDirective, DropdownComponent, DropdownToggleDirective, TextColorDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, BadgeComponent, DropdownDividerDirective, ProgressBarDirective, ProgressComponent, NgStyle]
+  imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavItemComponent, NavLinkDirective, RouterLink, RouterLinkActive, NgTemplateOutlet, BreadcrumbRouterComponent, ThemeDirective, DropdownComponent, DropdownToggleDirective, TextColorDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, BadgeComponent, DropdownDividerDirective, ProgressBarDirective, ProgressComponent, NgStyle,CommonModule]
 })
 export class DefaultHeaderComponent extends HeaderComponent {
 
@@ -53,7 +56,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
     return this.colorModes.find(mode=> mode.name === currentMode)?.icon ?? 'cilSun';
   });
 
-  constructor(private authservice:AuthService) {
+  constructor(private authservice:AuthService,private notificationService: NotificationService) {
     super();
     this.#colorModeService.localStorageItemName.set('coreui-free-angular-admin-template-theme-default');
     this.#colorModeService.eventName.set('ColorSchemeChange');
@@ -151,4 +154,19 @@ export class DefaultHeaderComponent extends HeaderComponent {
   logout() {
     this.authservice.logout()
   }
+
+  notifications: string[] = [];
+  dropdownOpen = false;
+
+
+  ngOnInit(): void {
+    this.notificationService.listenForOrderSuccess().subscribe((data) => {
+      this.notifications.push(`Order #${data.id} was successful!`);
+    });
+  }
+
+  toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
 }

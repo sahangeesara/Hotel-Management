@@ -25,7 +25,14 @@ export class OrderViewComponent {
     ) {
   }
   orderDelete(id:any){
-
+    this.allServe.deleteOrders(id).subscribe(
+      (data: any) => {
+        this.getOrder();
+      },
+      (error) => {
+        console.error('Error fetching employee:', error);
+      }
+    );
   }
 
   ngOnInit() {

@@ -268,6 +268,9 @@ export class AllServiceService {
   getOrders(){
     return this.http.get(`${this.besUrl}/orders`);
   }
+  deleteOrders(data:any){
+    return this.http.delete(`${this.besUrl}/orders/`+data);
+  }
 }
 
 

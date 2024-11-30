@@ -24,9 +24,15 @@
     </c-header-nav>
 
     <c-header-nav class="d-none d-md-flex ms-auto ">
-      <a cNavLink>
+      <a cNavLink class="dropdown-toggle" (click)="toggleDropdown()">
         <svg cIcon class="my-1" name="cilBell" size="lg"></svg>
+        <span *ngIf="notifications.length" class="badge badge-danger">{{ notifications.length }}</span>
       </a>
+      <div *ngIf="dropdownOpen" class="dropdown-menu">
+        <a *ngFor="let notification of notifications" class="dropdown-item">
+          {{ notification }}
+        </a>
+      </div>
       <a cNavLink>
         <svg cIcon class="my-1" name="cilEnvelopeOpen" size="lg"></svg>
       </a>

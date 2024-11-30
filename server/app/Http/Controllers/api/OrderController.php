@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\FoodItem;
 use App\Models\Order;
 use App\Models\OrderItems;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use App\Events\OrderSuccess;
 
 
 class OrderController extends Controller
@@ -44,7 +46,6 @@ class OrderController extends Controller
         $data = json_decode($request->form, true);
         $data2 = json_decode($request->food, true);
         $validatedData = Validator::make($data, [
-
             'r_id' => '',
             'guest_id' => 'required',
             'order_date' => 'required',
@@ -54,6 +55,19 @@ class OrderController extends Controller
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
+
+        foreach ($data2 as $item) {
+            $food = FoodItem::findOrFail($item['id']);
+            if ($food->quantity > 0 && $food->quantity <= 10) {
+                return response()->json(['error' => 'Quantity not Available']);
+            }
+        }
+
+        $today = Carbon::now()->format('Y-m-d');
+        $orderDate = Carbon::parse($data['order_date']);
+        $today = Carbon::parse($today);
+
+        if($orderDate  === $today) {
         $order =new Order();
         $order->r_id = $data['r_id'] ?? null;
         $order->guest_id = $data['guest_id'];
@@ -61,7 +75,6 @@ class OrderController extends Controller
         $order->order_amount = $data['order_amount'];
         $order->order_status_id = $data['oder_status_id'];
         $order->save();
-
         foreach ($data2 as $item) {
             $orderItem = new OrderItems();
             $orderItem->order_id = $order->id;
@@ -76,7 +89,11 @@ class OrderController extends Controller
             }
             $food->save();
         }
+        broadcast(new OrderSuccess($order->id));
         return json_encode($order);
+        }else{
+            return (response()->json(['error' => 'Data not valid.']));
+        }
     }
 
     /**
@@ -137,6 +154,18 @@ class OrderController extends Controller
             $order->is_active = false;
             $order->save();
 
+            $orderItems = OrderItems::where('order_id', $id)->get();
+            foreach ($orderItems as $orderItem) {
+                $orderItem->is_active = false;
+                $orderItem->save();
+
+                $food = FoodItem::findOrFail($orderItem->food_id);
+                if ($food->quantity > 0){
+                    $food->quantity = $food->quantity + $orderItem->quantity;
+                }
+                $food->save();
+
+            }
             return response()->json(['message' => 'Order deactivated successfully.'], 200);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response

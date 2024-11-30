@@ -37,21 +37,28 @@ class RoomsController extends Controller
     {
         $data = json_decode($request->form, true);
         $validatedData = Validator::make($data, [
-
-            'r_no' => 'required',
             'r_cost' => 'required',
             'r_category_id' => 'required',
         ]);
+
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
-        $room =new Rooms();
-        $room->r_no = $data['r_no'];
+
+        // Generate the 'r_no' based on the next auto-incremented 'id'
+        $nextId = Rooms::max('id') + 1; // Get the next available ID
+        $rNo = 'RN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
+
+        // Create a new room instance
+        $room = new Rooms();
         $room->r_cost = $data['r_cost'];
         $room->r_category_id = $data['r_category_id'];
+        $room->r_no = $rNo; // Set the 'r_no' value
         $room->save();
-        return json_encode($room);
+
+        return response()->json($room);
     }
+
 
     /**
      * Display the specified resource.
