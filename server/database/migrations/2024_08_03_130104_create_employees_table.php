@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('email')->nullable();
             $table->string('city');
-            $table->string('employee_type_id');
+            $table->unsignedBigInteger('employee_type_id');
             $table->char('nic',12);
             $table->char('tel_no',10);
             $table->boolean('is_active')->default(1);

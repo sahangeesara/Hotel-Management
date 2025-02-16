@@ -10,7 +10,15 @@ import {
   RowComponent,
   TableDirective
 } from "@coreui/angular";
-import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators
+} from "@angular/forms";
 import {NgForOf, NgIf} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
@@ -43,7 +51,8 @@ import {Order} from "../../../../../entities/order";
     NgbInputDatepicker,
     ButtonDirective,
     NgIf,
-    TableDirective
+    TableDirective,
+    FormsModule
   ],
   templateUrl: './order-add.component.html',
   styleUrl: './order-add.component.scss'
@@ -111,6 +120,7 @@ export class OrderAddComponent  implements OnInit{
     return this.orderForm.controls['oder_status_id'] as FormControl;
   }
 
+
   getRm() {
     this.allServe.getRoom().subscribe(
       (response: any) => {
@@ -164,10 +174,11 @@ export class OrderAddComponent  implements OnInit{
         (data: any) => {
 
             const food = Array.isArray(data) ? data[0] : data; // Get the first food item
-
+          console.log('foods ', food);
+          food.quantity = 0;
             this.foodItems.push({
               ...food,
-              quantity: 0
+              // quantity: 0
             });
             // this.foodQuantityField.setValue("")
 
@@ -178,6 +189,9 @@ export class OrderAddComponent  implements OnInit{
       );
     }
   }
+
+
+
   getOrderStatus() {
     this.allServe.getOrderStatus().subscribe(
       (response: any) => {
@@ -199,23 +213,27 @@ export class OrderAddComponent  implements OnInit{
     );
   }
 
+  updateTotalAmount() {
+    this.totalAmount=0;
+    console.log(this.foodItems);
+    for (let i = 0; i < this.foodItems.length; i++) {
+      this.totalAmount += (Number(this.foodItems[i]['food_amount']) || 0) * (Number(this.foodItems[i]['quantity']) || 0);
+      console.log(this.totalAmount);
+    }
+    this.orderForm.controls['order_amount'].setValue(this.totalAmount+".00");
+  }
+
 
   calculateOrderAmount(id:any) {
    const quantity = this.orderForm.controls['quantity'].value;
 
-    let f_amount = 0;
-    let o_amount = 0;
-
     for (let i = 0; i < this.foodItems.length; i++) {
-      const foodAmount = Number(this.foodItems[i]['food_amount']) || 0;
-      o_amount =foodAmount;
+
       if (this.foodItems[i].id == id) {
         this.foodItems[i].quantity = quantity;
       }
     }
-    f_amount = quantity * o_amount;
-    this.totalAmount += f_amount;
-    this.orderForm.controls['order_amount'].setValue(this.totalAmount+".00");
+    this.updateTotalAmount();
 
   }
 
@@ -228,8 +246,7 @@ export class OrderAddComponent  implements OnInit{
     this.getFoodStatus();
 
   }
-
-
+// Remove a food item dynamically
   removeFoodItem(index: number,amount:any) {
     let quantity = this.foodItems[index].quantity;
     const foodAmount = Number(amount) || 0;
@@ -237,9 +254,10 @@ export class OrderAddComponent  implements OnInit{
     // @ts-ignore
     let f_amount = quantity * foodAmount;
 
-    this.totalAmount -= f_amount;
-    this.orderForm.controls['order_amount'].setValue(this.totalAmount+".00");
+    // this.totalAmount -= f_amount;
     this.foodItems.splice(index, 1);
+    this.updateTotalAmount();
+    this.orderForm.controls['order_amount'].setValue(this.totalAmount+".00");
   }
 
 
@@ -291,11 +309,10 @@ export class OrderAddComponent  implements OnInit{
         )
         .subscribe();
     }
-    // console.log(data)
-    // console.log((this.foodItems))
   }
   handleError(error: { error: null; }){
    alert(this.error=error.error);
   }
+
 
 }

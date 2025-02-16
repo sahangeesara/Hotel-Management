@@ -75,8 +75,7 @@ class RoomBookController extends Controller
             $roomBook->booking_Date = $data['booking_Date'];
             $roomBook->cancel_Date = $data['cancel_Date'];
             $roomBook->save();
-            $room = Rooms::findOrFail($roomBook->r_id);
-            $room->r_book = $data['r_book'];
+
             $room->save();
 
             return json_encode([$roomBook, $room]);
@@ -202,8 +201,6 @@ class RoomBookController extends Controller
         }
         $roomBook->save();
 
-        $room = Rooms::findOrFail($roomBook->r_id);
-        $room->r_book =  $data['r_book'];
         $room->save();
 
             return json_encode([$roomBook,$room]);

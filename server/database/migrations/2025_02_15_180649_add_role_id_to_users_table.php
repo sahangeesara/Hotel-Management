@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('food_items', function (Blueprint $table) {
-            $table->unsignedBigInteger('food_status_id')->after('food_amount');
-
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('role_id')->after('password')->nullable()->constrained('roles')->onDelete('set null');
         });
+
     }
 
     /**
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('food_items', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             //
         });
     }

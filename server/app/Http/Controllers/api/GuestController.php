@@ -78,7 +78,7 @@ class GuestController extends Controller
             $guest->nic = $data['nic'];
             $guest->tel_no = $data['tel_no'];
             // Set guide_id to null if empty
-            $guest->guide_id = $data['guide_id'] ?? null;
+            $guest->guide_id = empty($data['guide_id']) ? null : $data['guide_id'];
             $guest->gender_id = $data['gender_id'];
             $guest->guest_type = $data['guest_type'];
             $guest->country = $data['country'];
@@ -176,6 +176,7 @@ class GuestController extends Controller
      */
     public function update(Request $request, string $id)
     {
+
         $data = json_decode($request->form, true);
         $validatedData = Validator::make($data, [
 
@@ -186,7 +187,7 @@ class GuestController extends Controller
             'nic' => 'required',
             'tel_no' => 'required',
             'gender_id' => 'required',
-            'guide_id' => 'nullable',
+            'guide_id' => '',
             'country' => 'required',
             'guest_type' => 'required',
             'guide_status' => 'required',
@@ -210,27 +211,29 @@ class GuestController extends Controller
         }
 
         try {
-            DB::beginTransaction();
+//            DB::beginTransaction();
 
             $guest = Guest::findOrFail($id);
+            $oldGuideID = empty($data['guide_id']) ? $guest->guide_id : $data['guide_id'];
             $guest->name = $data['name'];
             $guest->address = $data['address'];
             $guest->email = $data['email'];
             $guest->city = $data['city'];
             $guest->nic = $data['nic'];
             $guest->tel_no = $data['tel_no'];
-            $guest->guide_id = $data['guide_id'] ?? null;
+            // Set guide_id to null if empty
+            $guest->guide_id = empty($data['guide_id']) ? null : $data['guide_id']; // Ensure null is set
             $guest->gender_id = $data['gender_id'];
             $guest->guest_type = $data['guest_type'];
             $guest->country = $data['country'];
 
             $guest->save();
 
-                $guides = Guides::findOrFail($guest->guide_id);
+                $guides = Guides::findOrFail($oldGuideID);
                 $guides->guide_status = $data['guide_status'];
                 $guides->save();
 
-            DB::commit();
+//            DB::commit();
 
             return response()->json(['massage' => 'Successfully Update.', $guest]);
         }

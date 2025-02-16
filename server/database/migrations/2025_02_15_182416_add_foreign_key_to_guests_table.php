@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('food_items', function (Blueprint $table) {
-            $table->unsignedBigInteger('food_status_id')->after('food_amount');
-
+        Schema::table('guests', function (Blueprint $table) {
+            $table->foreign('guide_id')->references('id')->on('guides');
+            $table->foreign('gender_id')->references('id')->on('genders');
         });
     }
 
@@ -22,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('food_items', function (Blueprint $table) {
-            //
+        Schema::table('guests', function (Blueprint $table) {
+            $table->dropForeign(['guide_id']);
+            $table->dropForeign(['gender_id']);
         });
     }
 };

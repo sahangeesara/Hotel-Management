@@ -23,10 +23,12 @@ class OrderController extends Controller
         try {
             $orders = Order::with('room','guest','orderStatus')
                 ->where('is_active',1)
+                ->orderBy('created_at',"DESC")
                 ->get();
 
             $orderItems = OrderItems::with('order','food')
                 ->where('is_active',1)
+                ->orderBy('created_at',"DESC")
                 ->get();
 
             return response()->json($orders);
@@ -67,7 +69,14 @@ class OrderController extends Controller
         $orderDate = Carbon::parse($data['order_date']);
         $today = Carbon::parse($today);
 
-        if($orderDate  === $today) {
+//      info($today);
+//      info($orderDate);
+//      info($orderDate->equalTo($today));
+//      info($orderDate->toDateString() === $today->toDateString());
+//      info($orderDate->format('Y-m-d') === $today->format('Y-m-d'));
+
+
+        if($orderDate->equalTo($today)) {
         $order =new Order();
         $order->r_id = $data['r_id'] ?? null;
         $order->guest_id = $data['guest_id'];

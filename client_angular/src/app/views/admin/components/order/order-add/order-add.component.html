@@ -59,6 +59,9 @@
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel>Item Category:</label>
+<!--        <select aria-label="Select Item Category" cSelect name="item_category_id" formControlName="item_category_id" (change)="getFoods($any($event).target.value)">-->
+<!--          <option *ngFor="let food of itemCategories" [value]="food">{{ food.name }}</option>-->
+<!--        </select>-->
 
         <select aria-label="Select Item Category" cSelect name="item_category_id" formControlName="item_category_id" (change)="getFoods($any($event).target.value)">
           <option value="" selected>Select Item Category...</option>
@@ -73,6 +76,9 @@
 
       <div class="mb-3">
         <label cLabel>Foods Item:</label>
+<!--        <select aria-label="Select Food Item" cSelect name="food_id" formControlName="food_id"  (change)="getFoodsById($any($event).target.value)">-->
+<!--          <option *ngFor="let food of foods" [ngValue]="food">{{ food.name }}</option>-->
+<!--        </select>-->
 
         <select aria-label="Select Food Item" cSelect name="food_id" formControlName="food_id" (change)="getFoodsById($any($event).target.value)">
           <option value="" selected>Select Food Item...</option>
@@ -101,6 +107,7 @@
       </tr>
       </thead>
       <tbody>
+
       <tr *ngFor="let food of  foodItems; let i = index">
         <th scope="row">{{ i + 1 }}</th>
         <td hidden="hidden">{{ food.id }}</td>

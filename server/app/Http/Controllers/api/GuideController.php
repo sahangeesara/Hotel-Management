@@ -52,7 +52,7 @@ class GuideController extends Controller
                                 ->first();
         // If the booking exists, return an error message or handle the situation as needed
         if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
-
+        $guideStatus ="No_Assign";
         $guides = new Guides();
         $guides->name = $data['name'];
         $guides->address = $data['address'];
@@ -61,6 +61,7 @@ class GuideController extends Controller
         $guides->nic = $data['nic'];
         $guides->tel_no = $data['tel_no'];
         $guides->gender_id = $data['gender_id'];
+        $guides->guide_status = $guideStatus;
 
         $guides->save();
 
@@ -108,7 +109,8 @@ class GuideController extends Controller
         // If the booking exists, return an error message or handle the situation as needed
         if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
 
-        $guides = Guides::findOrFail($id);;
+        $guides = Guides::findOrFail($id);
+        $guideStatus =$guides->guide_status;
         $guides->name = $data['name'];
         $guides->address = $data['address'];
         $guides->email = $data['email'];
@@ -117,7 +119,7 @@ class GuideController extends Controller
         $guides->tel_no = $data['tel_no'];
         $guides->gender_id = $data['gender_id'];
         $guides->country = $data['country'];
-
+        $guides->guide_status = $guideStatus;
         $guides->save();
 
         return response()->json(['massage' => 'Successfully Update.', $guides]);

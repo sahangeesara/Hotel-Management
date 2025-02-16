@@ -5,6 +5,8 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
@@ -29,7 +31,7 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in storage.Test@1234
      */
     public function store(Request $request)
     {
@@ -37,12 +39,19 @@ class UserController extends Controller
         $user = User::create($data);
         return json_encode($user);
     }
-    private function changePassword(Request $request): \Illuminate\Http\JsonResponse
+    public function changePassword(Request $request): \Illuminate\Http\JsonResponse
     {
-        $user= User::whereEmail($request->email)->first();
-        $user->update(['password'=>$request->password]);
-        return response()->json(['data'=>'password Successfully Change'],ResponseAlias::HTTP_CREATED);
+        // Check if user is authenticated
+        $user = Auth::user();
 
+        if (!$user) {
+            return response()->json(['error' => 'User not authenticated'], ResponseAlias::HTTP_UNAUTHORIZED);
+        }
+
+        // Update password
+        $user->update(['password' => Hash::make($request->password)]);
+
+        return response()->json(['data' => 'Password successfully changed'], ResponseAlias::HTTP_OK);
     }
     /**
      * Display the specified resource.
@@ -66,7 +75,9 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $users = User::findOrFail($id);
-        $users->update($request->all());
+        $det = $request->all();
+        $det['password'] = Hash::make($det['password']);
+        $users->update($det);
         return json_encode($users);
     }
 
