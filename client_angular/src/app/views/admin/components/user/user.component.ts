@@ -23,6 +23,7 @@ import {Guest} from "../../../../entities/guest";
 import {User} from "../../../../entities/user";
 import {map} from "rxjs/operators";
 import {catchError, from, throwError} from "rxjs";
+import {NgForOf} from "@angular/common";
 
 @Component({
   selector: 'app-user',
@@ -43,7 +44,8 @@ import {catchError, from, throwError} from "rxjs";
     ModalBodyComponent,
     ModalTitleDirective,
     ModalFooterComponent,
-    ButtonCloseDirective
+    ButtonCloseDirective,
+    NgForOf
   ],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss'
@@ -139,30 +141,52 @@ export class UserComponent {
     );
 
   }
-  updateUser(){
-    // console.log(this.userForm.value)
-    // if (this.userForm.valid) {
-    //   this.allServe.passwordChange(this.userForm.value).subscribe(
-    //
-    //   )
-    //
-    // }
+  updateUser() {
+    this.formData = new FormData();
+    if (this.userForm.valid) {
+      let user = new User();
+
+      let id = this.userIdField.value;
+      user.name = this.userNameField.value;
+      user.password = this.userPasswordField.value;
+      user.email = this.userEmailField.value;
+
+
+      this.formData.append('form', JSON.stringify(user));
+      this.formData.append('_method', 'patch');
+      const submissionObservable = from(this.allServe.userUpdate(this.formData,id));
+
+      submissionObservable
+        .pipe(
+          map((data) => {
+            // Handle successful submission here
+            this.getUser();
+            this.clearForm();
+            return data; // If you need to return a value for further processing
+          }),
+          catchError((error) => {
+            // Handle errors here
+            this.handleError(error);
+            return throwError(error); // Re-throw the error if you want to propagate it further
+          })
+        )
+        .subscribe();
+    }
   }
-
-  getUserById(id:any) {
+  getUserById(id: any) {
     this.allServe.getUserById(id).subscribe(
-      (user:any) => {
-
-        this.userIdField.setValue(user.id);
-        this.userNameField.setValue(user.name);
-        this.userEmailField.setValue(user.email)
+      (user: any) => {
+        console.log(user.email);
+        this.userIdField.setValue(user.id); // Setting user ID
+        this.userNameField.setValue(user.name); // Setting user name
+        this.userEmailField.setValue(user.email); // Setting user email
+        this.userPasswordField.setValue(''); 
       },
       (error) => {
-        console.error('Error fetching employee types:', error);
+        console.error('Error fetching user data:', error);
       }
     );
   }
-
 
   ngOnInit() {
     this.getUser();

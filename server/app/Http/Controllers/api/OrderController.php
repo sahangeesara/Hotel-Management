@@ -69,12 +69,6 @@ class OrderController extends Controller
         $orderDate = Carbon::parse($data['order_date']);
         $today = Carbon::parse($today);
 
-//      info($today);
-//      info($orderDate);
-//      info($orderDate->equalTo($today));
-//      info($orderDate->toDateString() === $today->toDateString());
-//      info($orderDate->format('Y-m-d') === $today->format('Y-m-d'));
-
 
         if($orderDate->equalTo($today)) {
         $order =new Order();

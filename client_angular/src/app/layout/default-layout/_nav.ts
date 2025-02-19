@@ -146,6 +146,11 @@ export const navItems: INavData[] = [
     icon: 'nav-icon-bullet'
   },
   {
+    name: 'User Role',
+    url: '/role/user_role',
+    icon: 'nav-icon-bullet'
+  },
+  {
     name: 'Report',
     title: true
   },

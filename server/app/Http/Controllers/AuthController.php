@@ -37,9 +37,16 @@ class AuthController extends Controller
     }
     public function signup(SignUpRequest $request)
     {
+        $validatedData = $request->validated();
 
-        User::create($request->all());
-        return $this->login($request);
+        $user = User::create([
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'password' => bcrypt($validatedData['password'])
+        ]);
+
+        $token = auth()->login($user);
+        return $this->respondWithToken($token);
     }
 
     /**
@@ -87,7 +94,9 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'user'=>auth()->user()->name
+            'user' => auth()->user()->name,
+            'role' => auth()->user()->role->pluck('name') // Assuming "role" is a column in your users table
         ]);
     }
+
 }

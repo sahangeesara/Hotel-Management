@@ -9,4 +9,11 @@ export const routes: Routes = [
       title: 'User'
     }
   },
+  {
+    path: 'user_role',
+    loadComponent: () => import('./role/role.component').then(m => m.RoleComponent),
+    data: {
+      title: 'Role'
+    }
+  },
 ];

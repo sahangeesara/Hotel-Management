@@ -12,13 +12,11 @@ use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         try {
-            $users = User::where('is_active',1)
+            $users = User::with('role')
+                            ->where('is_active',1)
                             ->paginate(20);
 
             return response()->json($users);
@@ -41,18 +39,17 @@ class UserController extends Controller
     }
     public function changePassword(Request $request): \Illuminate\Http\JsonResponse
     {
-        // Check if user is authenticated
-        $user = Auth::user();
 
+        $user = Auth::user();
         if (!$user) {
             return response()->json(['error' => 'User not authenticated'], ResponseAlias::HTTP_UNAUTHORIZED);
         }
-
-        // Update password
-        $user->update(['password' => Hash::make($request->password)]);
-
+        $user= User::whereEmail( Auth::user()->email)->first();
+        $user->update(['password'=>$request->password]);
         return response()->json(['data' => 'Password successfully changed'], ResponseAlias::HTTP_OK);
+
     }
+
     /**
      * Display the specified resource.
      */
@@ -64,7 +61,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving room.'], 500);
+            return response()->json(['message' => 'An error occurred while retrieving user.'], 500);
         }
 
     }
@@ -74,11 +71,29 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $users = User::findOrFail($id);
-        $det = $request->all();
-        $det['password'] = Hash::make($det['password']);
-        $users->update($det);
-        return json_encode($users);
+        $userFrom = json_decode($request->input('form'), true);
+
+        // Find user by email
+        $user = User::whereEmail($userFrom['email'])->first();
+
+        // If user is not found, return an error response
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
+        $logUser = Auth::user();
+
+        // Ensure the logged-in user isn't trying to change another user's password
+        if ($logUser->email !== $user->email) {
+            $user->password = $userFrom['password']; // Automatically hashed via mutator
+            $user->email = $userFrom['email']; // Automatically hashed via mutator
+            $user->name = $userFrom['name']; // Automatically hashed via mutator
+            $user->save(); // Save changes
+        } else {
+            return response()->json(['message' => "You can't update this user's password."], 403);
+        }
+
+        return response()->json($user);
     }
 
     /**

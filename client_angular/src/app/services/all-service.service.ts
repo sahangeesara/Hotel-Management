@@ -1,30 +1,44 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {Employee} from "../entities/employee";
-import {EmployeeType} from "../entities/employeeTypee";
-import {Room} from "../entities/room";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Employee } from "../entities/employee";
+import { Room } from "../entities/room";
+import { RoomBook } from "../entities/roomBook";
+import { Guest } from "../entities/guest";
+import { Guide } from "../entities/guide";
+import { User } from "../entities/user";
+import { OrderStatus } from "../entities/OrderStatus";
+import { FoodStatus } from "../entities/foodStatus";
+import { Food } from "../entities/food";
+import { Order } from "../entities/order";
+import { TokenService } from './token.service';
 import {RoomsCategory} from "../entities/roomsCategory";
-import {RoomBook} from "../entities/roomBook";
-import {Guest} from "../entities/guest";
-import {Guide} from "../entities/guide";
-import {User} from "../entities/user";
-import {OrderStatus} from "../entities/OrderStatus";
-import {FoodStatus} from "../entities/foodStatus";
-import {Food} from "../entities/food";
-import {Order} from "../entities/order";
+import {EmployeeType} from "../entities/employeeTypee";
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AllServiceService {
-  private besUrl ='http://localhost:8000/api';
-  constructor(private http:HttpClient) { }
-  //Auth
-  signup(data:any){
-    return this.http.post(`${this.besUrl}/signup`,data);
+  private besUrl = 'http://localhost:8000/api';
+
+  constructor(private http: HttpClient, private tokenService: TokenService) {}
+
+  private getAuthHeaders() {
+    return {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${this.tokenService.get()}`
+      })
+    };
   }
-  login(data:any){
-    return this.http.post(`${this.besUrl}/login`,data);
+
+  // **Auth**
+  signup(data: any) {
+    return this.http.post(`${this.besUrl}/signup`, data);
+  }
+
+  login(data: any) {
+    return this.http.post(`${this.besUrl}/login`, data);
   }
   sendPasswordResetLink(data:any){
     return this.http.post(`${this.besUrl}/sendPasswordResetLink`,data);
@@ -33,243 +47,243 @@ export class AllServiceService {
     return this.http.post(`${this.besUrl}/resetPassword`,data);
 
   }
-  passwordChange(data: any){
-    return this.http.put(`${this.besUrl}/passwordReset`,data);
-
+  passwordChange(data: any) {
+    return this.http.put(`${this.besUrl}/passwordReset`, data, this.getAuthHeaders());
   }
 
   //Rooms Category
   getRoomsCategory(){
-    return this.http.get(`${this.besUrl}/roomsCategory`);
+    return this.http.get(`${this.besUrl}/roomsCategory`,this.getAuthHeaders());
   }
   getRoomCategoryById(data:any){
-    return this.http.get(`${this.besUrl}/roomsCategory/`+data);
+    return this.http.get(`${this.besUrl}/roomsCategory/`+data,this.getAuthHeaders());
   }
   updateRoomCategory(data:any, id:any){
-    return this.http.post(`${this.besUrl}/roomsCategory/${id}`,data);
+    return this.http.post(`${this.besUrl}/roomsCategory/${id}`,data,this.getAuthHeaders());
   }
   RoomCategoryDelete(data:any){
-    return this.http.delete(`${this.besUrl}/roomsCategory/`+data);
+    return this.http.delete(`${this.besUrl}/roomsCategory/`+data,this.getAuthHeaders());
   }
   submitRoomsCategory(data:any){
-    return this.http.post<RoomsCategory[]>(`${this.besUrl}/roomsCategory`,data);
+    return this.http.post<RoomsCategory[]>(`${this.besUrl}/roomsCategory`,data,this.getAuthHeaders());
   }
 
   //Rooms Book
   getRoomBook(){
-    return this.http.get(`${this.besUrl}/roomBook`);
+    return this.http.get(`${this.besUrl}/roomBook`,this.getAuthHeaders());
   }
   getRoomBookById(data:any){
-    return this.http.get(`${this.besUrl}/roomBook/`+data);
+    return this.http.get(`${this.besUrl}/roomBook/`+data,this.getAuthHeaders());
   }
   deleteRoomBook(data:any){
-    return this.http.delete(`${this.besUrl}/roomBook/`+data);
+    return this.http.delete(`${this.besUrl}/roomBook/`+data,this.getAuthHeaders());
   }
   updateRoomBook(data:any, id:any){
-    return this.http.post(`${this.besUrl}/roomBook/${id}`,data);
+    return this.http.post(`${this.besUrl}/roomBook/${id}`,data,this.getAuthHeaders());
   }
    submitRoomsBook(data:any){
-    return this.http.post<RoomBook[]>(`${this.besUrl}/roomBook`,data);
+    return this.http.post<RoomBook[]>(`${this.besUrl}/roomBook`,data,this.getAuthHeaders());
   }
 
   //Rooms
   submitRoom(data:any){
-    return this.http.post<Room[]>(`${this.besUrl}/rooms`,data);
+    return this.http.post<Room[]>(`${this.besUrl}/rooms`,data,this.getAuthHeaders());
   }
-  getRoom(){
-    return this.http.get(`${this.besUrl}/rooms`);
-  }
-  getRoomById(data:any){
-    return this.http.get(`${this.besUrl}/rooms/`+data);
-  }
-  deleteRoom(data:any){
-    return this.http.delete(`${this.besUrl}/rooms/`+data);
-  }
-  updateRoom(data:any, id:any){
-    return this.http.post(`${this.besUrl}/rooms/${id}`,data);
+  getRoom(): Observable<Room[]> {
+    return this.http.get<Room[]>(`${this.besUrl}/rooms`, this.getAuthHeaders());
   }
 
+  getRoomById(data:any){
+    return this.http.get(`${this.besUrl}/rooms/`+data,this.getAuthHeaders());
+  }
+  deleteRoom(id: any) {
+    return this.http.delete(`${this.besUrl}/rooms/${id}`, this.getAuthHeaders());
+  }
+  updateRoom(data: any, id: any) {
+    return this.http.put(`${this.besUrl}/rooms/${id}`, data, this.getAuthHeaders());
+  }
   //Genders
   getGenders(){
-    return this.http.get(`${this.besUrl}/genders`);
+    return this.http.get(`${this.besUrl}/genders`,this.getAuthHeaders());
   }
 
   //Employees Types
 
   getEmployeeTypes(){
-    return this.http.get(`${this.besUrl}/employeeTypes`);
+    return this.http.get(`${this.besUrl}/employeeTypes`,this.getAuthHeaders());
   }
   getEmployeeTypeById(data:any){
-    return this.http.get(`${this.besUrl}/employeeTypes/`+data);
+    return this.http.get(`${this.besUrl}/employeeTypes/`+data,this.getAuthHeaders());
   }
 
   employeeTypesDelete(data:any){
-    return this.http.delete(`${this.besUrl}/employeeTypes/`+ data);
+    return this.http.delete(`${this.besUrl}/employeeTypes/`+ data,this.getAuthHeaders());
 
   }
   updateEmployeeType(data:any, id:any){
-    return this.http.post(`${this.besUrl}/employeeTypes/${id}`,data);
+    return this.http.post(`${this.besUrl}/employeeTypes/${id}`,data,this.getAuthHeaders());
   }
   submitEmployeeType(data:any){
-    return this.http.post<EmployeeType[]>(`${this.besUrl}/employeeTypes`,data);
+    return this.http.post<EmployeeType[]>(`${this.besUrl}/employeeTypes`,data,this.getAuthHeaders());
   }
   //Employees
   getEmployees(){
-    return this.http.get(`${this.besUrl}/employees`);
+    return this.http.get(`${this.besUrl}/employees`,this.getAuthHeaders());
   }
   updateEmployee(data:any, id:any){
-    return this.http.post(`${this.besUrl}/employees/${id}`,data);
+    return this.http.post(`${this.besUrl}/employees/${id}`,data,this.getAuthHeaders());
   }
   getEmployeeById(data:any){
-    return this.http.get(`${this.besUrl}/employees/`+ data);
+    return this.http.get(`${this.besUrl}/employees/`+ data,this.getAuthHeaders());
 
   }
   employeeDelete(data:any){
-    return this.http.delete(`${this.besUrl}/employees/`+data);
+    return this.http.delete(`${this.besUrl}/employees/`+data,this.getAuthHeaders());
   }
   submitEmployee(data:any){
-    return this.http.post<Employee[]>(`${this.besUrl}/employees`,data);
+    return this.http.post<Employee[]>(`${this.besUrl}/employees`,data,this.getAuthHeaders());
   }
 
   //Guest
   getGuests(){
-    return this.http.get(`${this.besUrl}/guests`);
+    return this.http.get(`${this.besUrl}/guests`,this.getAuthHeaders());
   }
    submitGuest(data:any){
-    return this.http.post<Guest[]>(`${this.besUrl}/guests`,data);
+    return this.http.post<Guest[]>(`${this.besUrl}/guests`,data,this.getAuthHeaders());
   }
   getGuestById(data:any){
-    return this.http.get(`${this.besUrl}/guests/`+data);
+    return this.http.get(`${this.besUrl}/guests/`+data,this.getAuthHeaders());
   }
   guestDelete(data:any){
-    return this.http.delete(`${this.besUrl}/guests/`+data);
+    return this.http.delete(`${this.besUrl}/guests/`+data,this.getAuthHeaders());
   }
   updateGuests(data:any, id:any){
-    return this.http.post(`${this.besUrl}/guests/${id}`,data);
+    return this.http.post(`${this.besUrl}/guests/${id}`,data,this.getAuthHeaders());
   }
 
   //Guide
   getGuide(){
-    return this.http.get(`${this.besUrl}/guides`);
+    return this.http.get(`${this.besUrl}/guides`,this.getAuthHeaders());
   }
   getGuideById(data:any){
-    return this.http.get(`${this.besUrl}/guides/`+data);
+    return this.http.get(`${this.besUrl}/guides/`+data,this.getAuthHeaders());
   }
   guideDelete(data:any){
-    return this.http.delete(`${this.besUrl}/guides/`+data);
+    return this.http.delete(`${this.besUrl}/guides/`+data,this.getAuthHeaders());
   }
   submitGuide(data:any){
-    return this.http.post<Guide[]>(`${this.besUrl}/guides`,data);
+    return this.http.post<Guide[]>(`${this.besUrl}/guides`,data,this.getAuthHeaders());
   }
   getGuideByAssign(){
-    return this.http.get(`${this.besUrl}/getGuide`);
+    return this.http.get(`${this.besUrl}/getGuide`,this.getAuthHeaders());
   }
 
   updateGuide(data:any, id:any){
-    return this.http.post(`${this.besUrl}/guides/${id}`,data);
+    return this.http.post(`${this.besUrl}/guides/${id}`,data,this.getAuthHeaders());
   }
 
   //user
   submitUser(data:any){
-    return this.http.post<User[]>(`${this.besUrl}/user`,data);
+    return this.http.post<User[]>(`${this.besUrl}/user`,data,this.getAuthHeaders());
   }
   getUser(){
-    return this.http.get(`${this.besUrl}/user`);
+    return this.http.get(`${this.besUrl}/user`,this.getAuthHeaders());
   }
 
   getUserById(data:any){
-    return this.http.get(`${this.besUrl}/user/`+data);
+    return this.http.get(`${this.besUrl}/user/`+data,this.getAuthHeaders());
   }
   deleteUser(data:any){
-    return this.http.delete(`${this.besUrl}/user/`+data);
+    return this.http.delete(`${this.besUrl}/user/`+data,this.getAuthHeaders());
   }
   userUpdate(data:any, id:any){
-    return this.http.post(`${this.besUrl}/user/${id}`,data);
+    console.log(data);
+    return this.http.post(`${this.besUrl}/user/${id}`,data,this.getAuthHeaders());
   }
 
   //order Status
 
   getOrderStatus(){
-    return this.http.get(`${this.besUrl}/orderStatus`);
+    return this.http.get(`${this.besUrl}/orderStatus`,this.getAuthHeaders());
   }
   getOrderStatusById(data:any){
-    return this.http.get(`${this.besUrl}/orderStatus/`+data);
+    return this.http.get(`${this.besUrl}/orderStatus/`+data,this.getAuthHeaders());
   }
   deleteOrderStatus(data:any){
-    return this.http.delete(`${this.besUrl}/orderStatus/`+data);
+    return this.http.delete(`${this.besUrl}/orderStatus/`+data,this.getAuthHeaders());
   }
   submitOrderStatus(data:any){
-    return this.http.post<OrderStatus[]>(`${this.besUrl}/orderStatus`,data);
+    return this.http.post<OrderStatus[]>(`${this.besUrl}/orderStatus`,data,this.getAuthHeaders());
   }
   updateOrderStatus(data:any, id:any){
-    return this.http.post<OrderStatus>(`${this.besUrl}/orderStatus/${id}`,data);
+    return this.http.post<OrderStatus>(`${this.besUrl}/orderStatus/${id}`,data,this.getAuthHeaders());
   }
 
 //Food Status
 
   getFoodStatus(){
-    return this.http.get(`${this.besUrl}/foodStatus`);
+    return this.http.get(`${this.besUrl}/foodStatus`,this.getAuthHeaders());
   }
   getFoodStatusById(data:any){
-    return this.http.get(`${this.besUrl}/foodStatus/`+data);
+    return this.http.get(`${this.besUrl}/foodStatus/`+data,this.getAuthHeaders());
   }
   deleteFoodStatus(data:any){
-    return this.http.delete(`${this.besUrl}/foodStatus/`+data);
+    return this.http.delete(`${this.besUrl}/foodStatus/`+data,this.getAuthHeaders());
   }
   submitFoodStatus(data:any){
-    return this.http.post<FoodStatus[]>(`${this.besUrl}/foodStatus`,data);
+    return this.http.post<FoodStatus[]>(`${this.besUrl}/foodStatus`,data,this.getAuthHeaders());
   }
  updateFoodStatus(data:any, id:any){
-    return this.http.post<FoodStatus>(`${this.besUrl}/foodStatus/${id}`,data);
+    return this.http.post<FoodStatus>(`${this.besUrl}/foodStatus/${id}`,data,this.getAuthHeaders());
   }
 
   //Item Category
 
   getItemCategory(){
-    return this.http.get(`${this.besUrl}/itemCategory`);
+    return this.http.get(`${this.besUrl}/itemCategory`,this.getAuthHeaders());
   }
   getItemCategoryById(data:any){
-    return this.http.get(`${this.besUrl}/itemCategory/`+data);
+    return this.http.get(`${this.besUrl}/itemCategory/`+data,this.getAuthHeaders());
   }
   deleteItemCategory(data:any){
-    return this.http.delete(`${this.besUrl}/itemCategory/`+data);
+    return this.http.delete(`${this.besUrl}/itemCategory/`+data,this.getAuthHeaders());
   }
   submitItemCategory(data:any){
-    return this.http.post<FoodStatus[]>(`${this.besUrl}/itemCategory`,data);
+    return this.http.post<FoodStatus[]>(`${this.besUrl}/itemCategory`,data,this.getAuthHeaders());
   }
  updateItemCategory(data:any, id:any){
-    return this.http.post<FoodStatus>(`${this.besUrl}/itemCategory/${id}`,data);
+    return this.http.post<FoodStatus>(`${this.besUrl}/itemCategory/${id}`,data,this.getAuthHeaders());
   }
   //Food
 
   getFood(){
-    return this.http.get(`${this.besUrl}/foodItems`);
+    return this.http.get(`${this.besUrl}/foodItems`,this.getAuthHeaders());
   }
   getFoodById(data:any){
-    return this.http.get(`${this.besUrl}/foodItems/`+data);
+    return this.http.get(`${this.besUrl}/foodItems/`+data,this.getAuthHeaders());
   }
   getFoodByItemCateId(data:any){
-    return this.http.get(`${this.besUrl}/foodsByItemCateId/`+data);
+    return this.http.get(`${this.besUrl}/foodsByItemCateId/`+data,this.getAuthHeaders());
   }
   deleteFood(data:any){
-    return this.http.delete(`${this.besUrl}/foodItems/`+data);
+    return this.http.delete(`${this.besUrl}/foodItems/`+data,this.getAuthHeaders());
   }
   submitFood(data:any){
-    return this.http.post<Food[]>(`${this.besUrl}/foodItems`,data);
+    return this.http.post<Food[]>(`${this.besUrl}/foodItems`,data,this.getAuthHeaders());
   }
  updateFood(data:any, id:any){
-    return this.http.post<Food>(`${this.besUrl}/foodItems/${id}`,data);
+    return this.http.post<Food>(`${this.besUrl}/foodItems/${id}`,data,this.getAuthHeaders());
   }
 
 //Order
   submitOrder(data:any){
-    return this.http.post<Order[]>(`${this.besUrl}/orders`,data);
+    return this.http.post<Order[]>(`${this.besUrl}/orders`,data,this.getAuthHeaders());
   }
   getOrders(){
-    return this.http.get(`${this.besUrl}/orders`);
+    return this.http.get(`${this.besUrl}/orders`,this.getAuthHeaders());
   }
   deleteOrders(data:any){
-    return this.http.delete(`${this.besUrl}/orders/`+data);
+    return this.http.delete(`${this.besUrl}/orders/`+data,this.getAuthHeaders());
   }
 }
 

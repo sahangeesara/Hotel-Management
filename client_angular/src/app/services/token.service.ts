@@ -28,9 +28,10 @@ export class TokenService {
     const token =this.get();
     if(this.get()){
       const payload = this.payload(token);
-      if (payload){
-        return Object.values(this.iss).indexOf(payload.iss) >-1 ?true:false;
+      if (payload) {
+        return Object.values(this.iss).includes(payload.iss);
       }
+
     }
     return false;
   }
@@ -46,4 +47,17 @@ export class TokenService {
   loggedIn(){
     return this.isValid();
   }
+
+  getExpiry(): number | null {
+    const token = this.get();
+    if (!token) return null;
+
+    const payload = this.payload(token);
+    if (payload && payload.exp) {
+      return payload.exp * 1000; // Convert to milliseconds
+    }
+
+    return null;
+  }
+
 }
