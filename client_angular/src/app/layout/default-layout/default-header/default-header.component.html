@@ -61,16 +61,33 @@
 
 <ng-template #userDropdown>
   <c-dropdown [popperOptions]="{ placement: 'bottom-start' }" variant="nav-item">
-    <button [caret]="false" cDropdownToggle class="py-0 pe-0" aria-label="Open user menu">
-      <c-avatar
-        shape="rounded-1"
-        [size]="'md'"
-        src="./assets/images/avatars/8.jpg"
-        status="success"
-        textColor="primary"
-        alt="User avatar"
-      />
-    </button>
+    <ng-container *ngIf="customers && customers.length > 0; else noCustomers">
+      <ng-container *ngFor="let customer of customers;">
+        <button [caret]="false" cDropdownToggle class="py-0 pe-0" aria-label="Open user menu" style="border: none !important;">
+          <c-avatar
+            shape="circle"
+            [size]="'md'"
+            [src]="customer.image_url"
+            status="success"
+            textColor="primary"
+            alt="User avatar"
+          />
+        </button>
+      </ng-container>
+    </ng-container>
+    <!-- Else Block -->
+    <ng-template #noCustomers>
+      <button [caret]="false" cDropdownToggle class="py-0 pe-0" aria-label="Open user menu">
+        <c-avatar
+          shape="rounded-1"
+          [size]="'md'"
+          src="./assets/images/avatars/8.jpg"
+          status="success"
+          textColor="primary"
+          alt="User avatar"
+        />
+      </button>
+    </ng-template>
     <ul cDropdownMenu class="pt-0 w-auto">
       <li>
         <h6 cDropdownHeader class="bg-body-secondary text-body-secondary fw-semibold py-2">
@@ -79,7 +96,7 @@
       </li>
       <li></li>
       <li>
-        <a cDropdownItem routerLink="">
+        <a cDropdownItem routerLink="/profile/user_profile">
           <svg cIcon class="me-2" name="cilUser"></svg>
           Profile
         </a>

@@ -1,0 +1,256 @@
+<!-- Toggle Button -->
+<button class="btn btn-secondary mt-3 mb-3" (click)="toggleView()">
+  {{ showUserDetails ? 'Update User' : 'View User Details' }}
+</button>
+
+<div *ngIf="showUserDetails" id="userDetails" class=" mb-5">
+<div *ngFor="let type of user; let key = index; trackBy: trackByFn">
+
+  <c-row>
+    <c-col [xs]="12">
+      <div class="card mt-3" style="border-radius: 25px !important;">
+        <div class="card-body">
+          <c-row>
+          <h3 class="text-center" style="font-weight: bold; color: cadetblue">Your Details</h3>
+            <div class="mt-5">
+              <div *ngFor="let customer of customers; let key = index; trackBy: trackByFn">
+                <c-row>
+                    <c-col [xs]="6" class="d-flex ">
+                      <div class="card mt-3 detCard">
+                        <div class="card-body">
+                      <img  src="{{customer.image_url}}" width="250px" height="250px" class="mb-5 image">
+                          <div class=" d-flex justify-content-between">
+                            <h4 class="mb-0" style="color: goldenrod">
+                              {{ type.name || 'User Name' }} |
+                            </h4>
+                            <h4 class="mb-0" style="color: cornflowerblue">
+                              {{ type.role?.name || 'User Role' }}
+                            </h4>
+                          </div>
+
+                        </div>
+
+                      </div>
+                    </c-col>
+
+                  <c-col [xs]="6" class="mt-1">
+                    <div class="card detCard2">
+                      <div class="card-body">
+                          <c-row>
+                            <c-col [xs]="6">
+                              <h6 style="font-weight: bold">Your Email:</h6>
+                              <p>{{ type.email|| 'No email available' }}</p>
+                            </c-col>
+
+                            <c-col [xs]="6">
+                              <h6 style="font-weight: bold">Your Phone Number:</h6>
+                              <p>{{ customer.tel_no|| 'No  Phone Number available' }}</p>
+                            </c-col>
+                            <c-col [xs]="6">
+                              <h6 style="font-weight: bold">Your Nic:</h6>
+                              <p>{{ customer.nic|| 'No  Nic Number available' }}</p>
+                            </c-col>
+                            <c-col [xs]="6">
+                              <h6 style="font-weight: bold">Your Address:</h6>
+                              <p>{{ customer.address|| 'No  Address Number available' }}</p>
+                            </c-col>
+                            <c-col [xs]="6">
+                            <h6 style="font-weight: bold">Your City:</h6>
+                            <p>{{ customer.city|| 'No  City Number available' }}</p>
+                            </c-col>
+                              <c-col [xs]="6">
+                                <h6 style="font-weight: bold">Your Country:</h6>
+                                <p>{{ customer.country|| 'No  Country Number available' }}</p>
+                              </c-col>
+                          </c-row>
+                      </div>
+                    </div>
+                  </c-col>
+                </c-row>
+              </div>
+            </div>
+          </c-row>
+        </div>
+      </div>
+    </c-col>
+  </c-row>
+</div>
+</div>
+
+<div *ngIf="!showUserDetails" id="addForm" >
+  <c-row>
+
+    <c-col [xs]="12">
+      <div class="card">
+
+          <h3 class="mb-0 text-center mt-3" style="font-weight: bold; color: cadetblue">User Form</h3>
+
+        <div class="card-body m-5">
+          <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+            <c-row>
+              <c-col [xs]="4">
+                <input
+                  cFormControl
+                  type="hidden"
+                  class="form-control"
+                  id="user_id"
+                  formControlName="user_id"
+                />
+            <!-- Name -->
+            <div class="mb-3">
+              <label for="name" class="form-label">Your Name</label>
+              <input
+                cFormControl
+                type="text"
+                class="form-control"
+                id="name"
+                formControlName="name"
+                placeholder="Enter name"
+                readonly="readonly"
+              />
+<!--              <div *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched" class="invalid-feedback">-->
+<!--                Name is required.-->
+<!--              </div>-->
+            </div>
+              </c-col>
+              <c-col [xs]="4">
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Your Email</label>
+              <input
+                cFormControl
+                type="email"
+                class="form-control"
+                id="email"
+                formControlName="email"
+                placeholder="Enter email"
+                readonly="readonly"
+              />
+              <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="invalid-feedback">
+                Enter a valid email address.
+              </div>
+            </div>
+              </c-col>
+              <c-col [xs]="4">
+            <!-- Gender -->
+                <div class="mb-3">
+                  <label cLabel>Your Gender:</label>
+
+                  <select aria-label="Select User Gender" cSelect name="gender_id" formControlName="gender_id">
+                    <option selected="selected" value="">Select User Gender</option>
+                    <option *ngFor="let gender of userGenders" [value]="gender.id">
+                      {{ gender.name }}
+                    </option>
+                  </select>
+                </div>
+              </c-col>
+              <c-col [xs]="4">
+            <!-- Address -->
+            <div class="mb-3">
+              <label cLabel for="address" class="form-label">Your Address</label>
+              <input
+                cFormControl
+                type="text"
+                class="form-control"
+                id="address"
+                formControlName="address"
+                placeholder="Enter address"
+
+              />
+              <div *ngIf="userForm.get('address')?.invalid && userForm.get('address')?.touched" class="invalid-feedback">
+                address is required
+              </div>
+            </div>
+              </c-col>
+                <c-col [xs]="4">
+            <!-- Phone Number -->
+            <div class="mb-3">
+              <label cLabel for="tellNo" class="form-label">Your Phone Number</label>
+              <input
+                cFormControl
+                type="text"
+                class="form-control"
+                id="tellNo"
+                formControlName="tellNo"
+                placeholder="Enter Phone Number"
+
+              />
+              <div *ngIf="userForm.get('tellNo')?.invalid && userForm.get('tellNo')?.touched" class="invalid-feedback">
+                Phone Number is required
+              </div>
+            </div>
+              </c-col>
+              <c-col [xs]="4">
+            <!--Nic -->
+            <div class="mb-3">
+              <label cLabel for="nic" class="form-label">Your Nic</label>
+              <input
+                cFormControl
+                type="text"
+                class="form-control"
+                id="nic"
+                formControlName="nic"
+                placeholder="Enter Nic"
+
+              />
+              <div *ngIf="userForm.get('nic')?.invalid && userForm.get('nic')?.touched" class="invalid-feedback">
+                Nic is required
+              </div>
+            </div>
+              </c-col>
+              <c-col [xs]="4">
+            <!--Country -->
+            <div class="mb-3">
+              <label cLabel for="country" class="form-label">Your Country</label>
+              <input
+                cFormControl
+                type="text"
+                class="form-control"
+                id="country"
+                formControlName="country"
+                placeholder="Enter Country"
+
+              />
+              <div *ngIf="userForm.get('country')?.invalid && userForm.get('country')?.touched" class="invalid-feedback">
+                Country is required
+              </div>
+            </div>
+              </c-col>
+              <c-col [xs]="4">
+            <!--City -->
+            <div class="mb-3">
+              <label cLabel for="city" class="form-label">Your Country</label>
+              <input
+                cFormControl
+                type="text"
+                class="form-control"
+                id="city"
+                formControlName="city"
+                placeholder="Enter City"
+
+              />
+              <div *ngIf="userForm.get('city')?.invalid && userForm.get('city')?.touched" class="invalid-feedback">
+                City is required
+              </div>
+            </div>
+              </c-col>
+              <c-col [xs]="4">
+                <div class="mb-3">
+                  <label cLabel for="inputImage-1">User Image: </label>
+                  <input cFormControl  id="inputImage-1" (change)="selectImage($event)" name="image" formControlName="image" sizing="sm" type="file" />
+
+                </div>
+              </c-col>
+            </c-row>
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-ghost-info" style="color:black" [disabled]="userForm.invalid">Add User</button>&ngsp;
+            <button type="button" class="btn btn-ghost-success" style="color:black" (click)="clearForm()" >Clear User</button>&ngsp;
+            <button type="button" class="btn btn-ghost-danger" style="color:black" [disabled]="userForm.invalid">Update User</button>
+          </form>
+        </div>
+      </div>
+    </c-col>
+
+  </c-row>
+</div>
+

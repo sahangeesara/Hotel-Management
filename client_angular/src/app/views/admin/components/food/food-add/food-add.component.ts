@@ -104,7 +104,7 @@ export class FoodAddComponent {
       reader.readAsDataURL(this.file);
       reader.onload = () => {
         this.imageUrl = reader.result as string;
-        // console.log(this.imageUrl)
+
       };
     }
 

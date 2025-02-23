@@ -14,12 +14,14 @@ import { Order } from "../entities/order";
 import { TokenService } from './token.service';
 import {RoomsCategory} from "../entities/roomsCategory";
 import {EmployeeType} from "../entities/employeeTypee";
+import {Role} from "../entities/Role";
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AllServiceService {
+  // private besUrl = 'http://192.168.8.182:8000/api';
   private besUrl = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient, private tokenService: TokenService) {}
@@ -49,6 +51,10 @@ export class AllServiceService {
   }
   passwordChange(data: any) {
     return this.http.put(`${this.besUrl}/passwordReset`, data, this.getAuthHeaders());
+  }
+  userProfile(){
+    return this.http.get(`${this.besUrl}/me`, this.getAuthHeaders());
+
   }
 
   //Rooms Category
@@ -285,6 +291,45 @@ export class AllServiceService {
   deleteOrders(data:any){
     return this.http.delete(`${this.besUrl}/orders/`+data,this.getAuthHeaders());
   }
+
+  //User Role
+  getUserRole(){
+    return this.http.get(`${this.besUrl}/role`,this.getAuthHeaders());
+  }
+  getUserRoleById(data:any){
+    return this.http.get(`${this.besUrl}/role/`+data,this.getAuthHeaders());
+  }
+  updateUserRole(data:any, id:any){
+    return this.http.post(`${this.besUrl}/role/${id}`,data,this.getAuthHeaders());
+  }
+  UserRoleDelete(data:any){
+    return this.http.delete(`${this.besUrl}/role/`+data,this.getAuthHeaders());
+  }
+  submitUserRole(data:any){
+    return this.http.post<Role[]>(`${this.besUrl}/role`,data,this.getAuthHeaders());
+  }
+
+  //Customer
+  getCustomer(){
+    return this.http.get(`${this.besUrl}/customer`,this.getAuthHeaders());
+  }
+  updateCustomer(data:any, id:any){
+    return this.http.post(`${this.besUrl}/customer/${id}`,data,this.getAuthHeaders());
+  }
+  getCustomerById(data:any){
+    return this.http.get(`${this.besUrl}/customer/`+ data,this.getAuthHeaders());
+
+  }
+  customerDelete(data:any){
+    return this.http.delete(`${this.besUrl}/customer/`+data,this.getAuthHeaders());
+  }
+  submitCustomer(data:any){
+    return this.http.post<Employee[]>(`${this.besUrl}/customer`,data,this.getAuthHeaders());
+  }
+
+
+
+
 }
 
 

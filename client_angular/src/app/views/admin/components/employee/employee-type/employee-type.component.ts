@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {
-  ButtonDirective, ColComponent,
+  ButtonDirective,
+  ColComponent,
   FormControlDirective,
   FormDirective,
   FormLabelDirective,
@@ -10,7 +11,6 @@ import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, V
 import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
-import {Employee} from "../../../../../entities/employee";
 import {EmployeeType} from "../../../../../entities/employeeTypee";
 import { IconDirective } from '@coreui/icons-angular';
 import {catchError, from, throwError} from "rxjs";
@@ -40,7 +40,8 @@ export class EmployeeTypeComponent {
   formData = new FormData();
   empTypeForm: FormGroup;
   public error=null;
-
+  isUpdateVisible: boolean = false;
+  isSubmitVisible: boolean = true;
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private router:Router,
@@ -144,7 +145,8 @@ export class EmployeeTypeComponent {
         console.error('Error fetching employee:', error);
       }
     );
-
+    this.isUpdateVisible = true;
+    this.isSubmitVisible = false;
   }
 
   getEmpTypeById(id:any) {

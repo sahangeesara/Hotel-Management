@@ -1,0 +1,32 @@
+.image{
+  margin: 50px !important;
+  border-radius: 200px !important;
+}
+.shadow{
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2) !important; /* Added shadow */
+}
+.card{
+  @extend .shadow;
+}
+.detCard{
+  @extend .shadow;
+  border-radius: 25px !important;
+  mso-border-shadow: yes !important;
+  width: 400px !important;
+  height: 500px !important;
+  margin-left: 50px !important;
+  margin-bottom: 50px !important;
+}
+.detCard2{
+  @extend .shadow;
+  border-radius: 50px !important;
+  width: 600px !important;
+  height: 350px !important;
+  margin-left: -50px !important;
+  margin-top: 70px !important;
+  padding: 50px !important;
+  padding-left: 80px !important;
+}
+label{
+  font-weight: bold;
+}

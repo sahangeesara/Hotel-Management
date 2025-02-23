@@ -8,6 +8,7 @@ import {TokenService} from "./token.service";
 })
 export class SearchService {
   private besUrl ='http://localhost:8000/api';
+  // private besUrl ='http://192.168.8.182:8000/api';
 
   constructor(private http: HttpClient, private tokenService: TokenService) {}
 
@@ -41,6 +42,7 @@ export class SearchService {
 
   getCountGuest(){return this.http.get(`${this.besUrl}/countGuest`,this.getAuthHeaders());}
 
+  getCountOrder(){return this.http.get(`${this.besUrl}/countOrder`,this.getAuthHeaders());}
 
   //guest
   getGuestByDate(data:any){
@@ -48,5 +50,17 @@ export class SearchService {
   }
   getGuestByGender(data:any){
     return this.http.get(`${this.besUrl}/guestByGender/${data}`,this.getAuthHeaders());
+  }
+
+
+  //Customer
+
+  getAthCustomer(){
+    return this.http.get(`${this.besUrl}/athCustomer`,this.getAuthHeaders());
+  }
+
+  getCountCustomer() {
+    return this.http.get(`${this.besUrl}/countCustomer`,this.getAuthHeaders());
+
   }
 }

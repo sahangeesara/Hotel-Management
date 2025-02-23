@@ -72,6 +72,12 @@ export const routes: Routes = [
         loadChildren: () => import('./views/admin/components/routes').then((m) => m.routes),
         data: { preload: true }
       },
+      {
+        path: 'profile',
+        loadChildren: () => import('./views/admin/components/routes').then((m) => m.routes),
+        data: { preload: true }
+      },
+
       // {
       //   path: 'room_category',
       //   loadChildren: () => import('./views/components/routes').then((m) => m.routes)

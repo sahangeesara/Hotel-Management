@@ -31,6 +31,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { delay, filter, map, tap } from 'rxjs/operators';
 import {AuthService} from "../../../services/auth.service";
 import {NotificationService} from "../../../services/notification.service";
+import {SearchService} from "../../../services/search.service";
 
 @Component({
   selector: 'app-default-header',
@@ -55,8 +56,10 @@ export class DefaultHeaderComponent extends HeaderComponent {
     const currentMode = this.colorMode();
     return this.colorModes.find(mode=> mode.name === currentMode)?.icon ?? 'cilSun';
   });
+  customers: any[] = [];
 
-  constructor(private authservice:AuthService,private notificationService: NotificationService) {
+  constructor(private authservice:AuthService,private notificationService: NotificationService,private searchServe: SearchService,
+  ) {
     super();
     this.#colorModeService.localStorageItemName.set('coreui-free-angular-admin-template-theme-default');
     this.#colorModeService.eventName.set('ColorSchemeChange');
@@ -163,10 +166,21 @@ export class DefaultHeaderComponent extends HeaderComponent {
     this.notificationService.listenForOrderSuccess().subscribe((data) => {
       this.notifications.push(`Order #${data.id} was successful!`);
     });
+    this.getAthCustomer();
   }
 
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
   }
-
+  getAthCustomer(){
+    this.searchServe.getAthCustomer().subscribe(
+      (response: any) => {
+        this.customers = Array.isArray(response) ? response : [response];
+        console.log(this.customers);
+      },
+      (error) => {
+        console.error('Error fetching Food:', error);
+      }
+    );
+  }
 }

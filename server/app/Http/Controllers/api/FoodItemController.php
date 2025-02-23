@@ -21,9 +21,6 @@ class FoodItemController extends Controller
                 ->where('is_active',1)
                 ->orderBy('created_at',"DESC")
                 ->paginate(20);
-//                $foodItems->each(function($row) {
-//                    $row->append('image_url');
-//                });
 
             return response()->json($foodItems);
         } catch (\Exception $e) {
@@ -38,6 +35,7 @@ class FoodItemController extends Controller
      */
     public function store(Request $request)
     {
+
         $data = json_decode($request->form, true);
         $validatedData = Validator::make($data, [
 

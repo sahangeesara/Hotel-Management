@@ -24,6 +24,8 @@ import {SearchService} from "../../../services/search.service";
 })
 export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
   countGust: number | undefined;
+  countOrder: number | undefined;
+  countCustomer: number | undefined;
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
@@ -131,8 +133,11 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
   ngOnInit(): void {
     this.setData();
     this.getCountGuest();
+    this.getCountOrder();
+    this.getCountCustomer();
   }
 
+  //count Functions
   getCountGuest() {
     this.searchServe.getCountGuest().subscribe(
       (value: any) => {
@@ -143,6 +148,27 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
       }
     );
   }
+  getCountOrder() {
+    this.searchServe.getCountOrder().subscribe(
+      (value: any) => {
+        this.countOrder = value.orderCount;
+      },
+      (error) => {
+        console.error('Error fetching rooms Book:', error);
+      }
+    );
+  }
+  getCountCustomer() {
+    this.searchServe.getCountCustomer().subscribe(
+      (value: any) => {
+        this.countCustomer = value.customerCount;
+      },
+      (error) => {
+        console.error('Error fetching rooms Book:', error);
+      }
+    );
+  }
+//end count Functions
 
   ngAfterContentInit(): void {
     this.changeDetectorRef.detectChanges();

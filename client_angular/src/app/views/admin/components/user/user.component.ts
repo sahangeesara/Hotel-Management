@@ -176,11 +176,11 @@ export class UserComponent {
   getUserById(id: any) {
     this.allServe.getUserById(id).subscribe(
       (user: any) => {
-        console.log(user.email);
+
         this.userIdField.setValue(user.id); // Setting user ID
         this.userNameField.setValue(user.name); // Setting user name
         this.userEmailField.setValue(user.email); // Setting user email
-        this.userPasswordField.setValue(''); 
+        this.userPasswordField.setValue('');
       },
       (error) => {
         console.error('Error fetching user data:', error);

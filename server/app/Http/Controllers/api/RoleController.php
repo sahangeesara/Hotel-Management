@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class RoleController extends Controller
 {
@@ -30,7 +31,18 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $role = Role::create($request->all());
+        $data = json_decode($request->form, true);
+        $validatedData = Validator::make($data, [
+
+            'name' => 'required|max:255',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+        $role =new Role();
+        $role->name = $data['name'];
+        $role->save();
+
         return json_encode($role);
     }
 
@@ -54,8 +66,17 @@ class RoleController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $data = json_decode($request->form, true);
+        $validatedData = Validator::make($data, [
+
+            'name' => 'required|max:255',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
         $role = Role::findOrFail($id);
-        $role->update($request->all());
+        $role->name = $data['name'];
+        $role->save();
 
         return json_encode($role);
     }

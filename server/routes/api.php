@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\CustomerController;
 use App\Http\Controllers\api\EmployeeController;
 use App\Http\Controllers\api\EmployeeTypeController;
 use App\Http\Controllers\api\FoodItemController;
@@ -46,7 +47,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:api'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
-    Route::post('me', [AuthController::class, 'me']);
+    Route::get('me', [AuthController::class, 'me']);
     Route::put('passwordReset', [UserController::class, 'changePassword']);
 
 
@@ -74,6 +75,14 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('employeesByNameAndGender/{e_name}/{gen_id}', [EmployeeController::class, 'searchEmployeeByNameAndGender']);
     Route::get('employeesByNameAndType/{e_name}/{type_id}', [EmployeeController::class, 'searchEmployeeByNameAndType']);
 
+    //Customer
+    Route::get('athCustomer', [CustomerController::class, 'athCustomer']);
+    Route::get('countCustomer', [CustomerController::class, 'countCustomer']);
+
+    //Order
+    Route::get('countOrder', [OrderController::class, 'countOrder']);
+
+
     // Resource routes (Require authentication)
     Route::apiResources([
         'user' => UserController::class,
@@ -91,5 +100,6 @@ Route::middleware(['auth:api'])->group(function () {
         'rooms' => RoomsController::class,
         'genders' => GenderController::class,
         'role' => RoleController::class,
+        'customer' => CustomerController::class,
     ]);
 });

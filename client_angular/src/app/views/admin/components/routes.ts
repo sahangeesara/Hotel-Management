@@ -16,4 +16,11 @@ export const routes: Routes = [
       title: 'Role'
     }
   },
+  {
+    path: 'user_profile',
+    loadComponent: () => import('./profile/profile.component').then(m => m.ProfileComponent),
+    data: {
+      title: 'Profile'
+    }
+  },
 ];

@@ -99,6 +99,17 @@ class OrderController extends Controller
         }
     }
 
+    public function countOrder()
+    {
+        $oneWeekAgo = Carbon::now()->subWeek();
+
+        $orderCount = Order::with(['room', 'guest', 'orderStatus'])
+            ->whereBetween('created_at', [$oneWeekAgo, Carbon::now()])
+            ->where('is_active', 1)
+            ->count();
+
+        return response()->json(['orderCount' => $orderCount]);
+    }
     /**
      * Display the specified resource.
      */

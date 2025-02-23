@@ -5,8 +5,10 @@ import { Injectable } from '@angular/core';
 })
 export class TokenService {
   private iss={
+    // login : 'http://192.168.8.182:8000/api/login',
+    // signup : 'http://192.168.8.182:8000/api/signup',
     login : 'http://localhost:8000/api/login',
-    signup : 'http://localhost:8000/api/signup'
+    signup : 'http://localhost:8000/api/api/signup'
   };
   constructor() { }
   handle(token: any){
