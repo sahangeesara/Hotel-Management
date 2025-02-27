@@ -85,6 +85,26 @@ export class EmployeeViewComponent {
     return this.empSearchForm.controls['employee_type_id'] as FormControl;
   }
 
+  // search() {
+  //   const filters: { name?: any; gender?: any; type?: any } = {};
+  //
+  //   if (this.empSearchNameField.value) {
+  //     filters.name = this.empSearchNameField.value;
+  //   }
+  //   if (this.empSearchGenderField.value) {
+  //     filters.gender = this.empSearchGenderField.value;
+  //   }
+  //   if (this.empSearchTypeField.value) {
+  //     filters.type = this.empSearchTypeField.value;
+  //   }
+  //
+  //   this.searchServe.getEmployees(filters).subscribe(
+  //     (data: any) => { this.employees = data; },
+  //     (error) => { console.error('Error fetching employees:', error); }
+  //   );
+  // }
+
+
   search() {
     let s_name = this.empSearchNameField.value;
     let s_gender = this.empSearchGenderField.value;

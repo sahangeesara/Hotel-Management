@@ -88,10 +88,7 @@ export class FoodAddComponent {
 
 
   clearForm() {
-    this.foodNameField.setValue("");
-    this.foodQuantityField.setValue("");
-    this.foodAmountField.setValue("");
-    this.foodImageField.setValue("");
+    this.foodForm.reset();
     this.itemCategoryField.setValue("Select Item Category");
     this.foodStatusField.setValue("Select Food Status");
 

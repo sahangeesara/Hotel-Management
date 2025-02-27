@@ -99,7 +99,6 @@ getAthCustomer(){
   this.searchServe.getAthCustomer().subscribe(
     (response: any) => {
       this.customers = Array.isArray(response) ? response : [response];
-      console.log(this.customers);
     },
     (error) => {
       console.error('Error fetching Food:', error);

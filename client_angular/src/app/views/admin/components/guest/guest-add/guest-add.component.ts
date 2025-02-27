@@ -38,6 +38,7 @@ import {map} from "rxjs/operators";
 export class GuestAddComponent {
   public error=null;
 
+  guest:any;
   guestGenders: any[] = [];
   guides: any[] = [];
   formData = new FormData();
@@ -64,30 +65,7 @@ export class GuestAddComponent {
     });
 
   }
-  get guestNameField(): FormControl {
-    return this.guestForm.controls['name'] as FormControl;
-  }
-  get guestAddressField(): FormControl {
-    return this.guestForm.controls['address'] as FormControl;
-  }
-  get guestEmailField(): FormControl {
-    return this.guestForm.controls['email'] as FormControl;
-  }
-  get guestCityField(): FormControl {
-    return this.guestForm.controls['city'] as FormControl;
-  }
-  get guestNicField(): FormControl {
-    return this.guestForm.controls['nic'] as FormControl;
-  }
-  get guestTelNoField(): FormControl {
-    return this.guestForm.controls['tel_no'] as FormControl;
-  }
-  get guestCountryField(): FormControl {
-    return this.guestForm.controls['country'] as FormControl;
-  }
-  get guestTypeField(): FormControl {
-    return this.guestForm.controls['guest_type'] as FormControl;
-  }
+
   get guestGenField(): FormControl {
     return this.guestForm.controls['gender_id'] as FormControl;
   }
@@ -96,16 +74,11 @@ export class GuestAddComponent {
   }
 
   clearForm() {
-    this.guestNameField.setValue("");
-    this.guestAddressField.setValue("");
-    this.guestNicField.setValue("");
-    this.guestCityField.setValue("");
-    this.guestTelNoField.setValue("");
+
+    this.guestForm.reset();
     this.guestGenField.setValue("Select Guest Gender");
     this.guideField.setValue("Select Guide");
-    this.guestEmailField.setValue("");
-    this.guestTypeField.setValue("");
-    this.guestCountryField.setValue("");
+
 
   }
 
@@ -113,20 +86,9 @@ export class GuestAddComponent {
     this.formData = new FormData();
     if (this.guestForm.valid) {
 
-      let guest = new Guest();
+     this.guest = this.guestForm.getRawValue();
 
-      guest.name= this.guestNameField.value;
-      guest.address= this.guestAddressField.value;
-      guest.nic= this.guestNicField.value;
-      guest.city= this.guestCityField.value;
-      guest.tel_no= this.guestTelNoField.value;
-      guest.gender_id= this.guestGenField.value;
-      guest.guide_id= this.guideField.value;
-      guest.email= this.guestEmailField.value;
-      guest.guest_type= this.guestTypeField.value;
-      guest.country= this.guestCountryField.value;
-
-      this.formData.append('form', JSON.stringify(guest));
+      this.formData.append('form', JSON.stringify(this.guest));
       const submissionObservable = from( this.allServe.submitGuest(this.formData));
 
       submissionObservable

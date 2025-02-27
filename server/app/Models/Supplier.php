@@ -5,35 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 
-class Customer extends Model
+class Supplier extends Model
 {
     use HasFactory;
     protected $fillable = [
         'id',
-        'user_id',
+        'supp_no',
+        'company_name',
+        'name',
         'address',
+        'email',
         'city',
-        'country',
         'nic',
         'gender_id',
         'tel_no',
-        'image',
-        'image_url',
         'is_active',
     ];
-    protected $appends = ['image_url'];
+
     public function gender(): BelongsTo
     {
         return $this->belongsTo(Gender::class,'gender_id');
     }
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class,'user_id');
-    }
-    protected function getImageUrlAttribute()
-    {
-        return $this->attributes['image_url'] = url(Storage::url($this->image));
-    }
+
 }

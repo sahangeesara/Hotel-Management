@@ -1,0 +1,179 @@
+<button class="btn btn-secondary mt-3 mb-3" (click)="toggleView()">
+  {{ showSupplierDetails ? 'View Supplier Details' : 'Supplier Add Form' }}
+</button>
+<div *ngIf="showSupplierDetails">
+  <h3> <strong><em> Supplier Add Form </em> </strong></h3>
+  <form cForm [formGroup]="supplierAddForm" (ngSubmit)="onSubmit()">
+    <c-row>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputName-1">Supplier Name: </label>
+          <input cFormControl id="inputName-1" type="text" sizing="sm" name="name" formControlName="name">
+          <div cFormText>
+            ex: Kasun Dilruwan
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputEmail-1">Supplier Email address</label>
+          <input cFormControl id="inputEmail-1" type="email" sizing="sm" formControlName="email" name="email">
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputAddress-1">Supplier Address</label>
+          <input cFormControl id="inputAddress-1" type="text" name="address" formControlName="address" sizing="sm">
+          <div cFormText>
+            ex: 228 Panchikawatte Road, 10
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputCity-1">Supplier City</label>
+          <input cFormControl id="inputCity-1" type="text" name="city" formControlName="city" sizing="sm">
+          <div cFormText>
+            ex: Colombo
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputNic-1">Supplier Nic:</label>
+          <input cFormControl id="inputNic-1" type="text" name="nic" formControlName="nic" sizing="sm">
+          <div cFormText>
+            ex: 992404545V
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputTel_no-1">Supplier tel no:</label>
+          <input cFormControl id="inputTel_no-1" type="text" name="tel_no" formControlName="tel_no" sizing="sm">
+          <div cFormText>
+            ex: 078654545
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel>Company Name:</label>
+          <input cFormControl id="inputCompanyName-1" type="text" name="company_name" formControlName="company_name" sizing="sm">
+          <div cFormText>
+            ex: Anchor
+          </div>
+
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel>Employee Gender:</label>
+
+          <select aria-label="Select Supplier Gender" cSelect name="gender_id" formControlName="gender_id">
+            <option selected="selected" value="">Select Supplier Gender</option>
+            <option *ngFor="let gender of supplierGenders" [value]="gender.id">
+              {{ gender.name }}
+            </option>
+          </select>
+        </div>
+      </c-col>
+      <div  class="mb-3">
+        <input cButton color="primary" type="submit">&ngsp;
+        <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">
+      </div>
+    </c-row>
+  </form>
+
+</div>
+<hr/>
+
+<div *ngIf="!showSupplierDetails">
+  <div>
+  <h3> <strong><em> Supplier Search Form </em> </strong></h3>
+  <form cForm [formGroup]="supplierSearchForm" >
+    <c-row>
+      <c-col [xs]="3">
+        <div class="mb-3">
+          <label cLabel for="inputSearchName-1">Search Name: </label>
+          <input cFormControl id="inputSearchName-1" type="text" sizing="sm" name="searchName" formControlName="searchName">
+          <div cFormText>
+            ex: Kasun Dilruwan
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="3">
+        <div class="mb-3">
+          <label cLabel>Supplier Gender search:</label>
+
+          <select aria-label="Select Supplier Gender" cSelect name="search_gender_id" formControlName="search_gender_id">
+            <option selected="selected" value="">Select Supplier Gender</option>
+            <option *ngFor="let gender of supplierGenders" [value]="gender.id">
+              {{ gender.name }}
+            </option>
+          </select>
+        </div>
+      </c-col>
+    </c-row>
+    <input cButton color="success" style="color: white" type="button" (click)="search()" value="Search">&ngsp;
+    <input cButton color="danger" style="color: white" type="button" (click)="clearSearchForm()" value="Clear"> &ngsp;
+  </form>
+</div>
+
+<hr/>
+<h3>
+  <strong>
+    <em>
+      Supplier view Table
+    </em>
+  </strong>
+</h3>
+<table [striped]="true" cTable>
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Supplier Name</th>
+    <th scope="col">Supplier Gender</th>
+    <th scope="col">Supplier Address</th>
+    <th scope="col">Supplier Email</th>
+    <th scope="col">Supplier City</th>
+    <th scope="col">Supplier Nic</th>
+    <th scope="col">Supplier Company Name</th>
+    <th scope="col">Supplier Tel No</th>
+    <th scope="col">Action</th>
+  </tr>
+  </thead>
+  <tbody *ngIf="suppliers">
+  @for (type of suppliers; track type; let key = $index) {
+  <tr>
+    <th scope="row">{{key + 1}}</th>
+      <td>{{ type.name }}</td>
+      <td>{{ type.gender.name }}</td>
+      <td>{{ type.address }}</td>
+      <td>{{ type.email }}</td>
+      <td>{{ type.city }}</td>
+      <td>{{ type.nic }}</td>
+      <td>{{ type.company_name }}</td>
+      <td>{{ type.tel_no }}</td>
+       <td>
+      <button type="button" (click)="getShow(type.id)" cButton>  <svg cIcon name="cil-task" size="lg" title="Numbered List Icon" ></svg></button>
+       <button type="button" (click)="supplierDelete(type.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
+       </td>
+</tr>
+  }
+  </tbody>
+</table>
+</div>
+
+<c-modal id="liveDemoModal" [visible]="visible" (visibleChange)="handleLiveDemoChange($event)">
+  <c-modal-header>
+    <h5 cModalTitle> Supplier Update Form</h5>
+
+  </c-modal-header>
+  <c-modal-body><app-supplier-update></app-supplier-update></c-modal-body>
+  <c-modal-footer>
+    <button (click)="toggleLiveDemo()" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal>

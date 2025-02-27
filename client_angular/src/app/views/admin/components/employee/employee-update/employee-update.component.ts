@@ -40,7 +40,7 @@ export class EmployeeUpdateComponent {
   formData = new FormData();
   updateForm: FormGroup;
   public error=null;
-
+  emp:any;
 
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
@@ -61,27 +61,6 @@ export class EmployeeUpdateComponent {
       gender_id: ['', Validators.required],
     });
 
-  }
-  get empIdField(): FormControl {
-    return this.updateForm.controls['id'] as FormControl;
-  }
-  get empNameField(): FormControl {
-    return this.updateForm.controls['name'] as FormControl;
-  }
-  get empAddressField(): FormControl {
-    return this.updateForm.controls['address'] as FormControl;
-  }
-  get empEmailField(): FormControl {
-    return this.updateForm.controls['email'] as FormControl;
-  }
-  get empCityField(): FormControl {
-    return this.updateForm.controls['city'] as FormControl;
-  }
-  get empNicField(): FormControl {
-    return this.updateForm.controls['nic'] as FormControl;
-  }
-  get empTelNoField(): FormControl {
-    return this.updateForm.controls['tel_no'] as FormControl;
   }
   get empTypeField(): FormControl {
     return this.updateForm.controls['employee_type_id'] as FormControl;
@@ -111,39 +90,17 @@ export class EmployeeUpdateComponent {
     );
   }
     getData(data:any){
-        this.empIdField.setValue(data.id);
-        this.empNameField.setValue(data.name);
-        this.empAddressField.setValue(data.address);
-        this.empNicField.setValue(data.nic);
-        this.empCityField.setValue(data.city);
-        this.empTelNoField.setValue(data.tel_no);
-        this.empTypeField.setValue(data.employee_type_id);
-        this.empGenField.setValue(data.gender_id);
-        this.empEmailField.setValue(data.email);
-
+       this.updateForm.patchValue(data);
     }
-   async empUpdate(){
+    empUpdate(){
     this.formData = new FormData();
-    let id;
     if (this.updateForm.valid) {
 
-      let emp = new Employee();
+    this.emp = this.updateForm.getRawValue();
 
-      id = this.empIdField.value;
-
-      emp.id = this.empIdField.value;
-      emp.name = this.empNameField.value;
-      emp.address = this.empAddressField.value;
-      emp.nic = this.empNicField.value;
-      emp.city = this.empCityField.value;
-      emp.tel_no = this.empTelNoField.value;
-      emp.employee_type_id = this.empTypeField.value;
-      emp.gender_id = this.empGenField.value;
-      emp.email = this.empEmailField.value;
-
-      this.formData.append('form', JSON.stringify(emp));
+      this.formData.append('form', JSON.stringify(this.emp));
       this.formData.append('_method', 'patch');
-      const submissionObservable =  from( this.allServe.updateEmployee(this.formData,id));
+      const submissionObservable =  from( this.allServe.updateEmployee(this.formData,this.emp.id));
       submissionObservable
         .pipe(
           map((data) => {
@@ -167,15 +124,9 @@ export class EmployeeUpdateComponent {
   }
   clearForm() {
 
-    this.empIdField.setValue("");
-    this.empNameField.setValue("");
-    this.empAddressField.setValue("");
-    this.empNicField.setValue("");
-    this.empCityField.setValue("");
-    this.empTelNoField.setValue("");
+    this.updateForm.reset();
     this.empTypeField.setValue("Select Employee Type");
     this.empGenField.setValue("Select Employee Gender");
-    this.empEmailField.setValue("");
 
   }
 

@@ -111,7 +111,7 @@ export class RoomBookComponent {
   clearForm() {
     this.rmBookField.setValue("");
     this.rmBookRIdField.setValue("Select Room No");
-    this.rmBookGIdField.setValue("Select Guest");
+    this.rmBookGIdField.setValue("");
     this.rmBookCancelDateField.setValue("");
     this.rmBookDateField.setValue("");
 
@@ -144,8 +144,7 @@ export class RoomBookComponent {
           catchError((error) => {
             // Handle errors here
             this.handleError(error);
-            return throwError(error); // Re-throw the error if you want to propagate it further
-          })
+            return throwError(() => new Error(error?.error || "Server Error"));          })
         )
         .subscribe();
     }

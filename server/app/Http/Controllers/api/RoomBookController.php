@@ -76,9 +76,7 @@ class RoomBookController extends Controller
             $roomBook->cancel_Date = $data['cancel_Date'];
             $roomBook->save();
 
-            $room->save();
-
-            return json_encode([$roomBook, $room]);
+            return json_encode($roomBook);
 
         }else{
             return (response()->json(['error' => 'Data not valid.']));
@@ -174,6 +172,9 @@ class RoomBookController extends Controller
                     $query->where('r_id', $data['r_id'])
                         ->where('booking_Date', $data['booking_Date'])
                         ->where('is_active', true);
+                })->orWhere(function($query) use ($data) {
+                    $query->whereBetween('cancel_Date', [$data['booking_Date']])
+                        ->where('is_active', true);
                 });
             })
             ->first();
@@ -201,13 +202,19 @@ class RoomBookController extends Controller
         }
         $roomBook->save();
 
-        $room->save();
 
-            return json_encode([$roomBook,$room]);
+            return json_encode($roomBook);
         }else{
-            return (response()->json(['error' => 'Data not valid.']));
+            return (response()->json(['massage' => 'Data not valid.']));
         }
     }
+    public function countRoomBooking(){
+        $roomBookingCount = RoomBook::where('is_active', 1)
+                                ->count();
+
+        return response()->json(['roomBookingCount' =>$roomBookingCount]);
+    }
+
 
     /**
      * Remove the specified resource from storage.
@@ -220,9 +227,6 @@ class RoomBookController extends Controller
             $roomBook->r_book = "Canceling";
             $roomBook->save();
 
-            $room = Rooms::findOrFail($roomBook->r_id);
-            $room->r_book ="Canceling";
-            $room->save();
 
             return response()->json(['message' => 'Room Book deactivated successfully.'], 200);
         } catch (\Exception $e) {
@@ -245,10 +249,6 @@ class RoomBookController extends Controller
                 $booking->r_book = 'Canceling';
                 $booking->is_active = false;
                 $booking->save();
-
-                $room = Rooms::findOrFail($booking->r_id);
-                $room->r_book = 'Canceling';
-                $room->save();
             }
         })->daily();
     }

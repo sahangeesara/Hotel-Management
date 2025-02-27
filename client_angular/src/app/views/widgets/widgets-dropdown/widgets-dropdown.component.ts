@@ -26,6 +26,7 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
   countGust: number | undefined;
   countOrder: number | undefined;
   countCustomer: number | undefined;
+  countRBooking: number | undefined;
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
@@ -135,6 +136,7 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
     this.getCountGuest();
     this.getCountOrder();
     this.getCountCustomer();
+    this.getCountRoomBook();
   }
 
   //count Functions
@@ -162,6 +164,16 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
     this.searchServe.getCountCustomer().subscribe(
       (value: any) => {
         this.countCustomer = value.customerCount;
+      },
+      (error) => {
+        console.error('Error fetching rooms Book:', error);
+      }
+    );
+  }
+  getCountRoomBook() {
+    this.searchServe.getCountRoomBooking().subscribe(
+      (value: any) => {
+        this.countRBooking = value.roomBookingCount;
       },
       (error) => {
         console.error('Error fetching rooms Book:', error);

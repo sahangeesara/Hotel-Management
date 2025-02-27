@@ -43,6 +43,7 @@ export class EmployeeAddComponent {
   employeeGenders: any[] = [];
   formData = new FormData();
   empForm: FormGroup;
+  employeeData:any;
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private router:Router,
@@ -63,24 +64,7 @@ export class EmployeeAddComponent {
     });
 
   }
-  get empNameField(): FormControl {
-    return this.empForm.controls['name'] as FormControl;
-  }
-  get empAddressField(): FormControl {
-    return this.empForm.controls['address'] as FormControl;
-  }
-  get empEmailField(): FormControl {
-    return this.empForm.controls['email'] as FormControl;
-  }
-  get empCityField(): FormControl {
-    return this.empForm.controls['city'] as FormControl;
-  }
-  get empNicField(): FormControl {
-    return this.empForm.controls['nic'] as FormControl;
-  }
-  get empTelNoField(): FormControl {
-    return this.empForm.controls['tel_no'] as FormControl;
-  }
+
   get empTypeField(): FormControl {
     return this.empForm.controls['employee_type_id'] as FormControl;
   }
@@ -89,14 +73,9 @@ export class EmployeeAddComponent {
   }
 
   clearForm() {
-    this.empNameField.setValue("");
-    this.empAddressField.setValue("");
-    this.empNicField.setValue("");
-    this.empCityField.setValue("");
-    this.empTelNoField.setValue("");
-    this.empTypeField.setValue("Select Employee Type");
-    this.empGenField.setValue("Select Employee Gender");
-    this.empEmailField.setValue("");
+    this.empForm.reset();
+    this.empTypeField.patchValue("Select Employee Type");
+    this.empGenField.patchValue("Select Employee Gender");
 
   }
 
@@ -104,19 +83,9 @@ export class EmployeeAddComponent {
     this.formData = new FormData();
     if (this.empForm.valid) {
 
-      let emp = new Employee();
+      this.employeeData = this.empForm.getRawValue();
 
-      emp.name= this.empNameField.value;
-      emp.address= this.empAddressField.value;
-      emp.nic= this.empNicField.value;
-      emp.city= this.empCityField.value;
-      emp.tel_no= this.empTelNoField.value;
-      emp.employee_type_id= this.empTypeField.value;
-      emp.gender_id= this.empGenField.value;
-      emp.email= this.empEmailField.value;
-
-
-      this.formData.append('form', JSON.stringify(emp));
+      this.formData.append('form', JSON.stringify(this.employeeData));
       const submissionObservable =  from( this.allServe.submitEmployee(this.formData));
       submissionObservable
         .pipe(

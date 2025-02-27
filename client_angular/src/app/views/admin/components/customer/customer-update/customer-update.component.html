@@ -1,0 +1,177 @@
+<div  id="addForm" >
+  <c-row>
+
+    <c-col [xs]="12">
+          <form [formGroup]="customerUpdateForm">
+            <c-row>
+              <c-col [xs]="4">
+                <input
+                  cFormControl
+                  type="hidden"
+                  class="form-control"
+                  id="id"
+                  formControlName="id"
+                />
+                <input
+                  cFormControl
+                  type="hidden"
+                  class="form-control"
+                  id="user_id"
+                  formControlName="user_id"
+                />
+                <!-- Name -->
+                <div class="mb-3">
+                  <label for="name" class="form-label">Your Name</label>
+                  <input
+                    cFormControl
+                    type="text"
+                    class="form-control"
+                    id="name"
+                    formControlName="name"
+                    placeholder="Enter name"
+                    readonly="readonly"
+                  />
+                  <div *ngIf="customerUpdateForm.get('name')?.invalid && customerUpdateForm.get('name')?.touched" class="invalid-feedback">
+                    Name is required.
+                  </div>
+                </div>
+              </c-col>
+              <c-col [xs]="6">
+                <!-- Email -->
+                <div class="mb-3">
+                  <label for="email" class="form-label">Your Email</label>
+                  <input
+                    cFormControl
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    formControlName="email"
+                    placeholder="Enter email"
+                    readonly="readonly"
+                  />
+                  <div *ngIf="customerUpdateForm.get('email')?.invalid && customerUpdateForm.get('email')?.touched" class="invalid-feedback">
+                    Enter a valid email address.
+                  </div>
+                </div>
+              </c-col>
+              <c-col [xs]="6">
+                <!-- Gender -->
+                <div class="mb-3">
+                  <label cLabel>Your Gender:</label>
+
+                  <select aria-label="Select User Gender" cSelect name="gender_id" formControlName="gender_id">
+                    <option selected="selected" value="">Select User Gender</option>
+                    <option *ngFor="let gender of customGenders" [value]="gender.id">
+                      {{ gender.name }}
+                    </option>
+                  </select>
+                </div>
+              </c-col>
+              <c-col [xs]="6">
+                <!-- Address -->
+                <div class="mb-3">
+                  <label cLabel for="address" class="form-label">Your Address</label>
+                  <input
+                    cFormControl
+                    type="text"
+                    class="form-control"
+                    id="address"
+                    formControlName="address"
+                    placeholder="Enter address"
+
+                  />
+                  <div *ngIf="customerUpdateForm.get('address')?.invalid && customerUpdateForm.get('address')?.touched" class="invalid-feedback">
+                    address is required
+                  </div>
+                </div>
+              </c-col>
+              <c-col [xs]="6">
+                <!-- Phone Number -->
+                <div class="mb-3">
+                  <label cLabel for="tellNo" class="form-label">Your Phone Number</label>
+                  <input
+                    cFormControl
+                    type="text"
+                    class="form-control"
+                    id="tellNo"
+                    formControlName="tellNo"
+                    placeholder="Enter Phone Number"
+
+                  />
+                  <div *ngIf="customerUpdateForm.get('tellNo')?.invalid && customerUpdateForm.get('tellNo')?.touched" class="invalid-feedback">
+                    Phone Number is required
+                  </div>
+                </div>
+              </c-col>
+              <c-col [xs]="6">
+                <!--Nic -->
+                <div class="mb-3">
+                  <label cLabel for="nic" class="form-label">Your Nic</label>
+                  <input
+                    cFormControl
+                    type="text"
+                    class="form-control"
+                    id="nic"
+                    formControlName="nic"
+                    placeholder="Enter Nic"
+
+                  />
+                  <div *ngIf="customerUpdateForm.get('nic')?.invalid && customerUpdateForm.get('nic')?.touched" class="invalid-feedback">
+                    Nic is required
+                  </div>
+                </div>
+              </c-col>
+              <c-col [xs]="6">
+                <!--Country -->
+                <div class="mb-3">
+                  <label cLabel for="country" class="form-label">Your Country</label>
+                  <input
+                    cFormControl
+                    type="text"
+                    class="form-control"
+                    id="country"
+                    formControlName="country"
+                    placeholder="Enter Country"
+
+                  />
+                  <div *ngIf="customerUpdateForm.get('country')?.invalid && customerUpdateForm.get('country')?.touched" class="invalid-feedback">
+                    Country is required
+                  </div>
+                </div>
+              </c-col>
+              <c-col [xs]="6">
+                <!--City -->
+                <div class="mb-3">
+                  <label cLabel for="city" class="form-label">Your Country</label>
+                  <input
+                    cFormControl
+                    type="text"
+                    class="form-control"
+                    id="city"
+                    formControlName="city"
+                    placeholder="Enter City"
+
+                  />
+                  <div *ngIf="customerUpdateForm.get('city')?.invalid && customerUpdateForm.get('city')?.touched" class="invalid-feedback">
+                    City is required
+                  </div>
+                </div>
+              </c-col>
+              <c-col [xs]="6">
+                <div class="mb-3">
+                  <img [src]="imageUrl" style="width:50px;height:50px">&ngsp;
+                  <input id="inputImage-1" hidden="hidden" (change)="selectImage($event)" Select type="file" formControlName="image" sizing="sm" >
+                  <label for="inputImage-1" id="selectbutton">Select</label>
+                </div>
+              </c-col>
+            </c-row>
+            <!-- Submit Button -->
+            <button type="button" class="btn btn-danger" style="color:black" [disabled]="customerUpdateForm.invalid" (click)="customUpdate()">Update</button>
+          </form>
+
+
+    </c-col>
+
+  </c-row>
+</div>
+

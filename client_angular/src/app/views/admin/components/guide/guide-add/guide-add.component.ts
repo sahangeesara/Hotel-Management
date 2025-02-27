@@ -36,7 +36,7 @@ import {map} from "rxjs/operators";
   styleUrl: './guide-add.component.scss'
 })
 export class GuideAddComponent {
-
+  guid:any;
   public error=null;
   guideGenders: any[] = [];
   formData = new FormData();
@@ -61,55 +61,21 @@ export class GuideAddComponent {
     });
 
   }
-  get guideNameField(): FormControl {
-    return this.guideForm.controls['name'] as FormControl;
-  }
-  get guideAddressField(): FormControl {
-    return this.guideForm.controls['address'] as FormControl;
-  }
-  get guideEmailField(): FormControl {
-    return this.guideForm.controls['email'] as FormControl;
-  }
-  get guideCityField(): FormControl {
-    return this.guideForm.controls['city'] as FormControl;
-  }
-  get guideNicField(): FormControl {
-    return this.guideForm.controls['nic'] as FormControl;
-  }
-  get guideTelNoField(): FormControl {
-    return this.guideForm.controls['tel_no'] as FormControl;
-  }
-  get guideGenField(): FormControl {
-    return this.guideForm.controls['gender_id'] as FormControl;
-  }
+
+  get guideGenField(): FormControl { return this.guideForm.controls['gender_id'] as FormControl; }
 
   clearForm() {
-    this.guideNameField.setValue("");
-    this.guideAddressField.setValue("");
-    this.guideNicField.setValue("");
-    this.guideCityField.setValue("");
-    this.guideTelNoField.setValue("");
+    this.guideForm.reset();
     this.guideGenField.setValue("Select Guide Gender");
-    this.guideEmailField.setValue("");
-
-  }
+    }
 
   onSubmit() {
     this.formData = new FormData();
     if (this.guideForm.valid) {
 
-      let guid = new Guide();
+      this.guid = this.guideForm.getRawValue();
 
-      guid.name= this.guideNameField.value;
-      guid.address= this.guideAddressField.value;
-      guid.nic= this.guideNicField.value;
-      guid.city= this.guideCityField.value;
-      guid.tel_no= this.guideTelNoField.value;
-      guid.gender_id= this.guideGenField.value;
-      guid.email= this.guideEmailField.value;
-
-
-      this.formData.append('form', JSON.stringify(guid));
+      this.formData.append('form', JSON.stringify(this.guid));
       const submissionObservable = from( this.allServe.submitGuide(this.formData));
 
       submissionObservable
@@ -128,21 +94,13 @@ export class GuideAddComponent {
         .subscribe();
     }
   }
-  handleError(error: { error: null; }){
-    return  this.error=error.error;
-  }
+  handleError(error: { error: null; }){ return  this.error=error.error;}
 
   getGuideGen() {
     this.allServe.getGenders().subscribe(
-      (response: any) => {
-        this.guideGenders = response.data;
-      },
-      (error) => {
-        console.error('Error fetching guide Gender:', error);
-      }
-    );
+      (response: any) => { this.guideGenders = response.data; },
+      (error) => { console.error('Error fetching guide Gender:', error); });
   }
-
 
   ngOnInit() {
     this.getGuideGen();

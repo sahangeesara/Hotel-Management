@@ -24,7 +24,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving room.'], 500);
+            return response()->json(['error' => 'An error occurred while retrieving room.'], 500);
         }
     }
 
@@ -46,7 +46,7 @@ class UserController extends Controller
         }
         $user= User::whereEmail( Auth::user()->email)->first();
         $user->update(['password'=>$request->password]);
-        return response()->json(['data' => 'Password successfully changed'], ResponseAlias::HTTP_OK);
+        return response()->json(['message' => 'Password successfully changed'], ResponseAlias::HTTP_OK);
 
     }
 
@@ -61,7 +61,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving user.'], 500);
+            return response()->json(['error' => 'An error occurred while retrieving user.'], 500);
         }
 
     }
@@ -78,7 +78,7 @@ class UserController extends Controller
 
         // If user is not found, return an error response
         if (!$user) {
-            return response()->json(['message' => 'User not found.'], 404);
+            return response()->json(['error' => 'User not found.'], 404);
         }
 
         $logUser = Auth::user();
@@ -90,7 +90,7 @@ class UserController extends Controller
             $user->name = $userFrom['name']; // Automatically hashed via mutator
             $user->save(); // Save changes
         } else {
-            return response()->json(['message' => "You can't update this user's password."], 403);
+            return response()->json(['error' => "You can't update this user's password."], 403);
         }
 
         return response()->json($user);
@@ -109,7 +109,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while deactivating the rooms.'], 500);
+            return response()->json(['error' => 'An error occurred while deactivating the rooms.'], 500);
         }
     }
 }

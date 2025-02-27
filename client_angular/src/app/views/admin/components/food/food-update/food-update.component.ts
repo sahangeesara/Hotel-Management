@@ -87,9 +87,7 @@ export class FoodUpdateComponent {
 
 
   clearForm() {
-    this.foodNameField.setValue("");
-    this.foodQuantityField.setValue("");
-    this.foodAmountField.setValue("");
+   this.foodUpdateForm.reset();
     this.imageUrl= 'assets/default.png';
     this.itemCategoryField.setValue("Select Item Category");
     this.foodStatusField.setValue("Select Food Status");

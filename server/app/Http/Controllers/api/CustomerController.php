@@ -61,6 +61,13 @@ class CustomerController extends Controller
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
+
+        $existingBooking = Customer::where('nic', $data['nic'])
+                                    ->first();
+
+        // If the booking exists, return an error message or handle the situation as needed
+        if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
+
         try {
 
             $customer = new Customer();
@@ -150,6 +157,14 @@ class CustomerController extends Controller
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
+
+        $existingBooking = Customer::where('nic', $data['nic'])
+                                    ->where('id', '<>', $id)
+                                    ->first();
+
+        // If the booking exists, return an error message or handle the situation as needed
+        if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
+
         try {
 
             $customer =Customer::findOrFail($id);
@@ -172,7 +187,7 @@ class CustomerController extends Controller
             $customer->save();
 
 
-            return response()->json(['message' => 'Successfully submitted.', 'customer' => $customer]);
+            return response()->json(['message' => 'Successfully Updated.', 'customer' => $customer]);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['error' => 'An error occurred while processing the request.', 'exception' => $e->getMessage()]);

@@ -104,7 +104,7 @@
         </div>
       </c-col>
       <div  class="mb-3">
-        <input cButton color="primary" type="button" value="update" (click)="guestUpdate()">&ngsp;
+        <input cButton color="primary" type="button" value="update" (click)="guestUpdate()" [disabled]="guestUpadeForm.invalid">&ngsp;
       </div>
     </c-row>
   </form>

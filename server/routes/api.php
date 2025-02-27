@@ -15,6 +15,7 @@ use App\Http\Controllers\api\RoleController;
 use App\Http\Controllers\api\RoomBookController;
 use App\Http\Controllers\api\RoomsCategoryController;
 use App\Http\Controllers\api\RoomsController;
+use App\Http\Controllers\api\SupplierController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChangePasswordController;
@@ -82,6 +83,9 @@ Route::middleware(['auth:api'])->group(function () {
     //Order
     Route::get('countOrder', [OrderController::class, 'countOrder']);
 
+    //Room Booking
+    Route::get('roomBookingCount', [RoomBookController::class, 'countRoomBooking']);
+
 
     // Resource routes (Require authentication)
     Route::apiResources([
@@ -101,5 +105,6 @@ Route::middleware(['auth:api'])->group(function () {
         'genders' => GenderController::class,
         'role' => RoleController::class,
         'customer' => CustomerController::class,
+        'supplier' => SupplierController::class,
     ]);
 });

@@ -15,6 +15,7 @@ import { TokenService } from './token.service';
 import {RoomsCategory} from "../entities/roomsCategory";
 import {EmployeeType} from "../entities/employeeTypee";
 import {Role} from "../entities/Role";
+import {Customer} from "../entities/customer";
 
 
 @Injectable({
@@ -324,7 +325,26 @@ export class AllServiceService {
     return this.http.delete(`${this.besUrl}/customer/`+data,this.getAuthHeaders());
   }
   submitCustomer(data:any){
-    return this.http.post<Employee[]>(`${this.besUrl}/customer`,data,this.getAuthHeaders());
+    return this.http.post<Customer[]>(`${this.besUrl}/customer`,data,this.getAuthHeaders());
+  }
+
+
+  //Supplier
+  getSupplier(){
+    return this.http.get(`${this.besUrl}/supplier`,this.getAuthHeaders());
+  }
+  updateSupplier(data:any, id:any){
+    return this.http.post(`${this.besUrl}/supplier/${id}`,data,this.getAuthHeaders());
+  }
+  getSupplierById(data:any){
+    return this.http.get(`${this.besUrl}/supplier/`+ data,this.getAuthHeaders());
+
+  }
+  supplierDelete(data:any){
+    return this.http.delete(`${this.besUrl}/supplier/`+data,this.getAuthHeaders());
+  }
+  submitSupplier(data:any){
+    return this.http.post<Employee[]>(`${this.besUrl}/supplier`,data,this.getAuthHeaders());
   }
 
 

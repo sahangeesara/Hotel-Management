@@ -17,17 +17,36 @@
         </select>
       </div>
     </c-col>
+<!--    <c-col [xs]="6">-->
+<!--      <div class="mb-3">-->
+<!--        <label cLabel for="inputGuest-1">Guest:</label>-->
+<!--        <datalist id="inputGuest-1" aria-label="Select Guest" cSelect name="guest_id" formControlName="guest_id">-->
+<!--          <option selected="selected" value="">Select Guest</option>-->
+<!--          <option *ngFor="let guest of guests" [value]="guest.id">-->
+<!--            {{ guest.nic }}-->
+<!--          </option>-->
+<!--        </datalist>-->
+<!--      </div>-->
+<!--    </c-col>-->
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="inputGuest-1">Guest:</label>
-        <select id="inputGuest-1" aria-label="Select Guest" cSelect name="guest_id" formControlName="guest_id">
-          <option selected="selected" value="">Select Guest</option>
+        <input
+          id="inputGuest-1"
+          class="form-control"
+          list="guests-list"
+          name="guest_id"
+          formControlName="guest_id"
+          placeholder="Select Guest"
+        />
+        <datalist id="guests-list">
           <option *ngFor="let guest of guests" [value]="guest.id">
             {{ guest.nic }}
           </option>
-        </select>
+        </datalist>
       </div>
     </c-col>
+
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="inputRBook-1">Room Booking:</label>
@@ -39,7 +58,7 @@
       </div>
     </c-col>
     <c-col [xs]="6">
-      <label cLabel>Room Booking Date:</label>
+      <label cLabel>Check-in Date:</label>
 
       <input
         class="form-control"
@@ -51,7 +70,7 @@
       <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
     </c-col>
     <c-col [xs]="6">
-      <label cLabel>Room Cancel Date:</label>
+      <label cLabel>Check-out Date:</label>
 
       <input
         class="form-control"

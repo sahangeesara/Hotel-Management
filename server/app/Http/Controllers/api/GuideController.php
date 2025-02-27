@@ -118,7 +118,6 @@ class GuideController extends Controller
         $guides->nic = $data['nic'];
         $guides->tel_no = $data['tel_no'];
         $guides->gender_id = $data['gender_id'];
-        $guides->country = $data['country'];
         $guides->guide_status = $guideStatus;
         $guides->save();
 

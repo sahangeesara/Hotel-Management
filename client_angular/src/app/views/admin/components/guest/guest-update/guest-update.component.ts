@@ -36,6 +36,7 @@ import {map} from "rxjs/operators";
 })
 export class GuestUpdateComponent {
 
+  guest:any;
   public error=null;
   guestGenders: any[] = [];
   guides: any[] = [];
@@ -60,38 +61,12 @@ export class GuestUpdateComponent {
       gender_id: ['', Validators.required],
       guide_id: [''],
       guest_type: ['', Validators.required],
-      guide_status: ['', Validators.required],
+      guide_status: [''],
       country: ['', Validators.required],
     });
 
   }
-  get guestIdField(): FormControl {
-    return this.guestUpadeForm.controls['id'] as FormControl;
-  }
-  get guestNameField(): FormControl {
-    return this.guestUpadeForm.controls['name'] as FormControl;
-  }
-  get guestAddressField(): FormControl {
-    return this.guestUpadeForm.controls['address'] as FormControl;
-  }
-  get guestEmailField(): FormControl {
-    return this.guestUpadeForm.controls['email'] as FormControl;
-  }
-  get guestCityField(): FormControl {
-    return this.guestUpadeForm.controls['city'] as FormControl;
-  }
-  get guestNicField(): FormControl {
-    return this.guestUpadeForm.controls['nic'] as FormControl;
-  }
-  get guestTelNoField(): FormControl {
-    return this.guestUpadeForm.controls['tel_no'] as FormControl;
-  }
-  get guestCountryField(): FormControl {
-    return this.guestUpadeForm.controls['country'] as FormControl;
-  }
-  get guestTypeField(): FormControl {
-    return this.guestUpadeForm.controls['guest_type'] as FormControl;
-  }
+
   get guestGenField(): FormControl {
     return this.guestUpadeForm.controls['gender_id'] as FormControl;
   }
@@ -103,25 +78,14 @@ export class GuestUpdateComponent {
   }
 
   getData(data:any){
-    console.log(data)
-    this.guestIdField.setValue(data.id);
-    this.guestNameField.setValue(data.name);
-    this.guestAddressField.setValue(data.address);
-    this.guestEmailField.setValue(data.email);
-    this.guestCityField.setValue(data.city);
-    this.guestNicField.setValue(data.nic);
-    this.guestTelNoField.setValue(data.tel_no);
-    this.guestGenField.setValue(data.gender_id);
-    this.guideField.setValue(data.guide_id);
-    this.guestTypeField.setValue(data.guest_type);
-    this.guestCountryField.setValue(data.country);
+    this.guestUpadeForm.patchValue(data);
+
     if (data.guide) {
       this.guideStatusField.setValue(data.guide.guide_status);
     } else {
       // Set guideStatusField to a default value (optional)
       this.guideStatusField.setValue('');
     }
-
   }
 
 
@@ -159,24 +123,11 @@ export class GuestUpdateComponent {
     this.formData = new FormData();
     if (this.guestUpadeForm.valid) {
 
-      let id = this.guestIdField.value;
-      let guest = new Guest();
+      this.guest = this.guestUpadeForm.getRawValue();
 
-      guest.name= this.guestNameField.value;
-      guest.address= this.guestAddressField.value;
-      guest.nic= this.guestNicField.value;
-      guest.city= this.guestCityField.value;
-      guest.tel_no= this.guestTelNoField.value;
-      guest.gender_id= this.guestGenField.value;
-      guest.guide_id= this.guideField.value;
-      guest.email= this.guestEmailField.value;
-      guest.guest_type= this.guestTypeField.value;
-      guest.country= this.guestCountryField.value;
-      guest.guide_status= this.guideStatusField.value;
-
-      this.formData.append('form', JSON.stringify(guest));
+      this.formData.append('form', JSON.stringify(this.guest));
       this.formData.append('_method', 'patch');
-      const submissionObservable = from( this.allServe.updateGuests(this.formData,id));
+      const submissionObservable = from( this.allServe.updateGuests(this.formData,this.guest.id));
 
       submissionObservable
         .pipe(
@@ -199,17 +150,9 @@ export class GuestUpdateComponent {
   }
 
   clearForm() {
-    this.guestIdField.setValue("");
-    this.guestNameField.setValue("");
-    this.guestAddressField.setValue("");
-    this.guestNicField.setValue("");
-    this.guestCityField.setValue("");
-    this.guestTelNoField.setValue("");
+    this.guestUpadeForm.reset();
     this.guestGenField.setValue("Select Guest Gender");
     this.guideField.setValue("Select Guide");
-    this.guestEmailField.setValue("");
-    this.guestTypeField.setValue("");
-    this.guestCountryField.setValue("");
     this.guideStatusField.setValue("Select Guide Status");
 
   }

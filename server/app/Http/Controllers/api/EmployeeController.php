@@ -220,11 +220,11 @@ class EmployeeController extends Controller
             return response()->json($validatedData->errors());
         }
 
-        $existingBooking = Employees::where('nic', $data['nic'])
+        $existingNic = Employees::where('nic', $data['nic'])
                                     ->where('id', '<>', $id)
                                     ->first();
         // If the booking exists, return an error message or handle the situation as needed
-        if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
+        if ($existingNic) {  return response()->json(['error' => 'Nic already exists.']); }
 
         $employee = Employees::findOrFail($id);
 

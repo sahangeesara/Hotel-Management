@@ -62,14 +62,21 @@ class GuestController extends Controller
             return response()->json($validatedData->errors());
         }
 
+        $existingNic = Guest::where('nic', $data['nic'])
+                             ->first();
+
+        // If the booking exists, return an error message or handle the situation as needed
+        if ($existingNic) {  return response()->json(['error' => 'Nic already exists.']); }
+
         // Check for existing booking with the same guide_id
-        $existingBooking = Guest::where('guide_id', $data['guide_id'])
+        $existingGuide = Guest::where('guide_id', $data['guide_id'])
             ->where('is_active', true)
             ->first();
 
-        if ($existingBooking) {
+        if ($existingGuide) {
             return response()->json(['error' => 'Guide already exists.']);
         }
+
 
         try {
             DB::beginTransaction();
@@ -194,7 +201,7 @@ class GuestController extends Controller
             'guide_id' => '',
             'country' => 'required',
             'guest_type' => 'required',
-            'guide_status' => 'required',
+            'guide_status' => '',
 
         ]);
         if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
@@ -203,15 +210,19 @@ class GuestController extends Controller
                             ->where('id', '<>', $id) // Exclude the current guest's ID
                             ->first();
 
-        if ($existingNic) {
+        if ($existingNic) {  return response()->json(['error' => 'Nic already exists.']); }
+
+        if ($data['guide_id'] != null){
             // Check if the guest_id and r_book combination already exists
-            $existingBooking = Guest::where('guide_id', $data['guide_id'])
+            $existingGuide = Guest::where('guide_id', $data['guide_id'])
                 ->where('is_active', true)
+                ->where('id', '<>', $id)
                 ->first();
             // If the booking exists, return an error message or handle the situation as needed
-            if ($existingBooking) {
+            if ($existingGuide) {
                 return response()->json(['error' => 'Guide already exists.']);
             }
+
         }
 
         try {

@@ -35,7 +35,7 @@ import {Guide} from "../../../../../entities/guide";
   styleUrl: './guide-update.component.scss'
 })
 export class GuideUpdateComponent {
-
+  guid:any;
   public error=null;
 
   guideGenders: any[] = [];
@@ -61,75 +61,31 @@ export class GuideUpdateComponent {
     });
 
   }
-  get guideIdField(): FormControl {
-    return this.guideUpdateForm.controls['name'] as FormControl;
-  }
-  get guideNameField(): FormControl {
-    return this.guideUpdateForm.controls['name'] as FormControl;
-  }
-  get guideAddressField(): FormControl {
-    return this.guideUpdateForm.controls['address'] as FormControl;
-  }
-  get guideEmailField(): FormControl {
-    return this.guideUpdateForm.controls['email'] as FormControl;
-  }
-  get guideCityField(): FormControl {
-    return this.guideUpdateForm.controls['city'] as FormControl;
-  }
-  get guideNicField(): FormControl {
-    return this.guideUpdateForm.controls['nic'] as FormControl;
-  }
-  get guideTelNoField(): FormControl {
-    return this.guideUpdateForm.controls['tel_no'] as FormControl;
-  }
   get guideGenField(): FormControl {
     return this.guideUpdateForm.controls['gender_id'] as FormControl;
   }
 
   getData(data:any){
-    this.guideIdField.setValue(data.name);
-    this.guideNameField.setValue(data.name);
-    this.guideAddressField.setValue(data.address);
-    this.guideEmailField.setValue(data.email);
-    this.guideCityField.setValue(data.city);
-    this.guideNicField.setValue(data.nic);
-    this.guideTelNoField.setValue(data.tel_no);
-    this.guideGenField.setValue(data.gender_id);
-
+      this.guideUpdateForm.patchValue(data);
   }
   geGuideGen() {
     this.allServe.getGenders().subscribe(
-      (response: any) => {
-        this.guideGenders = response.data;
-      },
-      (error) => {
-        console.error('Error fetching employee Gender:', error);
-      }
+      (response: any) => {  this.guideGenders = response.data;  },
+      (error) => {   console.error('Error fetching employee Gender:', error);  }
     );
   }
 
-  ngOnInit() {
-    this.geGuideGen();
-  }
+  ngOnInit() { this.geGuideGen(); }
 
   guideUpdate() {
     this.formData = new FormData();
     if (this.guideUpdateForm.valid) {
 
-      let id = this.guideIdField.value;
-      let guide = new Guide();
+    this.guid =this.guideUpdateForm.getRawValue();
 
-      guide.name= this.guideNameField.value;
-      guide.address= this.guideAddressField.value;
-      guide.nic= this.guideNicField.value;
-      guide.city= this.guideCityField.value;
-      guide.tel_no= this.guideTelNoField.value;
-      guide.gender_id= this.guideGenField.value;
-      guide.email= this.guideEmailField.value;
-
-      this.formData.append('form', JSON.stringify(guide));
+      this.formData.append('form', JSON.stringify( this.guid));
       this.formData.append('_method', 'patch');
-      const submissionObservable = from( this.allServe.updateGuide(this.formData,id));
+      const submissionObservable = from( this.allServe.updateGuide(this.formData, this.guid.id));
 
       submissionObservable
         .pipe(
@@ -147,17 +103,9 @@ export class GuideUpdateComponent {
         .subscribe();
     }
   }
-  handleError(error: { error: null; }){
-    return  this.error=error.error;
-  }
+  handleError(error: { error: null; }){  return  this.error=error.error; }
   clearForm() {
-    this.guideIdField.setValue("");
-    this.guideNameField.setValue("");
-    this.guideAddressField.setValue("");
-    this.guideNicField.setValue("");
-    this.guideCityField.setValue("");
-    this.guideTelNoField.setValue("");
+    this.guideUpdateForm.reset();
     this.guideGenField.setValue("Select guide Gender");
-    this.guideEmailField.setValue("");
   }
 }

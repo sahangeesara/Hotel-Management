@@ -7,6 +7,7 @@ export class Food{
   quantity?:number;
   food_amount?:number;
   image?:any;
+  image_url?:any;
   item_category?:ItemCategory;
   food_status?:FoodStatus;
 

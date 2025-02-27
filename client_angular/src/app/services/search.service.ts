@@ -31,7 +31,7 @@ export class SearchService {
     return this.http.get<RoomBook>(`${this.besUrl}/roomBookByDateAndRoom/${id}/${date}`, this.getAuthHeaders());
   }
 
-  //Employee Search
+  //Employee
   getEmployeeByName(data:any){return this.http.get(`${this.besUrl}/employeesByName/${data}`, this.getAuthHeaders());}
   getEmployeeByGender(data:any){return this.http.get(`${this.besUrl}/employeesByGender/${data}`, this.getAuthHeaders());}
   getEmployeeByType(data:any){return this.http.get(`${this.besUrl}/employeesByType/${data}`,this.getAuthHeaders());}
@@ -40,20 +40,35 @@ export class SearchService {
   getEmployeeByNameAndType(e_name:any,type_id:any){return this.http.get(`${this.besUrl}/employeesByNameAndType/${e_name}/${type_id}`,this.getAuthHeaders());}
   getEmployeeByNameAndTypeAndGender(e_name:any,type_id:any,gen_id:any){return this.http.get(`${this.besUrl}/employeesByNameAndType/${e_name}/${type_id}/${gen_id}`,this.getAuthHeaders());}
 
-  getCountGuest(){return this.http.get(`${this.besUrl}/countGuest`,this.getAuthHeaders());}
+  // getEmployees(filters: { name?: any; gender?: any; type?: any }) {
+  //   let queryParams = [];
+  //
+  //   if (filters.name) queryParams.push(`name=${filters.name}`);
+  //   if (filters.gender) queryParams.push(`gender=${filters.gender}`);
+  //   if (filters.type) queryParams.push(`type=${filters.type}`);
+  //
+  //   const queryString = queryParams.length ? `?${queryParams.join('&')}` : '';
+  //
+  //   return this.http.get(`${this.besUrl}/employees${queryString}`, this.getAuthHeaders());
+  // }
 
+
+
+
+//order Search/Count
   getCountOrder(){return this.http.get(`${this.besUrl}/countOrder`,this.getAuthHeaders());}
 
-  //guest
+  //guest  Search/Count
   getGuestByDate(data:any){
     return this.http.get(`${this.besUrl}/guestByDate/${data}`,this.getAuthHeaders());
   }
   getGuestByGender(data:any){
     return this.http.get(`${this.besUrl}/guestByGender/${data}`,this.getAuthHeaders());
   }
+  getCountGuest(){return this.http.get(`${this.besUrl}/countGuest`,this.getAuthHeaders());}
 
 
-  //Customer
+  //Customer Search/Count
 
   getAthCustomer(){
     return this.http.get(`${this.besUrl}/athCustomer`,this.getAuthHeaders());
@@ -61,6 +76,10 @@ export class SearchService {
 
   getCountCustomer() {
     return this.http.get(`${this.besUrl}/countCustomer`,this.getAuthHeaders());
+
+  }
+  getCountRoomBooking() {
+    return this.http.get(`${this.besUrl}/roomBookingCount`,this.getAuthHeaders());
 
   }
 }
