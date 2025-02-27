@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('food_items', function (Blueprint $table) {
             $table->id();
+            $table->char('food_no');
             $table->string('name');
             $table->integer('quantity')->default(0);
             $table->decimal('food_amount');

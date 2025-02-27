@@ -47,7 +47,7 @@ class GuestController extends Controller
         // Validate request data
         $validatedData = Validator::make($data, [
             'name' => 'required|max:255',
-            'address' => 'required',
+            'address' => '',
             'email' => 'required',
             'city' => 'required',
             'nic' => 'required',
@@ -192,7 +192,7 @@ class GuestController extends Controller
         $validatedData = Validator::make($data, [
 
             'name' => 'required|max:255',
-            'address' => 'required',
+            'address' => '',
             'email' => 'required',
             'city' => 'required',
             'nic' => 'required',

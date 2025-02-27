@@ -117,18 +117,6 @@ export const navItems: INavData[] = [
     ]
   },
   {
-    name: 'Supplier',
-    url: '/supplier',
-    iconComponent: { name: 'cil-bell' },
-    children: [
-      {
-        name: 'supplier View',
-        url: '/supplier/supplier_view',
-        icon: 'nav-icon-bullet'
-      },
-    ]
-  },
-  {
     name: 'Customer',
     url: '/customer',
     iconComponent: { name: 'cil-bell' },

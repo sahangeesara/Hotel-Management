@@ -7,7 +7,6 @@ import {
     ModalHeaderComponent, ModalTitleDirective, TableDirective
 } from "@coreui/angular";
 import {NgIf} from "@angular/common";
-import {SupplierUpdateComponent} from "../../supplier/supplier-update/supplier-update.component";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {FormBuilder} from "@angular/forms";
 import {SearchService} from "../../../../../services/search.service";
@@ -28,7 +27,6 @@ import {IconDirective} from "@coreui/icons-angular";
     ModalHeaderComponent,
     ModalTitleDirective,
     NgIf,
-    SupplierUpdateComponent,
     TableDirective,
     CustomerUpdateComponent
   ],

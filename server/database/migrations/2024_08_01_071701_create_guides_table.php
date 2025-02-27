@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('guides', function (Blueprint $table) {
             $table->id();
+            $table->char('guide_no');
             $table->string('name');
             $table->string('address')->nullable();
             $table->string('email')->nullable();

@@ -7,6 +7,14 @@
       </c-col>
         <c-col [xs]="6">
         <div class="mb-3">
+          <label cLabel for="inputNumber-1">Employee Number: </label>
+          <input cFormControl id="inputNumber-1" type="text" sizing="sm" name="emp_no" formControlName="emp_no" readonly="readonly">
+          <div cFormText>
+            ex: EN0021
+          </div>
+        </div>
+      </c-col>  <c-col [xs]="6">
+        <div class="mb-3">
           <label cLabel for="inputName-1">Employee Name: </label>
           <input cFormControl id="inputName-1" type="text" sizing="sm" name="name" formControlName="name">
           <div cFormText>
@@ -80,7 +88,7 @@
           </select>
         </div>
       </c-col>
-      <c-col [xs]="3">
+      <c-col [xs]="12">
       <button cButton type="button" color="primary" (click)="empUpdate()">Update</button>
       </c-col>
     </c-row>

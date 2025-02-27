@@ -38,7 +38,7 @@ class GuideController extends Controller
         $validatedData = Validator::make($data, [
 
             'name' => 'required|max:255',
-            'address' => 'required',
+            'address' => '',
             'email' => 'required',
             'city' => 'required',
             'nic' => 'required',
@@ -93,7 +93,7 @@ class GuideController extends Controller
         $validatedData = Validator::make($data, [
 
             'name' => 'required|max:255',
-            'address' => 'required',
+            'address' => '',
             'email' => 'required',
             'city' => 'required',
             'nic' => 'required',

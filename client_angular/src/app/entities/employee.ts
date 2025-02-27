@@ -3,6 +3,7 @@ import {Gender} from "./gender";
 
 export class Employee{
   id?:number;
+  emp_no?:string;
   name?:string;
   address?:any;
   email?:any;

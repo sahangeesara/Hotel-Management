@@ -105,6 +105,5 @@ Route::middleware(['auth:api'])->group(function () {
         'genders' => GenderController::class,
         'role' => RoleController::class,
         'customer' => CustomerController::class,
-        'supplier' => SupplierController::class,
     ]);
 });

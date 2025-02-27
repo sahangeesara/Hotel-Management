@@ -55,6 +55,8 @@ class EmployeeController extends Controller
         // If the booking exists, return an error message or handle the situation as needed
         if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
 
+        $nextId = Employees::max('id') + 1; // Get the next available ID
+        $rNo = 'EN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
 
         $employee =new Employees();
 
@@ -66,6 +68,7 @@ class EmployeeController extends Controller
         $employee->tel_no = $data['tel_no'];
         $employee->employee_type_id = $data['employee_type_id'];
         $employee->gender_id = $data['gender_id'];
+        $employee->emp_no = $rNo;
 
         $employee->save();
         return json_encode($employee);
@@ -214,6 +217,7 @@ class EmployeeController extends Controller
             'tel_no' => 'required',
             'employee_type_id' => 'required',
             'gender_id' => 'required',
+            'emp_no' => 'required',
 
         ]);
         if ($validatedData->fails()) {
@@ -236,6 +240,7 @@ class EmployeeController extends Controller
         $employee->tel_no = $data['tel_no'];
         $employee->employee_type_id = $data['employee_type_id'];
         $employee->gender_id = $data['gender_id'];
+        $employee->emp_no = $data['emp_no'];
 
         $employee->save();
 

@@ -120,7 +120,8 @@ class CustomerController extends Controller
         $id=  Auth::user()->id;
         try {
             $customer = Customer::with('user','gender')
-                ->findOrFail($id);
+                ->where('user_id',$id)
+                ->first();
             return response()->json($customer);
 
         } catch (\Exception $e) {
