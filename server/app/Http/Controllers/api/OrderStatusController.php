@@ -40,11 +40,17 @@ class OrderStatusController extends Controller
             return response()->json($validatedData->errors());
         }
 
-        $orderStatus =new Order_status();
-        $orderStatus->name=$data['name'];
-        $orderStatus->save();
+        try {
+            $orderStatus = new Order_status();
+            $orderStatus->name = $data['name'];
+            $orderStatus->save();
 
-        return response()->json(['message' => 'Order status Add successfully.',$orderStatus]);
+            return response()->json(['message' => 'Order status Add successfully.', $orderStatus]);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving order status.'], 500);
+        }
     }
 
     /**
@@ -74,11 +80,18 @@ class OrderStatusController extends Controller
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
-        $orderStatus = Order_status::findOrFail($id);
-        $orderStatus->name=$data['name'];
-        $orderStatus->save();
 
-        return response()->json(['message' => 'Order status Update successfully.',$orderStatus]);
+        try {
+            $orderStatus = Order_status::findOrFail($id);
+            $orderStatus->name = $data['name'];
+            $orderStatus->save();
+
+            return response()->json(['message' => 'Order status Update successfully.', $orderStatus]);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving order status.'], 500);
+        }
     }
 
     /**

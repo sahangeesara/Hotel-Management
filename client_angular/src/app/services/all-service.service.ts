@@ -106,7 +106,8 @@ export class AllServiceService {
   deleteRoom(id: any) {
     return this.http.delete(`${this.besUrl}/rooms/${id}`, this.getAuthHeaders());
   }
-  updateRoom(data: any, id: any) {
+  roomUpdate(data: any, id: any) {
+    console.log(data)
     return this.http.put(`${this.besUrl}/rooms/${id}`, data, this.getAuthHeaders());
   }
   //Genders
@@ -327,29 +328,23 @@ export class AllServiceService {
   submitCustomer(data:any){
     return this.http.post<Customer[]>(`${this.besUrl}/customer`,data,this.getAuthHeaders());
   }
-
-
-  //Supplier
-  getSupplier(){
-    return this.http.get(`${this.besUrl}/supplier`,this.getAuthHeaders());
+//profile
+  getUserProfile(){
+    return this.http.get(`${this.besUrl}/userProfile`,this.getAuthHeaders());
   }
-  updateSupplier(data:any, id:any){
-    return this.http.post(`${this.besUrl}/supplier/${id}`,data,this.getAuthHeaders());
+  updateUserProfile(data:any, id:any){
+    return this.http.post(`${this.besUrl}/userProfile/${id}`,data,this.getAuthHeaders());
   }
-  getSupplierById(data:any){
-    return this.http.get(`${this.besUrl}/supplier/`+ data,this.getAuthHeaders());
+  getUserProfileById(data:any){
+    return this.http.get(`${this.besUrl}/userProfile/`+ data,this.getAuthHeaders());
 
   }
-  supplierDelete(data:any){
-    return this.http.delete(`${this.besUrl}/supplier/`+data,this.getAuthHeaders());
+  userProfileDelete(data:any){
+    return this.http.delete(`${this.besUrl}/userProfile/`+data,this.getAuthHeaders());
   }
-  submitSupplier(data:any){
-    return this.http.post<Employee[]>(`${this.besUrl}/supplier`,data,this.getAuthHeaders());
+  submitUserProfile(data:any){
+    return this.http.post<Customer[]>(`${this.besUrl}/userProfile`,data,this.getAuthHeaders());
   }
-
-
-
-
 }
 
 

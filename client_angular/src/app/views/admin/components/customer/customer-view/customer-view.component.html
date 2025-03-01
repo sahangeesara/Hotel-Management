@@ -1,3 +1,166 @@
+<div  id="AddForm" >
+  <c-row>
+    <h2><strong><em>Customer Add Form</em></strong></h2>
+    <c-col [xs]="12">
+      <form [formGroup]="customerAddForm" (ngSubmit)="onSubmit()">
+        <c-row>
+            <!-- Name -->
+            <c-col [xs]="6">
+              <div class="mb-3">
+                <label for="name" class="form-label">Your Name</label>
+                <input
+                  cFormControl
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  formControlName="name"
+                  placeholder="Enter name"
+                />
+                <div *ngIf="customerAddForm.get('name')?.invalid && customerAddForm.get('name')?.touched" class="invalid-feedback">
+                  Name is required.
+                </div>
+              </div>
+            </c-col>
+            <c-col [xs]="6">
+              <!-- Email -->
+              <div class="mb-3">
+                <label for="email" class="form-label">Your Email</label>
+                <input
+                  cFormControl
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  formControlName="email"
+                  placeholder="Enter email"
+                />
+                <div *ngIf="customerAddForm.get('email')?.invalid && customerAddForm.get('email')?.touched" class="invalid-feedback">
+                  Enter a valid email address.
+                </div>
+              </div>
+            </c-col>
+            <c-col [xs]="6">
+              <!-- Gender -->
+              <div class="mb-3">
+                <label cLabel>Your Gender:</label>
+
+                <select aria-label="Select User Gender" cSelect name="gender_id" formControlName="gender_id">
+                  <option selected="selected" value="">Select User Gender</option>
+                  <option *ngFor="let gender of customGenders" [value]="gender.id">
+                    {{ gender.name }}
+                  </option>
+                </select>
+              </div>
+            </c-col>
+            <c-col [xs]="6">
+              <div class="mb-3">
+                <label cLabel for="inputCustomType-1">Customer Type:</label>
+                <input cFormControl id="inputCustomType-1" type="text" name="custom_type" formControlName="custom_type" sizing="sm">
+              </div>
+            </c-col>
+            <c-col [xs]="6">
+              <!-- Address -->
+              <div class="mb-3">
+                <label cLabel for="address" class="form-label">Your Address</label>
+                <input
+                  cFormControl
+                  type="text"
+                  class="form-control"
+                  id="address"
+                  formControlName="address"
+                  placeholder="Enter address"
+
+                />
+                <div *ngIf="customerAddForm.get('address')?.invalid && customerAddForm.get('address')?.touched" class="invalid-feedback">
+                  address is required
+                </div>
+              </div>
+            </c-col>
+            <c-col [xs]="6">
+              <!-- Phone Number -->
+              <div class="mb-3">
+                <label cLabel for="tellNo" class="form-label">Your Phone Number</label>
+                <input
+                  cFormControl
+                  type="text"
+                  class="form-control"
+                  id="tel_no"
+                  formControlName="tel_no"
+                  placeholder="Enter Phone Number"
+
+                />
+                <div *ngIf="customerAddForm.get('tel_no')?.invalid && customerAddForm.get('tel_no')?.touched" class="invalid-feedback">
+                  Phone Number is required
+                </div>
+              </div>
+            </c-col>
+            <c-col [xs]="6">
+              <!--Nic -->
+              <div class="mb-3">
+                <label cLabel for="nic" class="form-label">Your Nic</label>
+                <input
+                  cFormControl
+                  type="text"
+                  class="form-control"
+                  id="nic"
+                  formControlName="nic"
+                  placeholder="Enter Nic"
+
+                />
+                <div *ngIf="customerAddForm.get('nic')?.invalid && customerAddForm.get('nic')?.touched" class="invalid-feedback">
+                  Nic is required
+                </div>
+              </div>
+            </c-col>
+            <c-col [xs]="6">
+              <!--Country -->
+              <div class="mb-3">
+                <label cLabel for="country" class="form-label">Your Country</label>
+                <input
+                  cFormControl
+                  type="text"
+                  class="form-control"
+                  id="country"
+                  formControlName="country"
+                  placeholder="Enter Country"
+
+                />
+                <div *ngIf="customerAddForm.get('country')?.invalid && customerAddForm.get('country')?.touched" class="invalid-feedback">
+                  Country is required
+                </div>
+              </div>
+            </c-col>
+            <c-col [xs]="6">
+              <!--City -->
+              <div class="mb-3">
+                <label cLabel for="city" class="form-label">Your Country</label>
+                <input
+                  cFormControl
+                  type="text"
+                  class="form-control"
+                  id="city"
+                  formControlName="city"
+                  placeholder="Enter City"
+
+                />
+                <div *ngIf="customerAddForm.get('city')?.invalid && customerAddForm.get('city')?.touched" class="invalid-feedback">
+                  City is required
+                </div>
+              </div>
+            </c-col>
+        </c-row>
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-danger" style="color:black" [disabled]="customerAddForm.invalid">Save</button>&ngsp;
+        <button type="button" class="btn btn-info" style="color:black"  (click)="clearForm()">Clear</button>
+      </form>
+
+
+    </c-col>
+
+  </c-row>
+</div>
+
+
+<hr>
 <h3>
   <strong>
     <em>
@@ -9,12 +172,14 @@
   <thead>
   <tr>
     <th scope="col">#</th>
-    <th scope="col">Customer Image</th>
+    <th scope="col">Customer Number</th>
     <th scope="col">Customer Name</th>
     <th scope="col">Customer Gender</th>
     <th scope="col">Customer Address</th>
     <th scope="col">Customer Email</th>
+    <th scope="col">Customer Type</th>
     <th scope="col">Customer City</th>
+    <th scope="col">Customer Country</th>
     <th scope="col">Customer Nic</th>
     <th scope="col">Customer Tel No</th>
     <th scope="col">Action</th>
@@ -24,12 +189,14 @@
   @for (type of customers; track type; let key = $index) {
   <tr>
     <th scope="row">{{key + 1}}</th>
-       <td><img src="{{ type.image_url}}" style="width:50px;height:50px"></td>
-      <td>{{ type.user.name }}</td>
+      <td>{{ type.custom_no }}</td>
+      <td>{{ type.name }}</td>
       <td>{{ type.gender.name }}</td>
       <td>{{ type.address }}</td>
-      <td>{{ type.user.email }}</td>
+      <td>{{ type.email }}</td>
+      <td>{{ type.custom_type }}</td>
       <td>{{ type.city }}</td>
+      <td>{{ type.country }}</td>
       <td>{{ type.nic }}</td>
       <td>{{ type.tel_no }}</td>
        <td>
@@ -44,7 +211,7 @@
 
 <c-modal id="liveDemoModal" [visible]="visible" (visibleChange)="handleLiveDemoChange($event)">
   <c-modal-header>
-    <h5 cModalTitle> Customer Update Form</h5>
+    <h5 cModalTitle> Customer Add Form</h5>
 
   </c-modal-header>
   <c-modal-body><app-customer-update></app-customer-update></c-modal-body>

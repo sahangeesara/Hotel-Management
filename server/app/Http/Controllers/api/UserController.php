@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class UserController extends Controller
@@ -34,8 +35,30 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $data = json_decode($request->form, true);
-        $user = User::create($data);
-        return json_encode($user);
+
+        $validatedData = Validator::make($data, [
+            'name' => 'required|max:255',
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+
+        try{
+            $user = new User();
+            $user->password = $data['password']; // Automatically hashed via mutator
+            $user->email = $data['email']; // Automatically hashed via mutator
+            $user->name = $data['name']; // Automatically hashed via mutator
+            $user->save(); // Save changes
+
+            return json_encode($user);
+            } catch (\Exception $e) {
+                    // Log the error and return an appropriate response
+                    Log::error($e->getMessage());
+                    return response()->json(['message' => 'An error occurred while retrieving customer.'], 500);
+            }
+
     }
     public function changePassword(Request $request): \Illuminate\Http\JsonResponse
     {
@@ -73,6 +96,15 @@ class UserController extends Controller
     {
         $userFrom = json_decode($request->input('form'), true);
 
+        $validatedData = Validator::make($userFrom, [
+            'name' => 'required|max:255',
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors());
+        }
+
         // Find user by email
         $user = User::whereEmail($userFrom['email'])->first();
 
@@ -81,6 +113,7 @@ class UserController extends Controller
             return response()->json(['error' => 'User not found.'], 404);
         }
 
+        try{
         $logUser = Auth::user();
 
         // Ensure the logged-in user isn't trying to change another user's password
@@ -94,6 +127,11 @@ class UserController extends Controller
         }
 
         return response()->json($user);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving user.'], 500);
+        }
     }
 
     /**
@@ -102,14 +140,34 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         try {
-            $user = User::findOrFail($id);
-            $user->is_active = false;
-            $user->save();
-            return response()->json(['message' => 'Rooms deactivated successfully.'], 200);
+            $authUser = Auth::user();
+            if (!$authUser) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+
+            $targetUser = User::findOrFail($id);
+
+            // Prevent deleting self or admin users
+            if ($authUser->id == $targetUser->id) {
+                return response()->json(['error' => 'You cannot deactivate yourself.'], 403);
+            }
+
+            if ($targetUser->role->name == "Admin") {
+                return response()->json(['error' => 'You cannot deactivate an Admin user.'], 403);
+            }
+
+            $user =  User::findOrFail($authUser->id);
+            if ($user->role->name != "Admin") {
+                return response()->json(['error' => 'You do not have permission to delete users.'], 403);
+            }else{
+                $targetUser->is_active = false;
+                $targetUser->save();
+            }
+
+            return response()->json(['message' => 'User deactivated successfully.'], 200);
         } catch (\Exception $e) {
-            // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['error' => 'An error occurred while deactivating the rooms.'], 500);
+            return response()->json(['error' => 'An error occurred while deactivating the user.'], 500);
         }
     }
 }

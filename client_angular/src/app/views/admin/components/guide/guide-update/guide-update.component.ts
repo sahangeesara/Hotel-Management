@@ -53,6 +53,7 @@ export class GuideUpdateComponent {
       id: [''],
       name: ['', [Validators.required]],
       address: [''],
+      guide_no: [''],
       email: ['', [Validators.required, Validators.email]],
       nic: ['', [Validators.required,Validators.maxLength(12) ]],
       city: ['', [Validators.required]],

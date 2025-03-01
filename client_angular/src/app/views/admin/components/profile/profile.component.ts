@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../services/all-service.service";
 import {SearchService} from "../../../../services/search.service";
 import {ToastrService} from "ngx-toastr";
-import {FormBuilder, FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgForOf, NgIf} from "@angular/common";
 import {
   ColComponent,
@@ -12,9 +12,9 @@ import {
   FormSelectDirective,
   RowComponent
 } from "@coreui/angular";
-import {Customer} from "../../../../entities/customer";
 import {catchError, from, throwError} from "rxjs";
 import {map} from "rxjs/operators";
+import {Profile} from "../../../../entities/profile";
 
 @Component({
   selector: 'app-profile',
@@ -35,9 +35,9 @@ import {map} from "rxjs/operators";
 export class ProfileComponent {
   formData = new FormData();
   user: any[] = [];
-  customers: any[] = [];
+  profiles: any[] = [];
   userGenders: any[] = [];
-  userForm: any;
+  userForm: FormGroup;
   showUserDetails = true;
   imageUrl?: string = 'assets/default.png';
   file?: any;
@@ -57,7 +57,7 @@ export class ProfileComponent {
       name: ['', [Validators.required]],
       email: ['', [Validators.required]],
       address: ['', [Validators.required]],
-      tellNo: ['', [Validators.required]],
+      tel_no: ['', [Validators.required]],
       gender_id: ['', [Validators.required]],
       image: ['', [Validators.required]],
       nic: ['', [Validators.required]],
@@ -74,31 +74,31 @@ export class ProfileComponent {
   get userEmailField(): FormControl {
     return this.userForm.controls['email'] as FormControl;
   }
-  get customerAddressField(): FormControl {
+  get profileAddressField(): FormControl {
     return this.userForm.controls['address'] as FormControl;
   }
-  get customerCountryField(): FormControl {
+  get profileCountryField(): FormControl {
     return this.userForm.controls['country'] as FormControl;
   }
-  get customerGenField(): FormControl {
+  get profileGenField(): FormControl {
     return this.userForm.controls['gender_id'] as FormControl;
   }
-  get customerTelNoField(): FormControl {
-    return this.userForm.controls['tellNo'] as FormControl;
+  get profileTelNoField(): FormControl {
+    return this.userForm.controls['tel_no'] as FormControl;
   }
-  get customerCityField(): FormControl {
+  get profileCityField(): FormControl {
     return this.userForm.controls['city'] as FormControl;
   }
-  get customerNicField(): FormControl {
+  get profileNicField(): FormControl {
     return this.userForm.controls['nic'] as FormControl;
   }
-  get customerImageField(): FormControl {
+  get profileImageField(): FormControl {
     return this.userForm.controls['image'] as FormControl;
   }
-getAthCustomer(){
-  this.searchServe.getAthCustomer().subscribe(
+getAthProfile(){
+  this.searchServe.getAthProfile().subscribe(
     (response: any) => {
-      this.customers = Array.isArray(response) ? response : [response];
+      this.profiles = Array.isArray(response) ? response : [response];
     },
     (error) => {
       console.error('Error fetching Food:', error);
@@ -149,19 +149,19 @@ getAthCustomer(){
     this.formData = new FormData();
     if (this.userForm.valid) {
 
-      let customer = new Customer();
+      let profile = new Profile();
 
-      customer.user_id= this.userIdField.value;
-      customer.address= this.customerAddressField.value;
-      customer.nic= this.customerNicField.value;
-      customer.city= this.customerCityField.value;
-      customer.tel_no= this.customerTelNoField.value;
-      customer.gender_id= this.customerGenField.value;
-      customer.country= this.customerCountryField.value;
+      profile.user_id= this.userIdField.value;
+      profile.address= this.profileAddressField.value;
+      profile.nic= this.profileNicField.value;
+      profile.city= this.profileCityField.value;
+      profile.tel_no= this.profileTelNoField.value;
+      profile.gender_id= this.profileGenField.value;
+      profile.country= this.profileCountryField.value;
 
       this.formData.append('image', this.file, this.file.name);
-      this.formData.append('form', JSON.stringify(customer));
-      const submissionObservable = from( this.allServe.submitCustomer(this.formData));
+      this.formData.append('form', JSON.stringify(profile));
+      const submissionObservable = from( this.allServe.submitUserProfile(this.formData));
 
       submissionObservable
         .pipe(
@@ -185,7 +185,7 @@ getAthCustomer(){
   ngOnInit() {
     this.profile();
     this.getUserGen();
-    this.getAthCustomer();
+    this.getAthProfile();
   }
   trackByFn(index: number, item: any): number {
     return index; // Change if you have a unique ID
@@ -195,15 +195,15 @@ getAthCustomer(){
   }
 
    clearForm() {
-     this.customerImageField.setValue("");
+     this.profileImageField.setValue("");
      this.userEmailField.setValue("");
      this.userNameField.setValue("");
-     this.customerAddressField.setValue("");
-     this.customerCountryField.setValue("");
-     this.customerTelNoField.setValue("");
-     this.customerCityField.setValue("");
-     this.customerNicField.setValue("");
+     this.profileAddressField.setValue("");
+     this.profileCountryField.setValue("");
+     this.profileTelNoField.setValue("");
+     this.profileCityField.setValue("");
+     this.profileNicField.setValue("");
      this.userIdField.setValue("");
-     this.customerGenField.setValue("Select User Gender");
+     this.profileGenField.setValue("Select User Gender");
   }
 }

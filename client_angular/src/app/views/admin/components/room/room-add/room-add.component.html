@@ -28,9 +28,9 @@
       </select>
     </div>
     <div  class="mb-3">
-      <input cButton color="primary" type="submit">&ngsp;
+      <input cButton color="primary" type="submit" [disabled]="roomForm.invalid">&ngsp;
       <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">&ngsp;
-      <input cButton color="secondary" style="color: white" type="button" (click)="updateRoom()" value="Update">
+      <input cButton color="secondary" style="color: white" type="button"  value="Update" (click)="updateRoom()" [disabled]="roomForm.invalid">
     </div>
   </form>
 

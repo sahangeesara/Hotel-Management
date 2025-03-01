@@ -1,14 +1,13 @@
 import {Gender} from "./gender";
 
-export class Guide{
+export class Profile{
   id?:number;
-  name?:string;
-  guide_no?:string;
+  user_id?:number;
   address?:any;
-  email?:any;
   city?:string;
   nic?:string;
   tel_no?:string;
   gender_id?:Gender;
-
+  country?:string;
+  image?:any;
 }

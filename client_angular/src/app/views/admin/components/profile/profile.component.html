@@ -13,12 +13,12 @@
           <c-row>
           <h3 class="text-center" style="font-weight: bold; color: cadetblue">Your Details</h3>
             <div class="mt-5">
-              <div *ngFor="let customer of customers; let key = index; trackBy: trackByFn">
+              <div *ngFor="let profile of profiles; let key = index; trackBy: trackByFn">
                 <c-row>
                     <c-col [xs]="6" class="d-flex ">
                       <div class="card mt-3 detCard">
                         <div class="card-body">
-                      <img  src="{{customer.image_url}}" width="250px" height="250px" class="mb-5 image">
+                      <img  src="{{profile.image_url}}" width="250px" height="250px" class="mb-5 image">
                           <div class=" d-flex justify-content-between">
                             <h4 class="mb-0" style="color: goldenrod">
                               {{ type.name || 'User Name' }} |
@@ -44,23 +44,23 @@
 
                             <c-col [xs]="6">
                               <h6 style="font-weight: bold">Your Phone Number:</h6>
-                              <p>{{ customer.tel_no|| 'No  Phone Number available' }}</p>
+                              <p>{{ profile.tel_no|| 'No  Phone Number available' }}</p>
                             </c-col>
                             <c-col [xs]="6">
                               <h6 style="font-weight: bold">Your Nic:</h6>
-                              <p>{{ customer.nic|| 'No  Nic Number available' }}</p>
+                              <p>{{ profile.nic|| 'No  Nic Number available' }}</p>
                             </c-col>
                             <c-col [xs]="6">
                               <h6 style="font-weight: bold">Your Address:</h6>
-                              <p>{{ customer.address|| 'No  Address Number available' }}</p>
+                              <p>{{ profile.address|| 'No  Address Number available' }}</p>
                             </c-col>
                             <c-col [xs]="6">
                             <h6 style="font-weight: bold">Your City:</h6>
-                            <p>{{ customer.city|| 'No  City Number available' }}</p>
+                            <p>{{ profile.city|| 'No  City Number available' }}</p>
                             </c-col>
                               <c-col [xs]="6">
                                 <h6 style="font-weight: bold">Your Country:</h6>
-                                <p>{{ customer.country|| 'No  Country Number available' }}</p>
+                                <p>{{ profile.country|| 'No  Country Number available' }}</p>
                               </c-col>
                           </c-row>
                       </div>
@@ -170,12 +170,12 @@
                 cFormControl
                 type="text"
                 class="form-control"
-                id="tellNo"
-                formControlName="tellNo"
+                id="tel_no"
+                formControlName="tel_no"
                 placeholder="Enter Phone Number"
 
               />
-              <div *ngIf="userForm.get('tellNo')?.invalid && userForm.get('tellNo')?.touched" class="invalid-feedback">
+              <div *ngIf="userForm.get('tel_no')?.invalid && userForm.get('tel_no')?.touched" class="invalid-feedback">
                 Phone Number is required
               </div>
             </div>

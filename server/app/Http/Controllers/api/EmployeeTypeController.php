@@ -39,11 +39,18 @@ class EmployeeTypeController extends Controller
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
-        $employeeType =new Employee_type();
-        $employeeType->name = $data['name'];
-        $employeeType->save();
+        try{
+            $employeeType =new Employee_type();
+            $employeeType->name = $data['name'];
+            $employeeType->save();
 
-        return json_encode($employeeType);
+            return json_encode($employeeType);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving employee type.'], 500);
+        }
+
     }
 
     /**
@@ -74,11 +81,17 @@ class EmployeeTypeController extends Controller
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
+        try{
         $employeeType = Employee_type::findOrFail($id);
         $employeeType->name = $data['name'];
         $employeeType->save();
 
         return json_encode($employeeType);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving employee type.'], 500);
+        }
     }
 
     /**

@@ -39,11 +39,17 @@ class RoleController extends Controller
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
-        $role =new Role();
-        $role->name = $data['name'];
-        $role->save();
+        try {
+            $role = new Role();
+            $role->name = $data['name'];
+            $role->save();
 
-        return json_encode($role);
+            return json_encode($role);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving customer.'], 500);
+        }
     }
 
     /**

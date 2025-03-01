@@ -97,21 +97,16 @@ export class RoomAddComponent {
   }
 
   updateRoom(){
-    this.formData = new FormData();
+     this.formData = new FormData();
     if (this.roomForm.valid) {
-
       let id = this.rmIdField.value;
       let rm = new Room();
-
-      rm.id= this.rmIdField.value;
       rm.r_no= this.rmNoField.value;
       rm.r_cost= this.rmCostField.value;
       rm.r_category_id= this.rmCategoryField.value;
-
       this.formData.append('form', JSON.stringify(rm));
       this.formData.append('_method', 'patch');
-      const submissionObservable = from( this.allServe.updateRoom(this.formData,id));
-
+      const submissionObservable = from( this.allServe.roomUpdate(this.formData,id));
       submissionObservable
         .pipe(
           map((data) => {

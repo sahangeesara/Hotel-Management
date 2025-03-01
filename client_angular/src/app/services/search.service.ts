@@ -70,8 +70,8 @@ export class SearchService {
 
   //Customer Search/Count
 
-  getAthCustomer(){
-    return this.http.get(`${this.besUrl}/athCustomer`,this.getAuthHeaders());
+  getAthProfile(){
+    return this.http.get(`${this.besUrl}/authProfile`,this.getAuthHeaders());
   }
 
   getCountCustomer() {

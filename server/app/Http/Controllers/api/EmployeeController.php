@@ -39,7 +39,7 @@ class EmployeeController extends Controller
 
             'name' => 'required|max:255',
             'address' => 'required',
-            'email' => 'required',
+            'email' => 'required|email',
             'city' => 'required',
             'nic' => 'required',
             'tel_no' => 'required',
@@ -58,6 +58,8 @@ class EmployeeController extends Controller
         $nextId = Employees::max('id') + 1; // Get the next available ID
         $rNo = 'EN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
 
+        try{
+
         $employee =new Employees();
 
         $employee->name = $data['name'];
@@ -72,6 +74,11 @@ class EmployeeController extends Controller
 
         $employee->save();
         return json_encode($employee);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving employee.'], 500);
+        }
     }
 
     /**
@@ -211,7 +218,7 @@ class EmployeeController extends Controller
 
             'name' => 'required|max:255',
             'address' => 'required',
-            'email' => 'required',
+            'email' => 'required|email',
             'city' => 'required',
             'nic' => 'required',
             'tel_no' => 'required',
@@ -230,6 +237,7 @@ class EmployeeController extends Controller
         // If the booking exists, return an error message or handle the situation as needed
         if ($existingNic) {  return response()->json(['error' => 'Nic already exists.']); }
 
+        try{
         $employee = Employees::findOrFail($id);
 
         $employee->name = $data['name'];
@@ -245,6 +253,11 @@ class EmployeeController extends Controller
         $employee->save();
 
         return json_encode($employee);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving employee.'], 500);
+        }
     }
 
     /**

@@ -40,10 +40,17 @@ class ItemCategoryController extends Controller
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
+
+        try{
         $itemCategory =new Item_Category();
         $itemCategory->name = $data['name'];
         $itemCategory->save();
         return json_encode($itemCategory);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving item category.'], 500);
+        }
     }
 
     /**
@@ -75,10 +82,16 @@ class ItemCategoryController extends Controller
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
+        try{
         $itemCategory = Item_Category::findOrFail($id);
         $itemCategory->name = $data['name'];
         $itemCategory->save();
         return json_encode($itemCategory);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving item category.'], 500);
+        }
     }
 
     /**

@@ -40,10 +40,16 @@ class RoomsCategoryController extends Controller
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
-        $roomsCategory =new Rooms_category();
-        $roomsCategory->name = $data['name'];
-        $roomsCategory->save();
-        return json_encode($roomsCategory);
+        try {
+            $roomsCategory = new Rooms_category();
+            $roomsCategory->name = $data['name'];
+            $roomsCategory->save();
+            return json_encode($roomsCategory);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving room category.'], 500);
+        }
     }
 
     /**
@@ -74,11 +80,17 @@ class RoomsCategoryController extends Controller
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
-        $roomsCategory = Rooms_category::findOrFail($id);
-        $roomsCategory->name = $data['name'];
-        $roomsCategory->save();
+        try {
+            $roomsCategory = Rooms_category::findOrFail($id);
+            $roomsCategory->name = $data['name'];
+            $roomsCategory->save();
 
-        return json_encode($roomsCategory);
+            return json_encode($roomsCategory);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving room category.'], 500);
+        }
     }
 
     /**

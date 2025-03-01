@@ -4,6 +4,7 @@ import {OrderStatus} from "./OrderStatus";
 
 export class Order{
   id?:number;
+  order_no?:string;
   r_id?:Room;
   guest_id?:Gender;
   order_date?:any;

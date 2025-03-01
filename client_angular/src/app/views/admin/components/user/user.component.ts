@@ -64,7 +64,7 @@ export class UserComponent {
   {
     this.userForm = this.fb.group({
 
-      id: ['', [Validators.required]],
+      id: [''],
       name: ['', [Validators.required]],
       password: ['', [Validators.required]],
       password_confirmation: ['', [Validators.required]],

@@ -4,6 +4,7 @@ import {Guide} from "./guide";
 export class Guest{
   id?:number;
   name?:string;
+  guest_no?:string;
   address?:any;
   email?:any;
   city?:string;

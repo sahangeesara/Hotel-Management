@@ -3,15 +3,17 @@ import {
   ColComponent,
   FormControlDirective,
   FormLabelDirective,
-  FormSelectDirective,
+  FormSelectDirective, FormTextDirective,
   RowComponent
 } from "@coreui/angular";
-import {FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgForOf, NgIf} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {SearchService} from "../../../../../services/search.service";
 import {ToastrService} from "ngx-toastr";
+import {catchError, from, throwError} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-customer-update',
@@ -25,17 +27,18 @@ import {ToastrService} from "ngx-toastr";
     NgForOf,
     NgIf,
     ReactiveFormsModule,
-    RowComponent
+    RowComponent,
+    FormTextDirective
   ],
   templateUrl: './customer-update.component.html',
   styleUrl: './customer-update.component.scss'
 })
 export class CustomerUpdateComponent {
   customGenders: any[] = [];
-  imageUrl?: string = 'assets/default.png';
   formData = new FormData();
-  customerUpdateForm:any;
-  file:any;
+  customerUpdateForm:FormGroup;
+  custom:any;
+  public error=null;
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private searchServe: SearchService,
@@ -47,81 +50,59 @@ export class CustomerUpdateComponent {
     this.customerUpdateForm = this.fb.group({
 
       id: [''],
-      user_id: [''],
+      custom_no: [''],
+      custom_type: [''],
       name: ['', [Validators.required]],
       email: ['', [Validators.required]],
       address: ['', [Validators.required]],
-      tellNo: ['', [Validators.required]],
+      tel_no: ['', [Validators.required]],
       gender_id: ['', [Validators.required]],
-      image: ['', [Validators.required]],
       nic: ['', [Validators.required]],
       country: ['', [Validators.required]],
       city: ['', [Validators.required]],
-      image_url: ['' ],
     });
   }
-  get userIdField(): FormControl {
-    return this.customerUpdateForm.controls['user_id'] as FormControl;
-  }
-  get userNameField(): FormControl {
-    return this.customerUpdateForm.controls['name'] as FormControl;
-  }
-  get userEmailField(): FormControl {
-    return this.customerUpdateForm.controls['email'] as FormControl;
-  }
-  get customerAddressField(): FormControl {
-    return this.customerUpdateForm.controls['address'] as FormControl;
-  }
-  get customerIdField(): FormControl {
-    return this.customerUpdateForm.controls['id'] as FormControl;
-  }
-  get customerCountryField(): FormControl {
-    return this.customerUpdateForm.controls['country'] as FormControl;
-  }
-  get customerGenField(): FormControl {
-    return this.customerUpdateForm.controls['gender_id'] as FormControl;
-  }
-  get customerTelNoField(): FormControl {
-    return this.customerUpdateForm.controls['tellNo'] as FormControl;
-  }
-  get customerCityField(): FormControl {
-    return this.customerUpdateForm.controls['city'] as FormControl;
-  }
-  get customerNicField(): FormControl {
-    return this.customerUpdateForm.controls['nic'] as FormControl;
-  }
-  get customerImageField(): FormControl {
-    return this.customerUpdateForm.controls['image'] as FormControl;
-  }
+
   getData(data: any) {
-    this.userIdField.setValue(data.user_id);
-    this.userNameField.setValue(data.user.name);
-    this.userEmailField.setValue(data.user.email);
-    this.customerAddressField.setValue(data.address);
-    this.imageUrl= data.image_url;
-    this.customerCountryField.setValue(data.country);
-    this.customerGenField.setValue(data.gender_id);
-    this.customerTelNoField.setValue(data.tel_no);
-    this.customerCityField.setValue(data.city);
-    this.customerNicField.setValue(data.nic);
-    this.customerIdField.setValue(data.id);
+   this.customerUpdateForm.patchValue(data)
   }
 
-  selectImage(e:any):void{
-    this.file = e.target.files ? e.target.files[0] : '';
+  clearForm() {
 
-    if (this.file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(this.file);
-      reader.onload = () => {
-        this.imageUrl = reader.result as string;
-        // console.log(this.imageUrl)
-      };
-    }
+    this.customerUpdateForm.reset();
+    // this.empTypeField.setValue("Select Employee Type");
+    // this.empGenField.setValue("Select Employee Gender");
 
   }
+
   customUpdate(){
+    this.formData = new FormData();
+    if (this.customerUpdateForm.valid) {
 
+      this.custom = this.customerUpdateForm.getRawValue();
+
+      this.formData.append('form', JSON.stringify(this.custom));
+      this.formData.append('_method', 'patch');
+      const submissionObservable =  from( this.allServe.updateCustomer(this.formData,this.custom.id));
+      submissionObservable
+        .pipe(
+          map((data) => {
+            // Handle successful submission here
+            this.clearForm();
+            return data; // If you need to return a value for further processing
+          }),
+          catchError((error) => {
+            // Handle errors here
+            this.handleError(error);
+            return throwError(error); // Re-throw the error if you want to propagate it further
+          })
+        )
+        .subscribe();
+
+    }
+  }
+  handleError(error: { error: null; }){
+    return  this.error=error.error;
   }
   getCustomGen() {
     this.allServe.getGenders().subscribe(
@@ -133,6 +114,7 @@ export class CustomerUpdateComponent {
       }
     );
   }
+
   ngOnInit() {this.getCustomGen();    }
 
 }

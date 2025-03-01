@@ -52,6 +52,7 @@
   <thead>
   <tr>
     <th scope="col">#</th>
+    <th scope="col">Employee Number</th>
     <th scope="col">Employee Name</th>
     <th scope="col">Employee Gender</th>
     <th scope="col">Employee Address</th>
@@ -67,6 +68,7 @@
   @for (employee of employees; track employee; let key = $index) {
   <tr>
     <th scope="row">{{key + 1}}</th>
+      <td>{{ employee.emp_no }}</td>
       <td>{{ employee.name }}</td>
       <td>{{ employee.gender.name }}</td>
       <td>{{ employee.address }}</td>

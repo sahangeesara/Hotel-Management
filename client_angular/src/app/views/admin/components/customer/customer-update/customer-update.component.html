@@ -1,10 +1,10 @@
-<div  id="addForm" >
+<div  id="updateForm" >
   <c-row>
 
     <c-col [xs]="12">
           <form [formGroup]="customerUpdateForm">
             <c-row>
-              <c-col [xs]="4">
+              <c-col [xs]="12">
                 <input
                   cFormControl
                   type="hidden"
@@ -12,14 +12,18 @@
                   id="id"
                   formControlName="id"
                 />
-                <input
-                  cFormControl
-                  type="hidden"
-                  class="form-control"
-                  id="user_id"
-                  formControlName="user_id"
-                />
-                <!-- Name -->
+              </c-col>
+                <c-col [xs]="6">
+                  <div class="mb-3">
+                    <label cLabel for="inputNumber-1">Customer Number: </label>
+                    <input cFormControl id="inputNumber-1" type="text" sizing="sm" name="custom_no" formControlName="custom_no" readonly="readonly">
+                    <div cFormText>
+                      ex: CN0021
+                    </div>
+                  </div>
+                </c-col>
+                 <!-- Name -->
+                <c-col [xs]="6">
                 <div class="mb-3">
                   <label for="name" class="form-label">Your Name</label>
                   <input
@@ -29,7 +33,6 @@
                     id="name"
                     formControlName="name"
                     placeholder="Enter name"
-                    readonly="readonly"
                   />
                   <div *ngIf="customerUpdateForm.get('name')?.invalid && customerUpdateForm.get('name')?.touched" class="invalid-feedback">
                     Name is required.
@@ -47,7 +50,6 @@
                     id="email"
                     formControlName="email"
                     placeholder="Enter email"
-                    readonly="readonly"
                   />
                   <div *ngIf="customerUpdateForm.get('email')?.invalid && customerUpdateForm.get('email')?.touched" class="invalid-feedback">
                     Enter a valid email address.
@@ -68,6 +70,12 @@
                 </div>
               </c-col>
               <c-col [xs]="6">
+                <div class="mb-3">
+                  <label cLabel for="inputCustomType-1">Customer Type:</label>
+                  <input cFormControl id="inputCustomType-1" type="text" name="custom_type" formControlName="custom_type" sizing="sm">
+                </div>
+              </c-col>
+              <c-col [xs]="6">
                 <!-- Address -->
                 <div class="mb-3">
                   <label cLabel for="address" class="form-label">Your Address</label>
@@ -78,7 +86,6 @@
                     id="address"
                     formControlName="address"
                     placeholder="Enter address"
-
                   />
                   <div *ngIf="customerUpdateForm.get('address')?.invalid && customerUpdateForm.get('address')?.touched" class="invalid-feedback">
                     address is required
@@ -93,12 +100,12 @@
                     cFormControl
                     type="text"
                     class="form-control"
-                    id="tellNo"
-                    formControlName="tellNo"
+                    id="tel_no"
+                    formControlName="tel_no"
                     placeholder="Enter Phone Number"
 
                   />
-                  <div *ngIf="customerUpdateForm.get('tellNo')?.invalid && customerUpdateForm.get('tellNo')?.touched" class="invalid-feedback">
+                  <div *ngIf="customerUpdateForm.get('tel_no')?.invalid && customerUpdateForm.get('tel_no')?.touched" class="invalid-feedback">
                     Phone Number is required
                   </div>
                 </div>
@@ -155,13 +162,6 @@
                   <div *ngIf="customerUpdateForm.get('city')?.invalid && customerUpdateForm.get('city')?.touched" class="invalid-feedback">
                     City is required
                   </div>
-                </div>
-              </c-col>
-              <c-col [xs]="6">
-                <div class="mb-3">
-                  <img [src]="imageUrl" style="width:50px;height:50px">&ngsp;
-                  <input id="inputImage-1" hidden="hidden" (change)="selectImage($event)" Select type="file" formControlName="image" sizing="sm" >
-                  <label for="inputImage-1" id="selectbutton">Select</label>
                 </div>
               </c-col>
             </c-row>

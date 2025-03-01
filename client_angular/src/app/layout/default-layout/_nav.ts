@@ -11,7 +11,7 @@ export const navItems: INavData[] = [
     }
   },
   {
-    name: 'Components',
+    name: 'Hotel Reservation',
     title: true
   },
   {
@@ -81,6 +81,10 @@ export const navItems: INavData[] = [
         icon: 'nav-icon-bullet'
       }
     ]
+  },
+  {
+    name: 'Restaurant',
+    title: true
   },
   {
     name: 'Order',

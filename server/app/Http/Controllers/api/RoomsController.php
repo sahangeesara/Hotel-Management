@@ -49,6 +49,7 @@ class RoomsController extends Controller
         $nextId = Rooms::max('id') + 1; // Get the next available ID
         $rNo = 'RN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
 
+        try{
         // Create a new room instance
         $room = new Rooms();
         $room->r_cost = $data['r_cost'];
@@ -57,6 +58,11 @@ class RoomsController extends Controller
         $room->save();
 
         return response()->json($room);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving room.'], 500);
+        }
     }
 
 
@@ -82,24 +88,31 @@ class RoomsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $data = json_decode($request->form, true);
-        $validatedData = Validator::make($data, [
-
-            'r_no' => 'required',
-            'r_cost' => 'required',
-            'r_category_id' => 'required',
-        ]);
-        if ($validatedData->fails()) {
-            return response()->json($validatedData->errors());
-        }
-        $room =Rooms::findOrFail($id);
-
-        $room->r_no = $data['r_no'];
-        $room->r_cost = $data['r_cost'];
-        $room->r_category_id = $data['r_category_id'];
-        $room->save();
-
-        return json_encode($room);
+        info($request->form);
+        info($id);
+//        $data = json_decode($request->form, true);
+//        $validatedData = Validator::make($data, [
+//            'r_no' => 'required',
+//            'r_cost' => 'required',
+//            'r_category_id' => 'required',
+//        ]);
+//        if ($validatedData->fails()) {
+//            return response()->json($validatedData->errors());
+//        }
+//        try{
+//            $room =Rooms::findOrFail($id);
+//
+//            $room->r_no = $data['r_no'];
+//            $room->r_cost = $data['r_cost'];
+//            $room->r_category_id = $data['r_category_id'];
+//            $room->save();
+//
+//            return json_encode($room);
+//        } catch (\Exception $e) {
+//            // Log the error and return an appropriate response
+//            Log::error($e->getMessage());
+//            return response()->json(['message' => 'An error occurred while retrieving room.'], 500);
+//        }
     }
 
     /**

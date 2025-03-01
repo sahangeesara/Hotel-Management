@@ -166,14 +166,14 @@ export class DefaultHeaderComponent extends HeaderComponent {
     this.notificationService.listenForOrderSuccess().subscribe((data) => {
       this.notifications.push(`Order #${data.id} was successful!`);
     });
-    this.getAthCustomer();
+    this.getAthProfile();
   }
 
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
   }
-  getAthCustomer(){
-    this.searchServe.getAthCustomer().subscribe(
+  getAthProfile(){
+    this.searchServe.getAthProfile().subscribe(
       (response: any) => {
         this.customers = Array.isArray(response) ? response : [response];
         console.log(this.customers);

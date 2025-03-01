@@ -8,6 +8,15 @@
     <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
     <c-col [xs]="6">
       <div class="mb-3">
+        <label cLabel for="inputNumber-1">Room Booking Number: </label>
+        <input cFormControl id="inputNumber-1" type="text" sizing="sm" name="booking_no" formControlName="booking_no" readonly="">
+        <div cFormText>
+          ex: RBN0021
+        </div>
+      </div>
+    </c-col>
+    <c-col [xs]="6">
+      <div class="mb-3">
         <label cLabel for="inputRNo-1">Room No:</label>
         <select id="inputRNo-1" aria-label="Select Room No" cSelect name="r_id" formControlName="r_id">
           <option selected="selected" value="">Select Room No</option>
@@ -85,7 +94,7 @@
   <div  class="mb-3">
     <input cButton color="primary" type="submit">&ngsp;
     <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear"> &ngsp;
-    <input cButton color="secondary" style="color: white" type="button" (click)="updateRmBook()" value="Update">
+    <input cButton color="secondary" style="color: white" type="button" (click)="updateRmBook()" [disabled]="rmBookForm.invalid" value="Update">
   </div>
 </form>
 </div>
@@ -129,17 +138,19 @@
     <thead>
     <tr>
       <th scope="col">#</th>
+      <th scope="col"> Book Number</th>
       <th scope="col">Room No</th>
       <th scope="col">Guest Name</th>
       <th scope="col">Guest Nic</th>
       <th scope="col"> Booking / Canceling </th>
-      <th scope="col"> Booking Date - Canceling Date </th>
+      <th scope="col"> Check-in Date - Check-out Date: </th>
       <th scope="col">Action</th>
     </tr>
     </thead>
     <tbody *ngIf="roomsBooks">
     <tr  *ngFor="let book of objectValues(roomsBooks); let i = index">
       <th scope="row">{{i + 1}}</th>
+      <td>{{ book.booking_no }}</td>
       <td>{{ book.room.r_no }}</td>
       <td>{{ book.guest.name }}</td>
       <td>{{ book.guest.nic }}</td>

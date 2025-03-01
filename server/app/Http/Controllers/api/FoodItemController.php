@@ -57,6 +57,11 @@ class FoodItemController extends Controller
             return response()->json($validatedData->errors());
         }
 
+        $nextId = FoodItem::max('id') + 1; // Get the next available ID
+        $rNo = 'FIN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
+
+
+        try{
         $foodItem = new FoodItem();
 
         $foodItem->name = $data['name'];
@@ -64,11 +69,18 @@ class FoodItemController extends Controller
         $foodItem->item_category_id = $data['item_category'];
         $foodItem->food_status_id = $data['food_status'];
         $foodItem->quantity = $data['quantity'];
+        $foodItem->food_no = $rNo;
         $foodItem->image = $request->file('image')->store('public/food/images');
+
 
         $foodItem->save();
 
         return response()->json(['message' => 'Successful added food item.',$foodItem], 200);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving foodItem.'], 500);
+        }
     }
     /**
      * Display the specified resource.
@@ -126,26 +138,34 @@ class FoodItemController extends Controller
             return response()->json($validatedData->errors());
         }
 
-        $foodItem = FoodItem::findOrFail($id);
+        try {
+            $foodItem = FoodItem::findOrFail($id);
 
-        $foodItem->name = $data['name'];
-        $foodItem->food_amount = $data['food_amount'];
-        $foodItem->item_category_id = $data['item_category'];
-        $foodItem->food_status_id = $data['food_status'];
-        $foodItem->quantity = $data['quantity'];
-        if ($request->hasFile('image')) {
-            // Delete the existing image if necessary
-            if ($foodItem->image) {
-                Storage::delete($foodItem->image);
+            $foodItem->name = $data['name'];
+            $foodItem->food_amount = $data['food_amount'];
+            $foodItem->item_category_id = $data['item_category'];
+            $foodItem->food_status_id = $data['food_status'];
+            $foodItem->quantity = $data['quantity'];
+            $foodItem->food_no = $data['food_no'];
+            if ($request->hasFile('image')) {
+                // Delete the existing image if necessary
+                if ($foodItem->image) {
+                    Storage::delete($foodItem->image);
+                }
+
+                // Store the new image
+                $foodItem->image = $request->file('image')->store('public/food/images');
             }
 
-            // Store the new image
-            $foodItem->image = $request->file('image')->store('public/food/images');
+            $foodItem->save();
+
+            return json_encode($foodItem);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving food Item.'], 500);
         }
 
-        $foodItem->save();
-
-        return json_encode($foodItem);
     }
 
     /**

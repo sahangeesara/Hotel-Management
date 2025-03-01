@@ -23,7 +23,7 @@ class FoodStatusController extends Controller
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving employees.'], 500);
+            return response()->json(['message' => 'An error occurred while retrieving food status.'], 500);
         }
     }
 
@@ -41,11 +41,17 @@ class FoodStatusController extends Controller
             return response()->json($validatedData->errors());
         }
 
-        $foodStatus =new Food_status();
-        $foodStatus->name = $data['name'];
-        $foodStatus->save();
+        try{
+            $foodStatus =new Food_status();
+            $foodStatus->name = $data['name'];
+            $foodStatus->save();
 
-        return json_encode($foodStatus);
+            return json_encode($foodStatus);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving food status.'], 500);
+        }
     }
 
     /**
@@ -59,7 +65,7 @@ class FoodStatusController extends Controller
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving employees.'], 500);
+            return response()->json(['message' => 'An error occurred while retrieving food status.'], 500);
         }
     }
 
@@ -77,11 +83,17 @@ class FoodStatusController extends Controller
             return response()->json($validatedData->errors());
         }
 
-        $foodStatus = Food_status::findOrFail($id);
-        $foodStatus->name = $data['name'];
-        $foodStatus->save();
+        try {
+            $foodStatus = Food_status::findOrFail($id);
+            $foodStatus->name = $data['name'];
+            $foodStatus->save();
 
-        return json_encode($foodStatus);
+            return json_encode($foodStatus);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving food status.'], 500);
+        }
     }
 
     /**
@@ -98,7 +110,7 @@ class FoodStatusController extends Controller
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while deactivating the employee.'], 500);
+            return response()->json(['message' => 'An error occurred while deactivating the food status.'], 500);
         }
     }
 }

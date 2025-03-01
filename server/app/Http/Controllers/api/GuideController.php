@@ -39,7 +39,7 @@ class GuideController extends Controller
 
             'name' => 'required|max:255',
             'address' => '',
-            'email' => 'required',
+            'email' => 'required|email',
             'city' => 'required',
             'nic' => 'required',
             'tel_no' => 'required',
@@ -52,7 +52,12 @@ class GuideController extends Controller
                                 ->first();
         // If the booking exists, return an error message or handle the situation as needed
         if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
+
+        $nextId = Guides::max('id') + 1; // Get the next available ID
+        $rNo = 'GIN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
+
         $guideStatus ="No_Assign";
+        try{
         $guides = new Guides();
         $guides->name = $data['name'];
         $guides->address = $data['address'];
@@ -62,10 +67,16 @@ class GuideController extends Controller
         $guides->tel_no = $data['tel_no'];
         $guides->gender_id = $data['gender_id'];
         $guides->guide_status = $guideStatus;
+        $guides->guide_no = $rNo;
 
         $guides->save();
 
         return response()->json(['massage' => 'Successfully submit.', $guides]);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving guide.'], 500);
+        }
     }
 
     /**
@@ -94,11 +105,12 @@ class GuideController extends Controller
 
             'name' => 'required|max:255',
             'address' => '',
-            'email' => 'required',
+            'email' => 'required|email',
             'city' => 'required',
             'nic' => 'required',
             'tel_no' => 'required',
             'gender_id' => 'required',
+            'guide_no' => 'required',
         ]);
         if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
 
@@ -109,6 +121,7 @@ class GuideController extends Controller
         // If the booking exists, return an error message or handle the situation as needed
         if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
 
+        try{
         $guides = Guides::findOrFail($id);
         $guideStatus =$guides->guide_status;
         $guides->name = $data['name'];
@@ -118,10 +131,16 @@ class GuideController extends Controller
         $guides->nic = $data['nic'];
         $guides->tel_no = $data['tel_no'];
         $guides->gender_id = $data['gender_id'];
+        $guides->guide_no = $data['guide_no'];
         $guides->guide_status = $guideStatus;
         $guides->save();
 
         return response()->json(['massage' => 'Successfully Update.', $guides]);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving guide.'], 500);
+        }
     }
 
     /**

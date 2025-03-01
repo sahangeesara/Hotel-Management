@@ -64,38 +64,47 @@ class OrderController extends Controller
                 return response()->json(['error' => 'Quantity not Available']);
             }
         }
+        $nextId = Order::max('id') + 1; // Get the next available ID
+        $rNo = 'ODN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
+
 
         $today = Carbon::now()->format('Y-m-d');
         $orderDate = Carbon::parse($data['order_date']);
         $today = Carbon::parse($today);
 
+        try {
+                if($orderDate->equalTo($today)) {
+                $order =new Order();
+                $order->r_id = $data['r_id'] ?? null;
+                $order->guest_id = $data['guest_id'];
+                $order->order_date = $data['order_date'];
+                $order->order_amount = $data['order_amount'];
+                $order->order_status_id = $data['oder_status_id'];
+                $order->order_no = $rNo;
+                $order->save();
+                foreach ($data2 as $item) {
+                    $orderItem = new OrderItems();
+                    $orderItem->order_id = $order->id;
+                    $orderItem->food_id = $item['id'];
+                    $orderItem->quantity = $item['quantity'];
+                    $orderItem->order_amount =  $item['quantity']*$item['food_amount']; // Assuming price is provided in the request
+                    $orderItem->save();
 
-        if($orderDate->equalTo($today)) {
-        $order =new Order();
-        $order->r_id = $data['r_id'] ?? null;
-        $order->guest_id = $data['guest_id'];
-        $order->order_date = $data['order_date'];
-        $order->order_amount = $data['order_amount'];
-        $order->order_status_id = $data['oder_status_id'];
-        $order->save();
-        foreach ($data2 as $item) {
-            $orderItem = new OrderItems();
-            $orderItem->order_id = $order->id;
-            $orderItem->food_id = $item['id'];
-            $orderItem->quantity = $item['quantity'];
-            $orderItem->order_amount =  $item['quantity']*$item['food_amount']; // Assuming price is provided in the request
-            $orderItem->save();
-
-            $food = FoodItem::findOrFail($item['id']);
-            if ($food->quantity > 0){
-                $food->quantity = $food->quantity - $item['quantity'];
-            }
-            $food->save();
-        }
-        broadcast(new OrderSuccess($order->id));
-        return json_encode($order);
-        }else{
-            return (response()->json(['error' => 'Data not valid.']));
+                    $food = FoodItem::findOrFail($item['id']);
+                    if ($food->quantity > 0){
+                        $food->quantity = $food->quantity - $item['quantity'];
+                    }
+                    $food->save();
+                }
+                broadcast(new OrderSuccess($order->id));
+                return json_encode($order);
+                }else{
+                    return (response()->json(['error' => 'Date not valid.']));
+                }
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving order.'], 500);
         }
     }
 
@@ -131,31 +140,65 @@ class OrderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
         $data = json_decode($request->form, true);
-        $validatedData = Validator::make($data, [
+        $data2 = json_decode($request->food, true);
 
+        $validatedData = Validator::make($data, [
             'r_id' => '',
             'guest_id' => 'required',
             'order_date' => 'required',
             'order_amount' => 'required',
             'oder_status_id' => 'required',
-            'food_id' => 'required',
         ]);
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
-        $order =Order::findOrFail($id);
 
-        $order->r_id = $data['r_id'] ?? null;
-        $order->guest_id = $data['guest_id'];
-        $order->order_date = $data['order_date'];
-        $order->order_amount = $data['order_amount'];
-        $order->oder_status_id = $data['oder_status_id'];
-        $order->food_id = $data['food_id'];
-        $order->save();
+        foreach ($data2 as $item) {
+            $food = FoodItem::findOrFail($item['id']);
+            if ($food->quantity > 0 && $food->quantity <= 10) {
+                return response()->json(['error' => 'Quantity not Available']);
+            }
+        }
 
-        return json_encode($order);
+
+        $today = Carbon::now()->format('Y-m-d');
+        $orderDate = Carbon::parse($data['order_date']);
+        $today = Carbon::parse($today);
+
+        try {
+            if($orderDate->equalTo($today)) {
+                $order =Order::findOrFail($id);
+                $order->r_id = $data['r_id'] ?? null;
+                $order->guest_id = $data['guest_id'];
+                $order->order_date = $data['order_date'];
+                $order->order_amount = $data['order_amount'];
+                $order->order_status_id = $data['oder_status_id'];
+                $order->order_no = $data['order_no'];
+                $order->save();
+                foreach ($data2 as $item) {
+                    $orderItem = new OrderItems();
+                    $orderItem->order_id = $order->id;
+                    $orderItem->food_id = $item['id'];
+                    $orderItem->quantity = $item['quantity'];
+                    $orderItem->order_amount =  $item['quantity']*$item['food_amount']; // Assuming price is provided in the request
+                    $orderItem->save();
+
+                    $food = FoodItem::findOrFail($item['id']);
+                    if ($food->quantity > 0){
+                        $food->quantity = $food->quantity - $item['quantity'];
+                    }
+                    $food->save();
+                }
+                return json_encode($order);
+            }else{
+                return (response()->json(['error' => 'Date not valid.']));
+            }
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving order.'], 500);
+        }
     }
 
     /**

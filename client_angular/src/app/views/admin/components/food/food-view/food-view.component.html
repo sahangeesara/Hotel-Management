@@ -12,6 +12,7 @@
   <tr>
     <th scope="col">#</th>
     <th scope="col">Food Image</th>
+    <th scope="col">Food Number</th>
     <th scope="col">Food Name</th>
     <th scope="col">Food Quantity</th>
     <th scope="col">Food Amount</th>
@@ -25,6 +26,7 @@
   <tr>
     <th scope="row">{{key + 1}}</th>
       <td><img src="{{ food.image_url}}" style="width:50px;height:50px"></td>
+      <td>{{ food.food_no }}</td>
       <td>{{ food.name }}</td>
       <td>{{ food.quantity }}</td>
       <td>{{ food.food_amount }}</td>

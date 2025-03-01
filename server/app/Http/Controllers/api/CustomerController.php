@@ -19,9 +19,8 @@ class CustomerController extends Controller
      */
     public function index()
     {
-       ;
         try {
-            $customers = Customer::with('user','gender')
+            $customers = Customer::with('gender')
                 ->where('is_active',1)
                 ->orderBy('created_at',"DESC")
                 ->paginate(20);
@@ -39,25 +38,21 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
+
         $data = json_decode($request->form, true); // Decode JSON data from request
 
         // Validate request data
         $validatedData = Validator::make($data, [
-            'user_id' => 'required',
+            'name' => 'required',
             'address' => 'required',
             'city' => 'required',
             'nic' => 'required',
+            'email' => 'required',
             'tel_no' => 'required',
             'gender_id' => 'required',
             'country' => 'required',
         ]);
 
-        if ($validatedData->fails()) {
-            return response()->json($validatedData->errors());
-        }
-        $validatedData = Validator::make($request->all(), [
-            'image' => 'required|image',
-        ]);
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
@@ -68,17 +63,22 @@ class CustomerController extends Controller
         // If the booking exists, return an error message or handle the situation as needed
         if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
 
+        $nextId = Customer::max('id') + 1; // Get the next available ID
+        $rNo = 'CN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
+
         try {
 
             $customer = new Customer();
-            $customer->user_id = $data['user_id'];
+            $customer->name = $data['name'];
             $customer->address = $data['address'];
+            $customer->email = $data['email'];
             $customer->city = $data['city'];
             $customer->nic = $data['nic'];
             $customer->tel_no = $data['tel_no'];
             $customer->gender_id = $data['gender_id'];
             $customer->country = $data['country'];
-            $customer->image = $request->file('image')->store('public/customer/images');
+            $customer->custom_type = $data['custom_type'];
+            $customer->custom_no = $rNo;
 
             $customer->save();
 
@@ -96,7 +96,7 @@ class CustomerController extends Controller
     public function show(string $id)
     {
         try {
-            $customer = Customer::with('user','gender')
+            $customer = Customer::with('gender')
                 ->findOrFail($id);
             return response()->json($customer);
 
@@ -109,27 +109,13 @@ class CustomerController extends Controller
 
     public function countCustomer()
     {
-        $customerCount = Customer::with(['user', 'gender'])
+        $customerCount = Customer::with(['gender'])
             ->where('is_active', 1)
             ->count();
 
         return response()->json(['customerCount' => $customerCount]);
     }
-    public function athCustomer()
-    {
-        $id=  Auth::user()->id;
-        try {
-            $customer = Customer::with('user','gender')
-                ->where('user_id',$id)
-                ->first();
-            return response()->json($customer);
 
-        } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving customer.'], 500);
-        }
-    }
 
     /**
      * Update the specified resource in storage.
@@ -140,24 +126,21 @@ class CustomerController extends Controller
 
         // Validate request data
         $validatedData = Validator::make($data, [
-            'user_id' => 'required',
+            'name' => 'required',
             'address' => 'required',
             'city' => 'required',
             'nic' => 'required',
+            'email' => 'required',
             'tel_no' => 'required',
             'gender_id' => 'required',
             'country' => 'required',
+            'custom_no' => 'required',
         ]);
 
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
-        $validatedData = Validator::make($request->all(), [
-            'image' => 'required|image',
-        ]);
-        if ($validatedData->fails()) {
-            return response()->json($validatedData->errors());
-        }
+
 
         $existingBooking = Customer::where('nic', $data['nic'])
                                     ->where('id', '<>', $id)
@@ -169,7 +152,7 @@ class CustomerController extends Controller
         try {
 
             $customer =Customer::findOrFail($id);
-            $customer->user_id = $data['user_id'];
+            $customer->name = $data['name'];
             $customer->address = $data['address'];
             $customer->city = $data['city'];
             $customer->nic = $data['nic'];
@@ -177,14 +160,9 @@ class CustomerController extends Controller
             // Set guide_id to null if empty
             $customer->gender_id = $data['gender_id'];
             $customer->country = $data['country'];
-            if ($request->hasFile('image')) {
-                // Delete the existing image if necessary
-                if ($customer->image) {
-                    Storage::delete($customer->image);
-                }
+            $customer->custom_no = $data['custom_no'];
+            $customer->custom_type = $data['custom_type'];
 
-                $customer->image = $request->file('image')->store('public/customer/images');
-            }
             $customer->save();
 
 

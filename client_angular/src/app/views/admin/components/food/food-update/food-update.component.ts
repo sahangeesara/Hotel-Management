@@ -59,6 +59,7 @@ export class FoodUpdateComponent {
       image: ['', [Validators.required]],
       item_category_id: ['', [Validators.required]],
       food_status_id: ['', [Validators.required]],
+      food_no: ['', [Validators.required]],
     });
 
   }
@@ -83,6 +84,9 @@ export class FoodUpdateComponent {
   }
   get foodStatusField(): FormControl {
     return this.foodUpdateForm.controls['food_status_id'] as FormControl;
+  }
+  get foodNumberField(): FormControl {
+    return this.foodUpdateForm.controls['food_no'] as FormControl;
   }
 
 
@@ -119,6 +123,7 @@ export class FoodUpdateComponent {
       food.food_amount= this.foodAmountField.value;
       food.item_category= this.itemCategoryField.value;
       food.food_status= this.foodStatusField.value;
+      food.food_no= this.foodNumberField.value;
 
       this.formData.append('image', this.file, this.file.name);
       this.formData.append('_method', 'patch');
@@ -182,5 +187,6 @@ export class FoodUpdateComponent {
     // this.foodImageField.setValue(data.image);
     this.itemCategoryField.setValue(data.item_category_id);
     this.foodStatusField.setValue(data.food_status_id);
+    this.foodNumberField.setValue(data.food_no);
   }
 }

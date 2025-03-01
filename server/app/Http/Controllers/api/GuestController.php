@@ -48,7 +48,7 @@ class GuestController extends Controller
         $validatedData = Validator::make($data, [
             'name' => 'required|max:255',
             'address' => '',
-            'email' => 'required',
+            'email' => 'required|email',
             'city' => 'required',
             'nic' => 'required',
             'guide_id' => '', // Allow empty guide_id
@@ -77,6 +77,8 @@ class GuestController extends Controller
             return response()->json(['error' => 'Guide already exists.']);
         }
 
+        $nextId = Guest::max('id') + 1; // Get the next available ID
+        $rNo = 'GSN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
 
         try {
             DB::beginTransaction();
@@ -93,6 +95,7 @@ class GuestController extends Controller
             $guest->gender_id = $data['gender_id'];
             $guest->guest_type = $data['guest_type'];
             $guest->country = $data['country'];
+            $guest->guest_no = $rNo;
 
             $guest->save();
 
@@ -193,7 +196,8 @@ class GuestController extends Controller
 
             'name' => 'required|max:255',
             'address' => '',
-            'email' => 'required',
+            'guest_no' => '',
+            'email' => 'required|email',
             'city' => 'required',
             'nic' => 'required',
             'tel_no' => 'required',
@@ -241,6 +245,7 @@ class GuestController extends Controller
             $guest->gender_id = $data['gender_id'];
             $guest->guest_type = $data['guest_type'];
             $guest->country = $data['country'];
+            $guest->guest_no = $data['guest_no'];
 
             $guest->save();
 

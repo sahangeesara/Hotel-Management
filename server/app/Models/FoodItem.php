@@ -18,6 +18,7 @@ class FoodItem extends Model
      */
     protected $fillable = [
         'id',
+        'food_no',
         'name',
         'quantity',
         'food_amount',

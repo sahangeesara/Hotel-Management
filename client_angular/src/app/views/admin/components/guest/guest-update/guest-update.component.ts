@@ -54,6 +54,7 @@ export class GuestUpdateComponent {
       id: [''],
       name: ['', [Validators.required]],
       address: [''],
+      guest_no: [''],
       email: ['', [Validators.required, Validators.email]],
       nic: ['', [Validators.required,Validators.maxLength(12) ]],
       city: ['', [Validators.required]],

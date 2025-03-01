@@ -17,6 +17,7 @@ use App\Http\Controllers\api\RoomsCategoryController;
 use App\Http\Controllers\api\RoomsController;
 use App\Http\Controllers\api\SupplierController;
 use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\api\UserProfileController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\ResetPasswordController;
@@ -77,7 +78,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('employeesByNameAndType/{e_name}/{type_id}', [EmployeeController::class, 'searchEmployeeByNameAndType']);
 
     //Customer
-    Route::get('athCustomer', [CustomerController::class, 'athCustomer']);
+
     Route::get('countCustomer', [CustomerController::class, 'countCustomer']);
 
     //Order
@@ -86,6 +87,8 @@ Route::middleware(['auth:api'])->group(function () {
     //Room Booking
     Route::get('roomBookingCount', [RoomBookController::class, 'countRoomBooking']);
 
+    //user
+    Route::get('authProfile', [UserProfileController::class, 'authProfile']);
 
     // Resource routes (Require authentication)
     Route::apiResources([
@@ -105,5 +108,6 @@ Route::middleware(['auth:api'])->group(function () {
         'genders' => GenderController::class,
         'role' => RoleController::class,
         'customer' => CustomerController::class,
+        'userProfile' => UserProfileController::class,
     ]);
 });

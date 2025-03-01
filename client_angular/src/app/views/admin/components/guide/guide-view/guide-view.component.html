@@ -10,6 +10,7 @@
   <thead>
   <tr>
     <th scope="col">#</th>
+    <th scope="col">Guide Number</th>
     <th scope="col">Guide Name</th>
     <th scope="col">Guide Gender</th>
     <th scope="col">Guide Address</th>
@@ -25,6 +26,7 @@
   @for (guide of guides; track guide; let key = $index) {
   <tr>
     <th scope="row">{{key + 1}}</th>
+      <td>{{ guide.guide_no }}</td>
       <td>{{ guide.name }}</td>
       <td>{{ guide.gender.name }}</td>
       <td>{{ guide.address }}</td>
@@ -33,7 +35,7 @@
       <td>{{ guide.nic }}</td>
       <td>{{ guide.tel_no }}</td>
       <td>
-       <button type="button" (click)="getShow(guide.id)" cButton>  <svg cIcon name="cil-task" size="lg" title="Numbered List Icon" ></svg></button>
+       <button type="button" (click)="getShow(guide.id)" cButton>  <svg cIcon name="cil-task" size="lg" title="Numbered List Icon" ></svg></button>&ngsp;
        <button type="button" (click)="guideDelete(guide.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
       </td>
 </tr>

@@ -4,7 +4,7 @@ import {
   ColComponent,
   FormControlDirective,
   FormDirective,
-  FormLabelDirective, FormSelectDirective,
+  FormLabelDirective, FormSelectDirective, FormTextDirective,
   RowComponent, TableDirective, TemplateIdDirective,
 } from "@coreui/angular";
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -41,6 +41,7 @@ import {SearchService} from "../../../../../services/search.service";
     NgbInputDatepicker,
     IconDirective,
     DatePipe,
+    FormTextDirective,
   ],
   templateUrl: './room-book.component.html',
   styleUrl: './room-book.component.scss'
@@ -54,7 +55,7 @@ export class RoomBookComponent {
   formData = new FormData();
   rmBookForm: FormGroup;
   rmSearchBookForm: FormGroup;
-
+  rmBook:any;
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private searchServe: SearchService,
@@ -68,6 +69,7 @@ export class RoomBookComponent {
 
       id: [''],
       r_id: ['', [Validators.required]],
+      booking_no: [''],
       guest_id: ['', [Validators.required]],
       r_book: ['', [Validators.required]],
       booking_Date: ['', [Validators.required]],
@@ -96,9 +98,13 @@ export class RoomBookComponent {
   get rmBookDateField(): FormControl {
     return this.rmBookForm.controls['booking_Date'] as FormControl;
   }
-  get rmBookCancelDateField(): FormControl {
+   get rmBookCancelDateField(): FormControl {
     return this.rmBookForm.controls['cancel_Date'] as FormControl;
   }
+   get rmBookNumberField(): FormControl {
+    return this.rmBookForm.controls['booking_no'] as FormControl;
+  }
+
 
   //search form
   get rmBookSearchDateField(): FormControl {
@@ -109,11 +115,7 @@ export class RoomBookComponent {
   }
 
   clearForm() {
-    this.rmBookField.setValue("");
-    this.rmBookRIdField.setValue("Select Room No");
-    this.rmBookGIdField.setValue("");
-    this.rmBookCancelDateField.setValue("");
-    this.rmBookDateField.setValue("");
+   this.rmBookForm.reset()
 
   }
    onSubmit() {
@@ -251,11 +253,7 @@ formatDate(obj:any){
   getRmBookById(id:any) {
     this.allServe.getRoomBookById(id).subscribe(
       (response: any) => {
-        this.rmBookField.setValue(response.r_book);
-        this.rmBookRIdField.setValue(response.r_id);
-        this.rmBookGIdField.setValue(response.guest_id);
-        this.rmBookCancelDateField.setValue(response.cancel_Date);
-        this.rmBookDateField.setValue(response.booking_Date);
+       this.rmBookForm.patchValue(response);
 
         // this.roomsBooks = response.data;
       },
@@ -278,6 +276,7 @@ formatDate(obj:any){
       rmBook.r_book= this.rmBookField.value;
       rmBook.r_id= this.rmBookRIdField.value;
       rmBook.guest_id= this.rmBookGIdField.value;
+      rmBook.booking_no= this.rmBookNumberField.value;
       rmBook.cancel_Date = this.formatDate(this.rmBookCancelDateField.value);
       rmBook.booking_Date = this.formatDate(this.rmBookDateField.value);
 
