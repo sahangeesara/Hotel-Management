@@ -79,30 +79,23 @@ export class EmployeeAddComponent {
 
   }
 
-   onSubmit() {
-    this.formData = new FormData();
+  onSubmit() {
     if (this.empForm.valid) {
+      const employeeData = this.empForm.getRawValue();
 
-      this.employeeData = this.empForm.getRawValue();
-
-      this.formData.append('form', JSON.stringify(this.employeeData));
-      const submissionObservable =  from( this.allServe.submitEmployee(this.formData));
-      submissionObservable
-        .pipe(
-          map((data) => {
-            // Handle successful submission here
-            this.clearForm();
-            return data; // If you need to return a value for further processing
-          }),
-          catchError((error) => {
-            // Handle errors here
-            this.handleError(error);
-            return throwError(error); // Re-throw the error if you want to propagate it further
-          })
-        )
-        .subscribe();
+      this.allServe.submitEmployee(employeeData).subscribe(
+        (response) => {
+          // Handle successful submission
+          this.clearForm();
+        },
+        (error) => {
+          // Handle errors
+          this.handleError(error);
+        }
+      );
     }
   }
+
   handleError(error: { error: null; }){
     return  this.error=error.error;
   }

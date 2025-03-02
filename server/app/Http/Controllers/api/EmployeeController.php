@@ -34,52 +34,43 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        $data = json_decode($request->form, true);
-        $validatedData = Validator::make($data, [
-
+        // Validate request data directly
+        $validatedData = $request->validate([
             'name' => 'required|max:255',
             'address' => 'required',
             'email' => 'required|email',
             'city' => 'required',
-            'nic' => 'required',
+            'nic' => 'required|unique:employees,nic', // Ensure NIC is unique
             'tel_no' => 'required',
-            'employee_type_id' => 'required',
-            'gender_id' => 'required',
-
+            'employee_type_id' => 'required|integer',
+            'gender_id' => 'required|integer',
         ]);
-        if ($validatedData->fails()) {
-            return response()->json($validatedData->errors());
-        }
-        $existingBooking = Employees::where('nic', $data['nic'])->first();
 
-        // If the booking exists, return an error message or handle the situation as needed
-        if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
+        try {
+            // Generate 'emp_no' based on the next auto-incremented 'id'
+            $nextId = Employees::max('id') + 1;
+            $empNo = 'EN' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
-        $nextId = Employees::max('id') + 1; // Get the next available ID
-        $rNo = 'EN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
+            // Create and save the new employee
+            $employee = Employees::create([
+                'name' => $validatedData['name'],
+                'address' => $validatedData['address'],
+                'email' => $validatedData['email'],
+                'city' => $validatedData['city'],
+                'nic' => $validatedData['nic'],
+                'tel_no' => $validatedData['tel_no'],
+                'employee_type_id' => $validatedData['employee_type_id'],
+                'gender_id' => $validatedData['gender_id'],
+                'emp_no' => $empNo,
+            ]);
 
-        try{
-
-        $employee =new Employees();
-
-        $employee->name = $data['name'];
-        $employee->address = $data['address'];
-        $employee->email = $data['email'];
-        $employee->city = $data['city'];
-        $employee->nic = $data['nic'];
-        $employee->tel_no = $data['tel_no'];
-        $employee->employee_type_id = $data['employee_type_id'];
-        $employee->gender_id = $data['gender_id'];
-        $employee->emp_no = $rNo;
-
-        $employee->save();
-        return json_encode($employee);
+            return response()->json(['message' => 'Employee created successfully', 'employee' => $employee], 201);
         } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving employee.'], 500);
+            Log::error('Employee creation error: ' . $e->getMessage());
+            return response()->json(['message' => 'An error occurred while creating the employee.'], 500);
         }
     }
+
 
     /**
      * Display the specified resource.

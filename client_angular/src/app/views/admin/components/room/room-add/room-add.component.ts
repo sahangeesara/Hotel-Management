@@ -96,34 +96,29 @@ export class RoomAddComponent {
     );
   }
 
-  updateRoom(){
-     this.formData = new FormData();
+  updateRoom() {
     if (this.roomForm.valid) {
       let id = this.rmIdField.value;
-      let rm = new Room();
-      rm.r_no= this.rmNoField.value;
-      rm.r_cost= this.rmCostField.value;
-      rm.r_category_id= this.rmCategoryField.value;
-      this.formData.append('form', JSON.stringify(rm));
-      this.formData.append('_method', 'patch');
-      const submissionObservable = from( this.allServe.roomUpdate(this.formData,id));
-      submissionObservable
-        .pipe(
-          map((data) => {
-            // Handle successful submission here
-            this.getRm();
-            this.clearForm();
-            return data; // If you need to return a value for further processing
-          }),
-          catchError((error) => {
-            // Handle errors here
-            this.handleError(error);
-            return throwError(error); // Re-throw the error if you want to propagate it further
-          })
-        )
-        .subscribe();
+      let rm = {
+        r_no: this.rmNoField.value,
+        r_cost: this.rmCostField.value,
+        r_category_id: this.rmCategoryField.value
+      };
+
+      this.allServe.roomUpdate(rm, id).subscribe(
+        (response) => {
+          // Handle successful response
+          this.getRm();
+          this.clearForm();
+        },
+        (error) => {
+          // Handle error response
+          this.handleError(error);
+        }
+      );
     }
   }
+
   getRm() {
     this.allServe.getRoom().subscribe(
       (response: any) => {
@@ -136,35 +131,26 @@ export class RoomAddComponent {
   }
 
   onSubmit() {
-    this.formData = new FormData();
     if (this.roomForm.valid) {
+      let rm = {
+        r_cost: this.rmCostField.value,
+        r_category_id: this.rmCategoryField.value
+      };
 
-      let rm = new Room();
-
-      rm.r_no= this.rmNoField.value;
-      rm.r_cost= this.rmCostField.value;
-      rm.r_category_id= this.rmCategoryField.value;
-
-      this.formData.append('form', JSON.stringify(rm));
-      const submissionObservable = from( this.allServe.submitRoom(this.formData));
-
-      submissionObservable
-        .pipe(
-          map((data) => {
-            // Handle successful submission here
-            this.getRm();
-            this.clearForm();
-            return data; // If you need to return a value for further processing
-          }),
-          catchError((error) => {
-            // Handle errors here
-            this.handleError(error);
-            return throwError(error); // Re-throw the error if you want to propagate it further
-          })
-        )
-        .subscribe();
+      this.allServe.submitRoom(rm).subscribe(
+        (response) => {
+          // Handle successful submission
+          this.getRm();
+          this.clearForm();
+        },
+        (error) => {
+          // Handle errors
+          this.handleError(error);
+        }
+      );
     }
   }
+
   handleError(error: { error: null; }){
     return  this.error=error.error;
   }
