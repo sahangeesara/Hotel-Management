@@ -174,7 +174,6 @@ export class OrderAddComponent  implements OnInit{
         (data: any) => {
 
             const food = Array.isArray(data) ? data[0] : data; // Get the first food item
-          console.log('foods ', food);
           food.quantity = 0;
             this.foodItems.push({
               ...food,

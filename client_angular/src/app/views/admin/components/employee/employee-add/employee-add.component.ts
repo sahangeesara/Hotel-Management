@@ -81,9 +81,9 @@ export class EmployeeAddComponent {
 
   onSubmit() {
     if (this.empForm.valid) {
-      const employeeData = this.empForm.getRawValue();
+      this.employeeData = this.empForm.getRawValue();
 
-      this.allServe.submitEmployee(employeeData).subscribe(
+      this.allServe.submitEmployee(this.employeeData).subscribe(
         (response) => {
           // Handle successful submission
           this.clearForm();

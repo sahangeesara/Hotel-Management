@@ -83,28 +83,21 @@ export class GuestAddComponent {
   }
 
    onSubmit() {
-    this.formData = new FormData();
+
     if (this.guestForm.valid) {
 
      this.guest = this.guestForm.getRawValue();
 
-      this.formData.append('form', JSON.stringify(this.guest));
-      const submissionObservable = from( this.allServe.submitGuest(this.formData));
-
-      submissionObservable
-        .pipe(
-          map((data) => {
-            // Handle successful submission here
-            this.clearForm();
-            return data; // If you need to return a value for further processing
-          }),
-          catchError((error) => {
-            // Handle errors here
-            this.handleError(error);
-            return throwError(error); // Re-throw the error if you want to propagate it further
-          })
-        )
-        .subscribe();
+      this.allServe.submitGuest(this.guest).subscribe(
+        (response) => {
+          // Handle successful submission
+          this.clearForm();
+        },
+        (error) => {
+          // Handle errors
+          this.handleError(error);
+        }
+      );
     }
   }
   handleError(error: { error: null; }){

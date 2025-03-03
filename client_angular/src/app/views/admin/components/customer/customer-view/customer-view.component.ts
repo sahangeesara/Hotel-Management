@@ -48,7 +48,6 @@ export class CustomerViewComponent {
   customers: any[] = [];
   customGenders: any[] = [];
   customerAddForm:FormGroup;
-  formData = new FormData();
   public error=null;
   customData:any;
   @ViewChild(CustomerUpdateComponent) customerUpdateComponent : CustomerUpdateComponent | undefined;
@@ -112,28 +111,21 @@ export class CustomerViewComponent {
   }
 
   onSubmit() {
-    this.formData = new FormData();
     if (this.customerAddForm.valid) {
 
       this.customData = this.customerAddForm.getRawValue();
 
-      this.formData.append('form', JSON.stringify(this.customData));
-      const submissionObservable =  from( this.allServe.submitCustomer(this.formData));
-      submissionObservable
-        .pipe(
-          map((data) => {
-            // Handle successful submission here
-            this.clearForm();
-            this.getCustom();
-            return data; // If you need to return a value for further processing
-          }),
-          catchError((error) => {
-            // Handle errors here
-            this.handleError(error);
-            return throwError(error); // Re-throw the error if you want to propagate it further
-          })
-        )
-        .subscribe();
+      this.allServe.submitCustomer(this.customData).subscribe(
+        (response) => {
+          // Handle successful submission
+          this.getCustom();
+          this.clearForm();
+        },
+        (error) => {
+          // Handle errors
+          this.handleError(error);
+        }
+      );
     }
   }
   handleError(error: { error: null; }) {

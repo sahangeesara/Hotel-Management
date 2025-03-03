@@ -42,7 +42,7 @@ class GuestController extends Controller
      */
     public function store(Request $request)
     {
-        $data = json_decode($request->form, true); // Decode JSON data from request
+        $data = $request->all();
 
         // Validate request data
         $validatedData = Validator::make($data, [
@@ -68,13 +68,15 @@ class GuestController extends Controller
         // If the booking exists, return an error message or handle the situation as needed
         if ($existingNic) {  return response()->json(['error' => 'Nic already exists.']); }
 
-        // Check for existing booking with the same guide_id
-        $existingGuide = Guest::where('guide_id', $data['guide_id'])
-            ->where('is_active', true)
-            ->first();
+        if ($data['guide_id'] != null) {
+            // Check for existing booking with the same guide_id
+            $existingGuide = Guest::where('guide_id', $data['guide_id'])
+                ->where('is_active', true)
+                ->first();
 
-        if ($existingGuide) {
-            return response()->json(['error' => 'Guide already exists.']);
+            if ($existingGuide) {
+                return response()->json(['error' => 'Guide already exists.']);
+            }
         }
 
         $nextId = Guest::max('id') + 1; // Get the next available ID
@@ -191,7 +193,7 @@ class GuestController extends Controller
     public function update(Request $request, string $id)
     {
 
-        $data = json_decode($request->form, true);
+        $data = $request->all();
         $validatedData = Validator::make($data, [
 
             'name' => 'required|max:255',

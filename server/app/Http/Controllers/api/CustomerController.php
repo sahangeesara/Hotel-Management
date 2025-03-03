@@ -39,15 +39,15 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
 
-        $data = json_decode($request->form, true); // Decode JSON data from request
+        $data = $request->all(); // Decode JSON data from request
 
         // Validate request data
         $validatedData = Validator::make($data, [
             'name' => 'required',
             'address' => 'required',
             'city' => 'required',
-            'nic' => 'required',
-            'email' => 'required',
+            'nic' => 'required|unique:customers,nic',
+            'email' => 'required|email',
             'tel_no' => 'required',
             'gender_id' => 'required',
             'country' => 'required',
@@ -57,11 +57,11 @@ class CustomerController extends Controller
             return response()->json($validatedData->errors());
         }
 
-        $existingBooking = Customer::where('nic', $data['nic'])
-                                    ->first();
-
-        // If the booking exists, return an error message or handle the situation as needed
-        if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
+//        $existingBooking = Customer::where('nic', $data['nic'])
+//                                    ->first();
+//
+//        // If the booking exists, return an error message or handle the situation as needed
+//        if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
 
         $nextId = Customer::max('id') + 1; // Get the next available ID
         $rNo = 'CN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
@@ -122,15 +122,15 @@ class CustomerController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $data = json_decode($request->form, true); // Decode JSON data from request
+        $data = $request->all(); // Decode JSON data from request
 
         // Validate request data
         $validatedData = Validator::make($data, [
             'name' => 'required',
             'address' => 'required',
             'city' => 'required',
-            'nic' => 'required',
-            'email' => 'required',
+            'nic' => 'required|unique:customers,nic,'.$id,
+            'email' => 'required|email',
             'tel_no' => 'required',
             'gender_id' => 'required',
             'country' => 'required',
@@ -140,14 +140,6 @@ class CustomerController extends Controller
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
-
-
-        $existingBooking = Customer::where('nic', $data['nic'])
-                                    ->where('id', '<>', $id)
-                                    ->first();
-
-        // If the booking exists, return an error message or handle the situation as needed
-        if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
 
         try {
 

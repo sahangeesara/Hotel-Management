@@ -126,24 +126,16 @@ export class GuestUpdateComponent {
 
       this.guest = this.guestUpadeForm.getRawValue();
 
-      this.formData.append('form', JSON.stringify(this.guest));
-      this.formData.append('_method', 'patch');
-      const submissionObservable = from( this.allServe.updateGuests(this.formData,this.guest.id));
-
-      submissionObservable
-        .pipe(
-          map((data) => {
-            // Handle successful submission here
-            this.clearForm();
-            return data; // If you need to return a value for further processing
-          }),
-          catchError((error) => {
-            // Handle errors here
-            this.handleError(error);
-            return throwError(error); // Re-throw the error if you want to propagate it further
-          })
-        )
-        .subscribe();
+      this.allServe.updateGuests(this.guest, this.guest.id).subscribe(
+        (response) => {
+          // Handle successful update
+          this.clearForm();
+        },
+        (error) => {
+          // Handle errors
+          this.handleError(error);
+        }
+      );
     }
   }
   handleError(error: { error: null; }){

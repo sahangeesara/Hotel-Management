@@ -81,23 +81,16 @@ export class CustomerUpdateComponent {
 
       this.custom = this.customerUpdateForm.getRawValue();
 
-      this.formData.append('form', JSON.stringify(this.custom));
-      this.formData.append('_method', 'patch');
-      const submissionObservable =  from( this.allServe.updateCustomer(this.formData,this.custom.id));
-      submissionObservable
-        .pipe(
-          map((data) => {
-            // Handle successful submission here
-            this.clearForm();
-            return data; // If you need to return a value for further processing
-          }),
-          catchError((error) => {
-            // Handle errors here
-            this.handleError(error);
-            return throwError(error); // Re-throw the error if you want to propagate it further
-          })
-        )
-        .subscribe();
+      this.allServe.updateCustomer(this.custom, this.custom.id).subscribe(
+        (response) => {
+          // Handle successful update
+          this.clearForm();
+        },
+        (error) => {
+          // Handle errors
+          this.handleError(error);
+        }
+      );
 
     }
   }

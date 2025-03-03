@@ -34,7 +34,7 @@ class GuideController extends Controller
      */
     public function store(Request $request)
     {
-        $data = json_decode($request->form, true);
+        $data = $request->all();
         $validatedData = Validator::make($data, [
 
             'name' => 'required|max:255',
@@ -100,7 +100,7 @@ class GuideController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $data = json_decode($request->form, true);
+        $data = $request->all();
         $validatedData = Validator::make($data, [
 
             'name' => 'required|max:255',
