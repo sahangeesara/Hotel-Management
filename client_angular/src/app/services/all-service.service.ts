@@ -66,7 +66,7 @@ export class AllServiceService {
     return this.http.get(`${this.besUrl}/roomsCategory/`+data,this.getAuthHeaders());
   }
   updateRoomCategory(data:any, id:any){
-    return this.http.post(`${this.besUrl}/roomsCategory/${id}`,data,this.getAuthHeaders());
+    return this.http.put(`${this.besUrl}/roomsCategory/${id}`,data,this.getAuthHeaders());
   }
   RoomCategoryDelete(data:any){
     return this.http.delete(`${this.besUrl}/roomsCategory/`+data,this.getAuthHeaders());
@@ -86,7 +86,7 @@ export class AllServiceService {
     return this.http.delete(`${this.besUrl}/roomBook/`+data,this.getAuthHeaders());
   }
   updateRoomBook(data:any, id:any){
-    return this.http.post(`${this.besUrl}/roomBook/${id}`,data,this.getAuthHeaders());
+    return this.http.put(`${this.besUrl}/roomBook/${id}`,data,this.getAuthHeaders());
   }
    submitRoomsBook(data:any){
     return this.http.post<RoomBook[]>(`${this.besUrl}/roomBook`,data,this.getAuthHeaders());
@@ -129,7 +129,7 @@ export class AllServiceService {
 
   }
   updateEmployeeType(data:any, id:any){
-    return this.http.post(`${this.besUrl}/employeeTypes/${id}`,data,this.getAuthHeaders());
+    return this.http.put(`${this.besUrl}/employeeTypes/${id}`,data,this.getAuthHeaders());
   }
   submitEmployeeType(data:any){
     return this.http.post<EmployeeType[]>(`${this.besUrl}/employeeTypes`,data,this.getAuthHeaders());
@@ -139,7 +139,7 @@ export class AllServiceService {
     return this.http.get(`${this.besUrl}/employees`,this.getAuthHeaders());
   }
   updateEmployee(data:any, id:any){
-    return this.http.post(`${this.besUrl}/employees/${id}`,data,this.getAuthHeaders());
+    return this.http.put(`${this.besUrl}/employees/${id}`,data,this.getAuthHeaders());
   }
   getEmployeeById(data:any){
     return this.http.get(`${this.besUrl}/employees/`+ data,this.getAuthHeaders());
@@ -166,7 +166,7 @@ export class AllServiceService {
     return this.http.delete(`${this.besUrl}/guests/`+data,this.getAuthHeaders());
   }
   updateGuests(data:any, id:any){
-    return this.http.post(`${this.besUrl}/guests/${id}`,data,this.getAuthHeaders());
+    return this.http.put(`${this.besUrl}/guests/${id}`,data,this.getAuthHeaders());
   }
 
   //Guide
@@ -187,7 +187,7 @@ export class AllServiceService {
   }
 
   updateGuide(data:any, id:any){
-    return this.http.post(`${this.besUrl}/guides/${id}`,data,this.getAuthHeaders());
+    return this.http.put(`${this.besUrl}/guides/${id}`,data,this.getAuthHeaders());
   }
 
   //user
@@ -206,7 +206,7 @@ export class AllServiceService {
   }
   userUpdate(data:any, id:any){
     console.log(data);
-    return this.http.post(`${this.besUrl}/user/${id}`,data,this.getAuthHeaders());
+    return this.http.put(`${this.besUrl}/user/${id}`,data,this.getAuthHeaders());
   }
 
   //order Status
@@ -224,7 +224,7 @@ export class AllServiceService {
     return this.http.post<OrderStatus[]>(`${this.besUrl}/orderStatus`,data,this.getAuthHeaders());
   }
   updateOrderStatus(data:any, id:any){
-    return this.http.post<OrderStatus>(`${this.besUrl}/orderStatus/${id}`,data,this.getAuthHeaders());
+    return this.http.put<OrderStatus>(`${this.besUrl}/orderStatus/${id}`,data,this.getAuthHeaders());
   }
 
 //Food Status
@@ -242,7 +242,7 @@ export class AllServiceService {
     return this.http.post<FoodStatus[]>(`${this.besUrl}/foodStatus`,data,this.getAuthHeaders());
   }
  updateFoodStatus(data:any, id:any){
-    return this.http.post<FoodStatus>(`${this.besUrl}/foodStatus/${id}`,data,this.getAuthHeaders());
+    return this.http.put<FoodStatus>(`${this.besUrl}/foodStatus/${id}`,data,this.getAuthHeaders());
   }
 
   //Item Category
@@ -260,7 +260,7 @@ export class AllServiceService {
     return this.http.post<FoodStatus[]>(`${this.besUrl}/itemCategory`,data,this.getAuthHeaders());
   }
  updateItemCategory(data:any, id:any){
-    return this.http.post<FoodStatus>(`${this.besUrl}/itemCategory/${id}`,data,this.getAuthHeaders());
+    return this.http.put<FoodStatus>(`${this.besUrl}/itemCategory/${id}`,data,this.getAuthHeaders());
   }
   //Food
 
@@ -280,7 +280,7 @@ export class AllServiceService {
     return this.http.post<Food[]>(`${this.besUrl}/foodItems`,data,this.getAuthHeaders());
   }
  updateFood(data:any, id:any){
-    return this.http.post<Food>(`${this.besUrl}/foodItems/${id}`,data,this.getAuthHeaders());
+    return this.http.put<Food>(`${this.besUrl}/foodItems/${id}`,data,this.getAuthHeaders());
   }
 
 //Order
@@ -302,7 +302,7 @@ export class AllServiceService {
     return this.http.get(`${this.besUrl}/role/`+data,this.getAuthHeaders());
   }
   updateUserRole(data:any, id:any){
-    return this.http.post(`${this.besUrl}/role/${id}`,data,this.getAuthHeaders());
+    return this.http.put(`${this.besUrl}/role/${id}`,data,this.getAuthHeaders());
   }
   UserRoleDelete(data:any){
     return this.http.delete(`${this.besUrl}/role/`+data,this.getAuthHeaders());
@@ -316,7 +316,7 @@ export class AllServiceService {
     return this.http.get(`${this.besUrl}/customer`,this.getAuthHeaders());
   }
   updateCustomer(data:any, id:any){
-    return this.http.post(`${this.besUrl}/customer/${id}`,data,this.getAuthHeaders());
+    return this.http.put(`${this.besUrl}/customer/${id}`,data,this.getAuthHeaders());
   }
   getCustomerById(data:any){
     return this.http.get(`${this.besUrl}/customer/`+ data,this.getAuthHeaders());
@@ -333,7 +333,7 @@ export class AllServiceService {
     return this.http.get(`${this.besUrl}/userProfile`,this.getAuthHeaders());
   }
   updateUserProfile(data:any, id:any){
-    return this.http.post(`${this.besUrl}/userProfile/${id}`,data,this.getAuthHeaders());
+    return this.http.put(`${this.besUrl}/userProfile/${id}`,data,this.getAuthHeaders());
   }
   getUserProfileById(data:any){
     return this.http.get(`${this.besUrl}/userProfile/`+ data,this.getAuthHeaders());

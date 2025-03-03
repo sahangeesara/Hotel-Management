@@ -203,51 +203,29 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
-        $data = json_decode($request->form, true);
-        $validatedData = Validator::make($data, [
-
+        // Validate request data directly
+        $validatedData = $request->validate([
             'name' => 'required|max:255',
             'address' => 'required',
             'email' => 'required|email',
             'city' => 'required',
-            'nic' => 'required',
+            'nic' => 'required|unique:employees,nic,' . $id,
             'tel_no' => 'required',
-            'employee_type_id' => 'required',
-            'gender_id' => 'required',
+            'employee_type_id' => 'required|integer',
+            'gender_id' => 'required|integer',
             'emp_no' => 'required',
-
         ]);
-        if ($validatedData->fails()) {
-            return response()->json($validatedData->errors());
-        }
 
-        $existingNic = Employees::where('nic', $data['nic'])
-                                    ->where('id', '<>', $id)
-                                    ->first();
-        // If the booking exists, return an error message or handle the situation as needed
-        if ($existingNic) {  return response()->json(['error' => 'Nic already exists.']); }
+        try {
+            $employee = Employees::findOrFail($id);
 
-        try{
-        $employee = Employees::findOrFail($id);
+            // Update employee details
+            $employee->update($validatedData);
 
-        $employee->name = $data['name'];
-        $employee->address = $data['address'];
-        $employee->email = $data['email'];
-        $employee->city = $data['city'];
-        $employee->nic = $data['nic'];
-        $employee->tel_no = $data['tel_no'];
-        $employee->employee_type_id = $data['employee_type_id'];
-        $employee->gender_id = $data['gender_id'];
-        $employee->emp_no = $data['emp_no'];
-
-        $employee->save();
-
-        return json_encode($employee);
+            return response()->json(['message' => 'Employee updated successfully', 'employee' => $employee], 200);
         } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving employee.'], 500);
+            Log::error('Employee update error: ' . $e->getMessage());
+            return response()->json(['message' => 'An error occurred while updating the employee.'], 500);
         }
     }
 

@@ -38,60 +38,49 @@ class RoomBookController extends Controller
      */
     public function store(Request $request)
     {
-        $data = json_decode($request->form, true);
-        $validatedData = Validator::make($data, [
+        // Validate request data directly
+        $validatedData = $request->validate([
             'r_id' => 'required',
             'guest_id' => 'required',
             'r_book' => 'required',
-            'booking_Date' => 'required',
-            'cancel_Date' => 'required',
+            'booking_Date' => 'required|date',
+            'cancel_Date' => 'required|date|after_or_equal:booking_Date',
         ]);
-        if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
-        // Check if the guest_id and r_book combination already exists
-        $existingBooking = RoomBook::where(function($query) use ($data) {
-            $query->where('guest_id', $data['guest_id'])
+
+        // Check if the booking already exists
+        $existingBooking = RoomBook::where(function ($query) use ($validatedData) {
+            $query->where('guest_id', $validatedData['guest_id'])
                 ->where('r_book', md5("Booking"));
-        })->orWhere(function($query) use ($data) {
-            $query->where('r_id', $data['r_id'])
-                ->where('booking_Date', $data['booking_Date'])
+        })->orWhere(function ($query) use ($validatedData) {
+            $query->where('r_id', $validatedData['r_id'])
+                ->where('booking_Date', $validatedData['booking_Date'])
                 ->where('is_active', true);
         })->first();
 
+        if ($existingBooking) {
+            return response()->json(['error' => 'Booking already exists for this room and guest.'], 409);
+        }
 
-        // If the booking exists, return an error message or handle the situation as needed
-        if ($existingBooking) {  return response()->json(['error' => 'Booking already exists Room and Guest and already booking.']); }
+        try {
+            $nextId = RoomBook::max('id') + 1;
+            $rNo = 'RBN' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
-        $nextId = RoomBook::max('id') + 1; // Get the next available ID
-        $rNo = 'RBN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
+            $roomBook = RoomBook::create([
+                'r_id' => $validatedData['r_id'],
+                'guest_id' => $validatedData['guest_id'],
+                'r_book' => $validatedData['r_book'],
+                'booking_Date' => $validatedData['booking_Date'],
+                'cancel_Date' => $validatedData['cancel_Date'],
+                'booking_no' => $rNo,
+            ]);
 
-        $today = Carbon::now()->format('Y-m-d');
-        $bookingDate = Carbon::parse($data['booking_Date']);
-        $cancelDate = Carbon::parse($data['cancel_Date']);
-        $today = Carbon::parse($today);
-
-        try{
-            if($bookingDate  >= $today && $bookingDate <= $cancelDate ) {
-
-                $roomBook = new RoomBook();
-                $roomBook->r_id = $data['r_id'];
-                $roomBook->guest_id = $data['guest_id'];
-                $roomBook->r_book = $data['r_book'];
-                $roomBook->booking_Date = $data['booking_Date'];
-                $roomBook->cancel_Date = $data['cancel_Date'];
-                $roomBook->booking_no =$rNo;
-                $roomBook->save();
-
-                return json_encode($roomBook);
-
-            }else{
-                return (response()->json(['error' => 'Date not valid.']));
-            }
+            return response()->json(['message' => 'Room booked successfully', 'roomBook' => $roomBook], 201);
         } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving room booking.'], 500);
+            Log::error('Room booking error: ' . $e->getMessage());
+            return response()->json(['message' => 'An error occurred while booking the room.'], 500);
         }
     }
+
 
     /**
      * Display the specified resource.
@@ -163,72 +152,61 @@ class RoomBookController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $data = json_decode($request->form, true);
-        $validatedData = Validator::make($data, [
+        // Validate request data
+        $validatedData = $request->validate([
             'r_id' => 'required',
-            'booking_no' => '',
+            'booking_no' => 'nullable|string',
             'guest_id' => 'required',
             'r_book' => 'required',
             'booking_Date' => 'required|date',
             'cancel_Date' => 'required|date|after_or_equal:booking_Date',
         ]);
 
-        if ($validatedData->fails()) {
-            return response()->json($validatedData->errors());
-        }
-
-        // Check if the guest_id and r_book combination already exists
+        // Check if a conflicting booking exists
         $existingBooking = RoomBook::where('id', '<>', $id)
-            ->where(function ($query) use ($data) {
-                $query->where(function ($query) use ($data) {
-                    $query->where('guest_id', $data['guest_id'])
-                        ->where('r_book', $data['r_book']); // Fixed comparison
-                })->orWhere(function ($query) use ($data) {
-                    $query->where('r_id', $data['r_id'])
-                        ->where('booking_Date', $data['booking_Date'])
+            ->where(function ($query) use ($validatedData) {
+                $query->where(function ($query) use ($validatedData) {
+                    $query->where('guest_id', $validatedData['guest_id'])
+                        ->where('r_id','<>', $validatedData['r_id'])
+                        ->where('r_book', $validatedData['r_book']);
+                })->orWhere(function ($query) use ($validatedData) {
+                    $query->where('r_id', $validatedData['r_id'])
+                        ->where('booking_Date', $validatedData['booking_Date'])
                         ->where('is_active', true);
-                })->orWhere(function ($query) use ($data) {
-                    $query->whereBetween('cancel_Date', [$data['booking_Date'], $data['cancel_Date']]) // Fixed whereBetween
-                    ->where('is_active', true);
+                })->orWhere(function ($query) use ($validatedData) {
+                    $query->whereBetween('cancel_Date', [$validatedData['booking_Date'], $validatedData['cancel_Date']])
+                        ->where('is_active', true);
                 });
-            })
-            ->first();
+            })->first();
 
         if ($existingBooking) {
-            return response()->json(['error' => 'Booking already exists for this guest or room.']);
+            Log::info('Conflicting Booking Found:', [
+                'existingBooking' => $existingBooking,
+                'newData' => $validatedData
+            ]);
+            return response()->json(['error' => 'Booking already exists for this guest or room.'], 409);
         }
 
-        $today = Carbon::now()->format('Y-m-d');
-        $bookingDate = Carbon::parse($data['booking_Date']);
-        $cancelDate = Carbon::parse($data['cancel_Date']);
-        $today = Carbon::parse($today);
 
         try {
-            if ($bookingDate >= $today && $bookingDate <= $cancelDate) {
-                $roomBook = RoomBook::findOrFail($id);
+            $roomBook = RoomBook::findOrFail($id);
+            $roomBook->update([
+                'r_id' => $validatedData['r_id'],
+                'guest_id' => $validatedData['guest_id'],
+                'r_book' => $validatedData['r_book'],
+                'booking_Date' => $validatedData['booking_Date'],
+                'cancel_Date' => $validatedData['cancel_Date'],
+                'booking_no' => $validatedData['booking_no'],
+                'is_active' => $validatedData['r_book'] === "Canceling" ? false : $roomBook->is_active,
+            ]);
 
-                $roomBook->r_id = $data['r_id'];
-                $roomBook->guest_id = $data['guest_id'];
-                $roomBook->r_book = $data['r_book'];
-                $roomBook->booking_Date = $data['booking_Date'];
-                $roomBook->cancel_Date = $data['cancel_Date'];
-                $roomBook->booking_no = $data['booking_no'];
-
-                if ($data['r_book'] === "Canceling") {
-                    $roomBook->is_active = false;
-                }
-
-                $roomBook->save();
-
-                return response()->json($roomBook);
-            } else {
-                return response()->json(['message' => 'Invalid booking date range.']);
-            }
+            return response()->json(['message' => 'Booking updated successfully', 'roomBook' => $roomBook], 200);
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
+            Log::error('Room booking update error: ' . $e->getMessage());
             return response()->json(['message' => 'An error occurred while updating room booking.'], 500);
         }
     }
+
 
     public function countRoomBooking(){
         $roomBookingCount = RoomBook::where('is_active', 1)

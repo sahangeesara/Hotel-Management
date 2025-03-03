@@ -93,32 +93,24 @@ export class EmployeeUpdateComponent {
     getData(data:any){
        this.updateForm.patchValue(data);
     }
-    empUpdate(){
-    this.formData = new FormData();
+
+  empUpdate() {
     if (this.updateForm.valid) {
+      const empData = this.updateForm.getRawValue();
 
-    this.emp = this.updateForm.getRawValue();
-
-      this.formData.append('form', JSON.stringify(this.emp));
-      this.formData.append('_method', 'patch');
-      const submissionObservable =  from( this.allServe.updateEmployee(this.formData,this.emp.id));
-      submissionObservable
-        .pipe(
-          map((data) => {
-            // Handle successful submission here
-            this.clearForm();
-            return data; // If you need to return a value for further processing
-          }),
-          catchError((error) => {
-            // Handle errors here
-            this.handleError(error);
-            return throwError(error); // Re-throw the error if you want to propagate it further
-          })
-        )
-        .subscribe();
-
+      this.allServe.updateEmployee(empData, empData.id).subscribe(
+        (response) => {
+          // Handle successful update
+          this.clearForm();
+        },
+        (error) => {
+          // Handle errors
+          this.handleError(error);
+        }
+      );
     }
   }
+
 
   handleError(error: { error: null; }){
     return  this.error=error.error;

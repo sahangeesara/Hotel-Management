@@ -118,39 +118,31 @@ export class RoomBookComponent {
    this.rmBookForm.reset()
 
   }
-   onSubmit() {
-    this.formData = new FormData();
+  onSubmit() {
     if (this.rmBookForm.valid) {
+      const rmBook = {
+        r_book: this.rmBookField.value,
+        r_id: this.rmBookRIdField.value,
+        guest_id: this.rmBookGIdField.value,
+        cancel_Date: this.formatDate(this.rmBookCancelDateField.value),
+        booking_Date: this.formatDate(this.rmBookDateField.value)
+      };
 
-      let rmBook = new RoomBook();
-
-      rmBook.r_book= this.rmBookField.value;
-      rmBook.r_id= this.rmBookRIdField.value;
-      rmBook.guest_id= this.rmBookGIdField.value;
-      rmBook.cancel_Date = this.formatDate(this.rmBookCancelDateField.value);
-      rmBook.booking_Date = this.formatDate(this.rmBookDateField.value);
-
-      this.formData.append('form', JSON.stringify(rmBook));
-      const submissionObservable =  from(this.allServe.submitRoomsBook(this.formData));
-
-      // Use pipe() to apply operators
-      submissionObservable
-        .pipe(
-          map((data) => {
-            // Handle successful submission here
-            this.getRm();
-            this.getRmBook();
-            this.clearForm();
-            return data; // If you need to return a value for further processing
-          }),
-          catchError((error) => {
-            // Handle errors here
-            this.handleError(error);
-            return throwError(() => new Error(error?.error || "Server Error"));          })
-        )
-        .subscribe();
+      this.allServe.submitRoomsBook(rmBook).subscribe(
+        (data) => {
+          // Handle successful submission
+          this.getRm();
+          this.getRmBook();
+          this.clearForm();
+        },
+        (error) => {
+          // Handle errors
+          this.handleError(error);
+        }
+      );
     }
   }
+
   handleError(error: { error: null; }){
    return  this.error=error.error;
   }
@@ -263,46 +255,33 @@ formatDate(obj:any){
     );
   }
 
-  updateRmBook(){
-
-    this.formData = new FormData();
+  updateRmBook() {
     if (this.rmBookForm.valid) {
+      const id = this.rmBookIdField.value;
 
-      let id =this.rmBookIdField.value;
+      const rmBook = {
+        id: this.rmBookIdField.value,
+        r_book: this.rmBookField.value,
+        r_id: this.rmBookRIdField.value,
+        guest_id: this.rmBookGIdField.value,
+        booking_no: this.rmBookNumberField.value,
+        cancel_Date: this.formatDate(this.rmBookCancelDateField.value),
+        booking_Date: this.formatDate(this.rmBookDateField.value)
+      };
 
-      let rmBook = new RoomBook();
-
-      rmBook.id= this.rmBookIdField.value;
-      rmBook.r_book= this.rmBookField.value;
-      rmBook.r_id= this.rmBookRIdField.value;
-      rmBook.guest_id= this.rmBookGIdField.value;
-      rmBook.booking_no= this.rmBookNumberField.value;
-      rmBook.cancel_Date = this.formatDate(this.rmBookCancelDateField.value);
-      rmBook.booking_Date = this.formatDate(this.rmBookDateField.value);
-
-      this.formData.append('form', JSON.stringify(rmBook));
-      this.formData.append('_method', 'patch');
-      const submissionObservable =  from(this.allServe.updateRoomBook(this.formData,id));
-
-      // Use pipe() to apply operators
-      submissionObservable
-        .pipe(
-          map((data) => {
-            // Handle successful submission here
-            this.getRm();
-            this.getRmBook();
-            this.clearForm();
-            return data; // If you need to return a value for further processing
-          }),
-          catchError((error) => {
-            // Handle errors here
-            this.handleError(error);
-            return throwError(error); // Re-throw the error if you want to propagate it further
-          })
-        )
-        .subscribe();
+      this.allServe.updateRoomBook(rmBook, id).subscribe(
+        (data) => {
+          // Handle successful submission
+          this.getRm();
+          this.getRmBook();
+          this.clearForm();
+        },
+        (error) => {
+          // Handle errors
+          this.handleError(error);
+        }
+      );
     }
-
   }
 
   ngOnInit() {
