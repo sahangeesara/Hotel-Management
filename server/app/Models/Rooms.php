@@ -14,7 +14,6 @@ class Rooms extends Model
         'id',
         'r_no',
         'r_cost',
-        'r_book',
         'r_category_id',
         'is_active',
     ];

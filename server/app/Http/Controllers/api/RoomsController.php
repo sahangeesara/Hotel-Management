@@ -37,6 +37,8 @@ class RoomsController extends Controller
     {
         // Validate request data directly
         $validatedData = $request->validate([
+            'id' =>'',
+            'r_no' =>'',
             'r_cost' => 'required|numeric',
             'r_category_id' => 'required|integer',
         ]);

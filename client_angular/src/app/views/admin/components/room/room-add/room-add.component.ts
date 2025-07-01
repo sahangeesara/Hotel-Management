@@ -44,6 +44,7 @@ export class RoomAddComponent {
   roomsCategories: any[] = [];
   formData = new FormData();
   roomForm: FormGroup;
+  roomData:any;
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private router:Router,
@@ -75,9 +76,7 @@ export class RoomAddComponent {
   }
 
   clearForm() {
-    this.rmIdField.setValue("");
-    this.rmNoField.setValue("");
-    this.rmCostField.setValue("");
+    this.roomForm.reset();
     this.rmCategoryField.setValue("Select Rooms Category");
   }
 
@@ -98,14 +97,9 @@ export class RoomAddComponent {
 
   updateRoom() {
     if (this.roomForm.valid) {
-      let id = this.rmIdField.value;
-      let rm = {
-        r_no: this.rmNoField.value,
-        r_cost: this.rmCostField.value,
-        r_category_id: this.rmCategoryField.value
-      };
+      this.roomData = this.roomForm.getRawValue();
 
-      this.allServe.roomUpdate(rm, id).subscribe(
+      this.allServe.roomUpdate(this.roomData, this.roomData.id).subscribe(
         (response) => {
           // Handle successful response
           this.getRm();
@@ -132,12 +126,10 @@ export class RoomAddComponent {
 
   onSubmit() {
     if (this.roomForm.valid) {
-      let rm = {
-        r_cost: this.rmCostField.value,
-        r_category_id: this.rmCategoryField.value
-      };
 
-      this.allServe.submitRoom(rm).subscribe(
+      this.roomData = this.roomForm.getRawValue();
+
+      this.allServe.submitRoom(this.roomData).subscribe(
         (response) => {
           // Handle successful submission
           this.getRm();
