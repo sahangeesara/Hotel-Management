@@ -154,7 +154,7 @@ class RoomBookController extends Controller
     {
         // Validate request data
         $validatedData = $request->validate([
-            'r_id' => 'required',
+            'r_id' => 'required|integer',
             'booking_no' => 'nullable|string',
             'guest_id' => 'required',
             'r_book' => 'required',

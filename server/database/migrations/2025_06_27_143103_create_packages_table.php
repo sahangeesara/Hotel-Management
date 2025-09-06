@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
+            $table->char('package_no')->unique();
+            $table->text('description')->nullable();
+            $table->string('name');
+            $table->decimal('package_amount',10,2);
+            $table->integer('duration')->nullable();// Duration in days/nights
+            $table->integer('max_guests')->nullable(); // Guest capacity
+
+            $table->unsignedBigInteger('event_id');
+            $table->foreign('event_id')->references('id')->on('events');
+            $table->boolean('is_active')->default(1);
             $table->timestamps();
         });
     }

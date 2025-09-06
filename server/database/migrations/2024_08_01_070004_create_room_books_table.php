@@ -18,6 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('guest_id');
             $table->string('r_book');
             $table->dateTime('booking_Date');
+//            $table->integer('max_guests')->nullable(); // Guest capacity
+//            $table->string('meal_plan')->nullable();   // e.g., BB, HB, FB, AI
             $table->dateTime('cancel_Date')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();

@@ -11,11 +11,7 @@ import {NgForOf, NgIf} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
-import {Employee} from "../../../../../entities/employee";
-import {Room} from "../../../../../entities/room";
 import { IconDirective } from '@coreui/icons-angular';
-import {catchError, from, throwError} from "rxjs";
-import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-room-add',

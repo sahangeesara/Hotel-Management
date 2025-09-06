@@ -3,6 +3,8 @@
 use App\Http\Controllers\api\CustomerController;
 use App\Http\Controllers\api\EmployeeController;
 use App\Http\Controllers\api\EmployeeTypeController;
+use App\Http\Controllers\api\EventBookingController;
+use App\Http\Controllers\api\EventController;
 use App\Http\Controllers\api\FoodItemController;
 use App\Http\Controllers\api\FoodStatusController;
 use App\Http\Controllers\api\GenderController;
@@ -11,6 +13,7 @@ use App\Http\Controllers\api\GuideController;
 use App\Http\Controllers\api\ItemCategoryController;
 use App\Http\Controllers\api\OrderController;
 use App\Http\Controllers\api\OrderStatusController;
+use App\Http\Controllers\api\PackageController;
 use App\Http\Controllers\api\RoleController;
 use App\Http\Controllers\api\RoomBookController;
 use App\Http\Controllers\api\RoomsCategoryController;
@@ -109,5 +112,8 @@ Route::middleware(['auth:api'])->group(function () {
         'role' => RoleController::class,
         'customer' => CustomerController::class,
         'userProfile' => UserProfileController::class,
+        'event' => EventController::class,
+        'eventBook' => EventBookingController::class,
+        'package' => PackageController::class,
     ]);
 });

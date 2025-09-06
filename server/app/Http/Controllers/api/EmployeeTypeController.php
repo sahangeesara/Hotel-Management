@@ -17,7 +17,7 @@ class EmployeeTypeController extends Controller
     {
         try {
             $employeeTypes = Employee_type::where('is_active', 1)
-                                            ->paginate(20);
+                                            ->get();
             return response()->json($employeeTypes);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response

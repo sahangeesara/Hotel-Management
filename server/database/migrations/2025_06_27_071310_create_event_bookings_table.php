@@ -13,13 +13,15 @@ return new class extends Migration
     {
         Schema::create('event_bookings', function (Blueprint $table) {
             $table->id();
-            $table->char('event_booking_no');
+            $table->char('event_booking_no')->unique();;
 
             // Define the foreign key columns first
             $table->unsignedBigInteger('event_id');
             $table->unsignedBigInteger('customer_id')->default(0);
             $table->unsignedBigInteger('guest_id')->default(0);
             $table->unsignedBigInteger('r_id');
+            $table->dateTime('booking_Date');
+            $table->dateTime('cancel_Date')->nullable();
 
             // Now apply the foreign key constraints
             $table->foreign('event_id')->references('id')->on('events');
