@@ -13,6 +13,7 @@ class EventBooking extends Model
 
     protected $fillable = [
         'id',
+        'room_booking_id',
         'event_booking_no',
         'guest_id',
         'customer_id',
@@ -38,6 +39,10 @@ class EventBooking extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class,'customer_id');
+    }
+   public function roomBooking(): BelongsTo
+    {
+        return $this->belongsTo(RoomBook::class,'room_booking_id');
     }
 
 

@@ -16,7 +16,7 @@ class EventBookingController extends Controller
     public function index()
     {
         try {
-            $eventBook = EventBooking::with('event','room','guest','customer')
+            $eventBook = EventBooking::with('event','room','guest','customer','roomBooking')
                 ->where('is_active',1)
                 ->orderBy('created_at',"DESC")
                 ->get();
@@ -25,7 +25,7 @@ class EventBookingController extends Controller
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving Event.'], 500);
+            return response()->json(['message' => 'An error occurred while retrieving Event booking.'], 500);
         }
     }
 
@@ -42,7 +42,8 @@ class EventBookingController extends Controller
             'r_id' => 'required|integer',
             'booking_Date' => 'required|date',
             'cancel_Date' => 'required|date|after_or_equal:booking_Date',
-        ]);
+            'r_book' => 'required',
+            ]);
 
         $existingBooking = RoomBook::where(function ($query) use ($validatedData) {
             $query->where('guest_id', $validatedData['guest_id'])
@@ -56,7 +57,6 @@ class EventBookingController extends Controller
         if ($existingBooking) {
             return response()->json(['error' => 'Booking already exists for this room and guest.'], 409);
         }
-
 
         try {
             // Generate 'emp_no' based on the next auto-incremented 'id'
@@ -87,7 +87,7 @@ class EventBookingController extends Controller
                 'cancel_Date' => $validatedData['cancel_Date'],
                 'booking_no' => $rNo,
             ]);
-            return response()->json(['message' => 'Event Book created successfully', 'employee' =>  $eventBook], 201);
+            return response()->json(['message' => 'Event & Room booking created successfully', 'eventBook' =>  $eventBook, 'roomBook' => $roomBook], 201);
         } catch (\Exception $e) {
             Log::error('Employee creation error: ' . $e->getMessage());
             return response()->json(['message' => 'An error occurred while creating the employee.'], 500);
@@ -100,7 +100,7 @@ class EventBookingController extends Controller
     public function show(string $id)
     {
         try {
-            $employees = EventBooking::with('event','room','guest','customer')
+            $employees = EventBooking::with('event','room','guest','customer','roomBooking')
                 ->findOrFail($id);
             return response()->json($employees);
         } catch (\Exception $e) {
@@ -124,12 +124,50 @@ class EventBookingController extends Controller
             'booking_Date' => 'required|date',
             'cancel_Date' => 'required|date|after_or_equal:booking_Date',
             'event_booking_no' => 'required',
+            'booking_no' => 'nullable|string',
+            'roomBooking' => 'required|integer',
         ]);
 
+
+        $existingBooking = RoomBook::where('id', '<>',  $validatedData['roomBooking'])
+            ->where(function ($query) use ($validatedData) {
+                $query->where(function ($query) use ($validatedData) {
+                    $query->where('guest_id', $validatedData['guest_id'])
+                        ->where('r_id','<>', $validatedData['r_id'])
+                        ->where('r_book', $validatedData['r_book']);
+                })->orWhere(function ($query) use ($validatedData) {
+                    $query->where('r_id', $validatedData['r_id'])
+                        ->where('booking_Date', $validatedData['booking_Date'])
+                        ->where('is_active', true);
+                })->orWhere(function ($query) use ($validatedData) {
+                    $query->whereBetween('cancel_Date', [$validatedData['booking_Date'], $validatedData['cancel_Date']])
+                        ->where('is_active', true);
+                });
+            })->first();
+
+        if ($existingBooking) {
+            Log::info('Conflicting Booking Found:', [
+                'existingBooking' => $existingBooking,
+                'newData' => $validatedData
+            ]);
+            return response()->json(['error' => 'Booking already exists for this guest or room.'], 409);
+        }
         try {
             $eventBook = EventBooking::findOrFail($id);
             // Update Event Book details
             $eventBook->update($validatedData);
+
+            $roomBook = RoomBook::findOrFail($validatedData['roomBooking']);
+            $roomBook->update([
+                'r_id' => $validatedData['r_id'],
+                'guest_id' => $validatedData['guest_id'],
+                'r_book' => $validatedData['r_book'],
+                'booking_Date' => $validatedData['booking_Date'],
+                'cancel_Date' => $validatedData['cancel_Date'],
+                'booking_no' => $validatedData['booking_no'],
+                'is_active' => $validatedData['r_book'] === "Canceling" ? false : $roomBook->is_active,
+            ]);
+
 
             return response()->json(['message' => 'Event Book created successfully', 'employee' =>  $eventBook], 201);
         } catch (\Exception $e) {
@@ -146,6 +184,11 @@ class EventBookingController extends Controller
 
         try {
             $eventBook = EventBooking::findOrFail($id);
+            $roomBook = RoomBook::findOrFail($eventBook->room_booking_id);
+            $roomBook->is_active = false;
+            $roomBook->r_book = "Canceling";
+            $roomBook->save();
+
             $eventBook->is_active = false;
             $eventBook->save();
 
