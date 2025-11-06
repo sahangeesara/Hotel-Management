@@ -83,6 +83,23 @@ export const navItems: INavData[] = [
     ]
   },
   {
+    name: 'Event',
+    url: '/event',
+    iconComponent: { name: 'cil-people' },
+    children: [
+      {
+        name: 'Event View',
+        url: '/event/event_view',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Event Book',
+        url: '/event/event_book',
+        icon: 'nav-icon-bullet'
+      },
+    ]
+  },
+  {
     name: 'Restaurant',
     title: true
   },

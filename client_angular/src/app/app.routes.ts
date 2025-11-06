@@ -38,6 +38,11 @@ export const routes: Routes = [
         data: { preload: true }
       },
       {
+        path: 'event',
+        loadChildren: () => import('./views/admin/components/event/routes').then((m) => m.routes),
+        data: { preload: true }
+      },
+      {
         path: 'guest',
         loadChildren: () => import('./views/admin/components/guest/routes').then((m) => m.routes),
         data: { preload: true }

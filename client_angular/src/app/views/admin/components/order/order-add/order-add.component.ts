@@ -87,8 +87,8 @@ export class OrderAddComponent  implements OnInit{
       order_date: ['', [Validators.required]],
       order_amount: ['', [Validators.required]],
       oder_status_id: ['', [Validators.required]],
-      item_category_id: ['', [Validators.required]],
-      food_id: ['', [Validators.required]],
+      item_category_id: [''],
+      food_id: [''],
       quantity: [''],
 
     });
@@ -166,27 +166,48 @@ export class OrderAddComponent  implements OnInit{
       }
     );
   }
-  getFoodsById(id: any) {
-    const selectedFoodId = id;
+  addSelectedFood() {
+    const selectedFoodId = this.orderForm.get('food_id')?.value;
+    const quantityRaw = this.orderForm.get('quantity')?.value;
 
-    if (selectedFoodId) {
-      this.allServe.getFoodById(selectedFoodId).subscribe(
-        (data: any) => {
+    const quantity = Number(quantityRaw);
 
-            const food = Array.isArray(data) ? data[0] : data; // Get the first food item
-          food.quantity = 0;
-            this.foodItems.push({
-              ...food,
-              // quantity: 0
-            });
-            // this.foodQuantityField.setValue("")
-
-          },
-        (error) => {
-          console.error('Error fetching food item:', error);
-        }
-      );
+    if (!selectedFoodId) {
+      alert('Please select a food item first.');
+      return;
     }
+
+    if (!quantity || quantity <= 0) {
+      alert('Please enter a valid quantity greater than 0.');
+      return;
+    }
+
+    // find selected food from foods list
+    const food = this.foods.find((f: any) => String(f.id) === String(selectedFoodId));
+    if (!food) {
+      alert('Selected food not found in available list.');
+      return;
+    }
+
+    // check if already added
+    const existing = this.foodItems.find(f => String(f.id) === String(food.id));
+    if (existing) {
+      // if exists, just update quantity instead of blocking
+      // @ts-ignore
+      existing.quantity += quantity;
+    } else {
+      // add new item
+      this.foodItems.push({
+        ...food,
+        quantity: quantity,
+      });
+    }
+
+    // reset fields for next entry
+    this.orderForm.patchValue({ quantity: '', food_id: '' });
+
+    // recalculate total
+    this.updateTotalAmount();
   }
 
 
@@ -214,26 +235,12 @@ export class OrderAddComponent  implements OnInit{
 
   updateTotalAmount() {
     this.totalAmount=0;
-    console.log(this.foodItems);
+
     for (let i = 0; i < this.foodItems.length; i++) {
       this.totalAmount += (Number(this.foodItems[i]['food_amount']) || 0) * (Number(this.foodItems[i]['quantity']) || 0);
       console.log(this.totalAmount);
     }
     this.orderForm.controls['order_amount'].setValue(this.totalAmount+".00");
-  }
-
-
-  calculateOrderAmount(id:any) {
-   const quantity = this.orderForm.controls['quantity'].value;
-
-    for (let i = 0; i < this.foodItems.length; i++) {
-
-      if (this.foodItems[i].id == id) {
-        this.foodItems[i].quantity = quantity;
-      }
-    }
-    this.updateTotalAmount();
-
   }
 
 
@@ -253,7 +260,6 @@ export class OrderAddComponent  implements OnInit{
     // @ts-ignore
     let f_amount = quantity * foodAmount;
 
-    // this.totalAmount -= f_amount;
     this.foodItems.splice(index, 1);
     this.updateTotalAmount();
     this.orderForm.controls['order_amount'].setValue(this.totalAmount+".00");

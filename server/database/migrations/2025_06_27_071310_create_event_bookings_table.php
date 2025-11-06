@@ -15,19 +15,19 @@ return new class extends Migration
             $table->id();
             $table->char('event_booking_no')->unique();;
 
-            // Define the foreign key columns first
             $table->unsignedBigInteger('event_id');
+            $table->unsignedBigInteger('package_id');
             $table->unsignedBigInteger('customer_id')->default(0);
             $table->unsignedBigInteger('guest_id')->default(0);
             $table->unsignedBigInteger('r_id');
             $table->dateTime('booking_Date');
             $table->dateTime('cancel_Date')->nullable();
 
-            // Now apply the foreign key constraints
             $table->foreign('event_id')->references('id')->on('events');
             $table->foreign('customer_id')->references('id')->on('customers');
             $table->foreign('guest_id')->references('id')->on('guests');
             $table->foreign('r_id')->references('id')->on('rooms');
+            $table->foreign('package_id')->references('id')->on('packages');
 
             $table->boolean('is_active')->default(1);
             $table->timestamps();

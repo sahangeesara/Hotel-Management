@@ -12,17 +12,7 @@
         </select>
       </div>
     </c-col>
-<!--    <c-col [xs]="6">-->
-<!--      <div class="mb-3">-->
-<!--        <label cLabel for="inputGuest-1">Guest:</label>-->
-<!--        <select id="inputGuest-1" aria-label="Select Guest" cSelect name="guest_id" formControlName="guest_id">-->
-<!--          <option selected="selected">Select Guest</option>-->
-<!--          <option *ngFor="let guest of guests" [value]="guest.id">-->
-<!--            {{ guest.nic }}-->
-<!--          </option>-->
-<!--        </select>-->
-<!--      </div>-->
-<!--    </c-col>-->
+
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="inputGuest-1">Guest:</label>
@@ -74,43 +64,54 @@
       />
       <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
     </c-col>
-    <c-col [xs]="6">
-      <div class="mb-3">
-        <label cLabel>Item Category:</label>
-<!--        <select aria-label="Select Item Category" cSelect name="item_category_id" formControlName="item_category_id" (change)="getFoods($any($event).target.value)">-->
-<!--          <option *ngFor="let food of itemCategories" [value]="food">{{ food.name }}</option>-->
-<!--        </select>-->
 
-        <select aria-label="Select Item Category" cSelect name="item_category_id" formControlName="item_category_id" (change)="getFoods($any($event).target.value)">
-          <option value="" selected>Select Item Category...</option>
-          <option *ngFor="let category of itemCategories " [value]="category.id">
-            {{ category.name }}
-          </option>
-        </select>
+      <hr class="mt-2">
+      <div>
+        <c-row>
+        <c-col [xs]="6">
+          <div class="mb-3">
+            <label cLabel>Item Category:</label>
+            <select aria-label="Select Item Category" cSelect name="item_category_id" formControlName="item_category_id" (change)="getFoods($any($event).target.value)">
+              <option value="" selected>Select Item Category...</option>
+              <option *ngFor="let category of itemCategories " [value]="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+          </div>
+        </c-col>
+
+        <c-col [xs]="6">
+
+          <div class="mb-3">
+            <label cLabel>Foods Item:</label>
+             <select aria-label="Select Food Item" cSelect name="food_id" formControlName="food_id">
+              <option value="" selected>Select Food Item...</option>
+              <option *ngFor="let food of foods" [value]="food.id">
+                {{ food.name }}(Available quantity : {{food.quantity}})
+              </option>
+            </select>
+          </div>
+        </c-col>
+        <c-col [xs]="6">
+          <div class="mb-3">
+            <label cLabel for="txtQuantity">Quantity : </label>
+            <input
+              cFormControl
+              id="txtQuantity"
+              type="number"
+              name="quantity"
+              formControlName="quantity"
+              sizing="sm"
+              min="0"
+            />
+          </div>
+        </c-col>
+        </c-row>
+        <button type="button" cButton color="primary" (click)="addSelectedFood()">Add Food</button>
       </div>
-    </c-col>
 
-    <c-col [xs]="6">
+    <hr class="mt-4 mb-4">
 
-      <div class="mb-3">
-        <label cLabel>Foods Item:</label>
-<!--        <select aria-label="Select Food Item" cSelect name="food_id" formControlName="food_id"  (change)="getFoodsById($any($event).target.value)">-->
-<!--          <option *ngFor="let food of foods" [ngValue]="food">{{ food.name }}</option>-->
-<!--        </select>-->
-
-        <select aria-label="Select Food Item" cSelect name="food_id" formControlName="food_id" (change)="getFoodsById($any($event).target.value)">
-          <option value="" selected>Select Food Item...</option>
-          <option *ngFor="let food of foods" [value]="food.id">
-            {{ food.name }}(Available quantity : {{food.quantity}})
-          </option>
-        </select>
-        <c-col [xs]="4">
-      </c-col>
-
-      </div>
-
-    </c-col>
-    <hr>
     <table [striped]="true" cTable>
       <thead>
       <tr>
@@ -131,16 +132,7 @@
         <td hidden="hidden">{{ food.id }}</td>
         <td>{{ food.name }}</td>
         <td >
-          <input
-            cFormControl
-            id="inputQuantity-{{ i }}"
-            type="number"
-            name="quantity"
-            formControlName="quantity"
-            sizing="sm"
-            min="0"
-            (keyup)="calculateOrderAmount(food.id)"
-          >
+          {{food.quantity  }}
         </td>
         <td>{{ food.food_amount }}</td>
         <td>
