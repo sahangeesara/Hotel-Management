@@ -85,7 +85,7 @@ export const navItems: INavData[] = [
   {
     name: 'Event',
     url: '/event',
-    iconComponent: { name: 'cil-people' },
+    iconComponent: { name: 'cil-spreadsheet' },
     children: [
       {
         name: 'Event View',
