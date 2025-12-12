@@ -28,7 +28,7 @@ import { IconDirective } from '@coreui/icons-angular';
     NgForOf,
     ReactiveFormsModule,
     TableDirective,
-    NgIf
+    NgIf,
   ],
   templateUrl: './room-add.component.html',
   styleUrl: './room-add.component.scss'
