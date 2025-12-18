@@ -12,9 +12,7 @@ import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} fr
 import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
-import {Employee} from "../../../../../entities/employee";
-import {catchError, from, throwError} from "rxjs";
-import {map} from "rxjs/operators";
+
 
 @Component({
   selector: 'app-employee-update',

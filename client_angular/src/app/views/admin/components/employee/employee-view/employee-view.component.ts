@@ -1,7 +1,6 @@
 import {Component, ViewChild} from '@angular/core';
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {
-  ButtonCloseDirective,
   ButtonDirective,
   ColComponent,
   FormControlDirective,
@@ -20,7 +19,6 @@ import {
 import { IconDirective } from '@coreui/icons-angular';
 import {EmployeeUpdateComponent} from "../employee-update/employee-update.component";
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {Employee} from "../../../../../entities/employee";
 import {ToastrService} from "ngx-toastr";
 import {NgForOf, NgIf} from "@angular/common";
 import {SearchService} from "../../../../../services/search.service";
@@ -31,7 +29,6 @@ import {SearchService} from "../../../../../services/search.service";
   imports: [
     IconDirective,
     TableDirective,
-    ButtonCloseDirective,
     ButtonDirective,
     ModalBodyComponent,
     ModalComponent,

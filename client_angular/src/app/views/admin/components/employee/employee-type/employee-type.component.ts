@@ -27,7 +27,6 @@ import {map} from "rxjs/operators";
     ReactiveFormsModule,
     FormControlDirective,
     FormLabelDirective,
-    FormTextDirective,
     ButtonDirective,
     TableDirective,
     ColComponent,

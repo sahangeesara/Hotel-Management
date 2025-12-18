@@ -11,7 +11,6 @@ import {
   TableDirective
 } from "@coreui/angular";
 import {
-  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -28,9 +27,7 @@ import {Food} from "../../../../../entities/food";
 import {FoodStatus} from "../../../../../entities/foodStatus";
 import {ItemCategory} from "../../../../../entities/ItemCategory";
 import {Room} from "../../../../../entities/room";
-import _default from "chart.js/dist/plugins/plugin.tooltip";
 import {SearchService} from "../../../../../services/search.service";
-import {Guest} from "../../../../../entities/guest";
 import {catchError, from, throwError} from "rxjs";
 import {map} from "rxjs/operators";
 import {Order} from "../../../../../entities/order";
@@ -50,7 +47,6 @@ import {Order} from "../../../../../entities/order";
     FormTextDirective,
     NgbInputDatepicker,
     ButtonDirective,
-    NgIf,
     TableDirective,
     FormsModule
   ],
@@ -73,7 +69,6 @@ export class OrderAddComponent  implements OnInit{
    totalAmount = 0;
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
-                 private searchServe: SearchService,
                  private router:Router,
                  private toastr: ToastrService,
                  private fb: FormBuilder,

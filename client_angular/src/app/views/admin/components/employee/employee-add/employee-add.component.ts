@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import {
   ButtonDirective, ColComponent,
-  FormCheckComponent,
-  FormCheckInputDirective, FormCheckLabelDirective,
   FormControlDirective, FormDirective,
   FormLabelDirective, FormSelectDirective, FormTextDirective, RowComponent
 } from "@coreui/angular";
@@ -11,9 +9,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
 import {NgForOf} from "@angular/common";
-import {Employee} from "../../../../../entities/employee";
-import {catchError, from, throwError} from "rxjs";
-import {map} from "rxjs/operators";
+
 
 @Component({
   selector: 'app-employee-add',
@@ -21,11 +17,8 @@ import {map} from "rxjs/operators";
   imports: [
     FormControlDirective,
     FormLabelDirective,
-    FormCheckComponent,
-    FormCheckInputDirective,
     ButtonDirective,
     FormTextDirective,
-    FormCheckLabelDirective,
     FormDirective,
     ReactiveFormsModule,
     FormSelectDirective,
