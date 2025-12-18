@@ -95,17 +95,9 @@ export class OrderAddComponent  implements OnInit{
 
   }
 
-  get foodQuantityField(): FormControl {
-    return this.orderForm.controls['quantity'] as FormControl;
-  }
+
   get roomIdField(): FormControl {
     return this.orderForm.controls['r_id'] as FormControl;
-  }
-  get orderDateField(): FormControl {
-    return this.orderForm.controls['order_date'] as FormControl;
-  }
-  get orderAmountField(): FormControl {
-    return this.orderForm.controls['order_amount'] as FormControl;
   }
   get itemCateField(): FormControl {
     return this.orderForm.controls['item_category_id'] as FormControl;
@@ -267,15 +259,15 @@ export class OrderAddComponent  implements OnInit{
 
 
   clearForm() {
+    this.foodItems = [];
+    this.orderForm.reset();
+    this.totalAmount=0;
+    this.orderForm.controls['order_amount'].setValue(this.totalAmount+".00");
     this.foodIdField.setValue("Select Food Item...");
-    this.foodQuantityField.setValue("");
-    this.orderDateField.setValue("");
-    this.orderAmountField.setValue("");
     this.itemCateField.setValue("Select Item Category...");
     this.roomIdField.setValue("Select Room Number");
     this.orderStatusField.setValue("Select Order Status: ");
     this.guestIdField.setValue("Select Guest");
-
   }
 
   onSubmit() {

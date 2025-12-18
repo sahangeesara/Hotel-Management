@@ -30,18 +30,21 @@
     </tr>
     </thead>
     <tbody>
-    @for (type of employeeTypes; track type; let key = $index) {
-    <tr>
-      <th scope="row">{{key + 1}}</th>
-    <td>{{ type.name }}</td>
-    <td>
-    <button (click)="getEmpTypeById(type.id)" cButton>
-          <svg cIcon name="cil-task" size="lg" aria-label="Numbered List Icon" title="Numbered List Icon"></svg>
-    </button>&ngsp;
-    <button type="button" (click)="empTypeDelete(type.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
-    </td>
-  </tr>
-    }
+      @for (type of employeeTypes; track type.id; let key = $index) {
+        <tr>
+          <th scope="row">{{ key + 1 }}</th>
+          <td>{{ type.name }}</td>
+          <td>
+            <button cButton (click)="getEmpTypeById(type.id)">
+              <svg cIcon name="cil-task" size="lg"></svg>
+            </button>&ngsp;
+
+            <button cButton color="danger" (click)="empTypeDelete(type.id)">
+              <svg cIcon name="cil-trash" size="lg"></svg>
+            </button>
+          </td>
+        </tr>
+      }
     </tbody>
   </table>
 

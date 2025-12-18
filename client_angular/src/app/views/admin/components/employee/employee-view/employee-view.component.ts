@@ -145,6 +145,9 @@ export class EmployeeViewComponent {
         (data: any) => {this.employees = data; },
         (error) => {console.error('Error fetching Employee name and Type and Gender:', error); });
     }
+    else if(!(s_name) && !(s_gender) && !(s_type)){
+      this.getEmp();
+    }
   }
 
   clearSearchForm() {
@@ -156,13 +159,15 @@ export class EmployeeViewComponent {
   getEmpType() {
     this.allServe.getEmployeeTypes().subscribe(
       (response: any) => {
-        this.employeeTypes = response.data;
+        console.log(response); // DEBUG
+        this.employeeTypes = response.data ?? response;
       },
       (error) => {
         console.error('Error fetching employee types:', error);
       }
     );
   }
+
   toggleLiveDemo() {
     this.visible = !this.visible;
   }

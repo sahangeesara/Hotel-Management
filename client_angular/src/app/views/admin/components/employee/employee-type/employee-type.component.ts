@@ -7,6 +7,7 @@ import {
   FormLabelDirective,
   FormTextDirective, RowComponent, TableDirective
 } from "@coreui/angular";
+import { CommonModule } from '@angular/common';
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
@@ -20,6 +21,7 @@ import {map} from "rxjs/operators";
   selector: 'app-employee-type',
   standalone: true,
   imports: [
+    CommonModule,
     FormDirective,
     FormsModule,
     ReactiveFormsModule,
@@ -149,30 +151,27 @@ export class EmployeeTypeComponent {
     this.isSubmitVisible = false;
   }
 
-  getEmpTypeById(id:any) {
-    this.allServe.getEmployeeTypeById(id).subscribe(
-      (employeeType:any) => {
-
-        this.empTypeIdField.setValue(employeeType.id);
-        this.empTypeNameField.setValue(employeeType.name);
-      },
-      (error) => {
-        console.error('Error fetching employee types:', error);
-      }
-    );
+  getEmpTypeById(id: any) {
+    this.allServe.getEmployeeTypeById(id).subscribe((employeeType: any) => {
+      this.empTypeIdField.setValue(employeeType.id);
+      this.empTypeNameField.setValue(employeeType.name);
+      this.isUpdateVisible = true;
+      this.isSubmitVisible = false;
+    });
   }
 
 
   getEmpType() {
     this.allServe.getEmployeeTypes().subscribe(
       (response: any) => {
-        this.employeeTypes = response.data;
+        this.employeeTypes = response.data ?? response;
       },
       (error) => {
         console.error('Error fetching employee types:', error);
       }
     );
   }
+
 
 
   ngOnInit() {

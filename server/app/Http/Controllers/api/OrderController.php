@@ -96,7 +96,7 @@ class OrderController extends Controller
                     }
                     $food->save();
                 }
-                broadcast(new OrderSuccess($order->id));
+//                broadcast(new OrderSuccess($order->id));
                 return json_encode($order);
                 }else{
                     return (response()->json(['error' => 'Date not valid.']));

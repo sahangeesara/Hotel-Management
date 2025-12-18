@@ -72,13 +72,15 @@ export class EmployeeUpdateComponent {
   getEmpType() {
     this.allServe.getEmployeeTypes().subscribe(
       (response: any) => {
-        this.employeeTypes = response.data;
+        console.log(response); // DEBUG
+        this.employeeTypes = response.data ?? response;
       },
       (error) => {
         console.error('Error fetching employee types:', error);
       }
     );
   }
+
 
   getEmGen() {
     this.allServe.getGenders().subscribe(
