@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('event_bookings', function (Blueprint $table) {
-            // Add event_booking_id column if it doesn't exist
             if (!Schema::hasColumn('event_bookings', 'room_booking_id')) {
                 $table->unsignedBigInteger('room_booking_id')->after('id');
             }
@@ -21,7 +20,7 @@ return new class extends Migration
             $table->foreign('room_booking_id')
                 ->references('id')
                 ->on('room_books')
-                ->onDelete('cascade'); // delete room_book when event_booking is deleted
+                ->onDelete('cascade');
         });
     }
 

@@ -25,15 +25,6 @@ export class LoginComponent {
               private  auth: AuthService) {  }
 
 
-  // email = new FormControl('', [Validators.required, Validators.email]);
-  // public error=null;
-  // getErrorMessage() {
-  //   if (this.email.hasError('required')) {
-  //     return 'You must enter a value';
-  //   }
-  //
-  //   return this.email.hasError('email') ? 'Not a valid email' : '';
-  // }
   hide = true;
 
   onSubmit(loginForm: any) {
