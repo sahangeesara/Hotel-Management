@@ -70,25 +70,25 @@
       <label cLabel>Check-in Date:</label>
 
       <input
+        type="date"
         class="form-control"
         placeholder="yyyy-mm-dd"
         name="booking_Date" formControlName="booking_Date"
         ngbDatepicker
         #d="ngbDatepicker"
       />
-      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
     </c-col>
     <c-col [xs]="6">
       <label cLabel>Check-out Date:</label>
 
       <input
+        type="date"
         class="form-control"
         placeholder="yyyy-mm-dd"
         name="cancel_Date" formControlName="cancel_Date"
         ngbDatepicker
         #x="ngbDatepicker"
       />
-      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="x.toggle()" type="button"></button>
     </c-col>
   </c-row>
   <div  class="mb-3">
