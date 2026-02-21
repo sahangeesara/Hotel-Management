@@ -41,9 +41,8 @@ export class RoomAddComponent {
   formData = new FormData();
   roomForm: FormGroup;
   roomData:any;
-  constructor(   private route:ActivatedRoute,
+  constructor(
                  private allServe: AllServiceService,
-                 private router:Router,
                  private toastr: ToastrService,
                  private fb: FormBuilder,
   ) {
