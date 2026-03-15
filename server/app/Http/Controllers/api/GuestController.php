@@ -54,6 +54,8 @@ class GuestController extends Controller
             'guide_id' => '', // Allow empty guide_id
             'tel_no' => 'required',
             'gender_id' => 'required',
+            'country_id' => 'required',
+            'cuntry_code_id' => 'required',
             'country' => 'required',
             'guest_type' => 'required',
         ]);
@@ -95,6 +97,8 @@ class GuestController extends Controller
             // Set guide_id to null if empty
             $guest->guide_id = empty($data['guide_id']) ? null : $data['guide_id'];
             $guest->gender_id = $data['gender_id'];
+            $guest->country_id = $data['country_id'];
+            $guest->cuntry_code_id = $data['cuntry_code_id'];
             $guest->guest_type = $data['guest_type'];
             $guest->country = $data['country'];
             $guest->guest_no = $rNo;
@@ -204,6 +208,8 @@ class GuestController extends Controller
             'nic' => 'required',
             'tel_no' => 'required',
             'gender_id' => 'required',
+            'country_id' => 'required',
+            'cuntry_code_id' => 'required',
             'guide_id' => '',
             'country' => 'required',
             'guest_type' => 'required',
@@ -245,6 +251,8 @@ class GuestController extends Controller
             // Set guide_id to null if empty
             $guest->guide_id = empty($data['guide_id']) ? null : $data['guide_id']; // Ensure null is set
             $guest->gender_id = $data['gender_id'];
+            $guest->country_id = $data['country_id'];
+            $guest->cuntry_code_id = $data['cuntry_code_id'];
             $guest->guest_type = $data['guest_type'];
             $guest->country = $data['country'];
             $guest->guest_no = $data['guest_no'];

@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('email')->nullable();
             $table->string('city');
-            $table->char('nic',12);
-            $table->char('tel_no',10);
+            $table->char('nic',12)->unique();
+            $table->char('tel_no',10)->unique();
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('country')->nullable();
             $table->char('nic', 12)->nullable()->unique();
             $table->string('custom_type');
-            $table->string('tel_no', 10);
+            $table->string('tel_no', 10)->unique();
             $table->unsignedBigInteger('gender_id');
             $table->foreign('gender_id')->references('id')->on('genders');
             $table->boolean('is_active')->default(1);
