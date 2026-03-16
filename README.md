@@ -216,15 +216,4 @@ This project is developed for **educational purposes (Final Year Project)**.
 
 ---
 
-💡 **Suggestion:**
-Your project has **many controllers (40+)**, which is actually **very good for a final year system**. If you add:
-
-* API documentation
-* ER diagram
-* System architecture
-* Screenshots
-
-your GitHub project will look **very strong for job applications**.
-
----
 
