@@ -12,5 +12,6 @@ class Nationality extends Model
     protected $fillable = [
         'id',
         'name',
+        'is_active',
     ];
 }

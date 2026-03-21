@@ -10,9 +10,10 @@ class CountryCode extends Model
 {
     use HasFactory;
     protected $fillable = [
-            "id",
-            "country_id",
-            "cuntry_code",
+            'id',
+            'country_id',
+            'cuntry_code',
+            'is_active',
         ];
 
     public function country(): BelongsTo

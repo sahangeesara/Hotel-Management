@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class RoomSetup extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'id',
+        'name',
+        'is_active',
+    ];
 }

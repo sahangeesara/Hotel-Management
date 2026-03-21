@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Duration extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'duration',
+        'is_active',
+    ];
 }

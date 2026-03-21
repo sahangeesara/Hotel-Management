@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class FlightClass extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'id',
+        'class_name',
+        'is_active',
+    ];
 }
