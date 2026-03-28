@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('guests', function (Blueprint $table) {
-            $table->unsignedBigInteger('gender_id')->nullable();
+            $table->foreign('country_id')->references('id')->on('nationalities');
+            $table->foreign('cuntry_code_id')->references('id')->on('country_codes');
+
         });
     }
 
@@ -22,7 +24,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('guests', function (Blueprint $table) {
-            $table->dropColumn('gender_id');
+            $table->dropForeign(['country_id']);
+            $table->dropForeign(['cuntry_code_id']);
         });
     }
 };

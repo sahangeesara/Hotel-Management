@@ -20,10 +20,8 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->unsignedBigInteger('section_id')->nullable();
-            $table->foreign('section_id')->references('id')->on('sections');
             $table->integer('passengers');
             $table->unsignedBigInteger('hotel_id')->nullable();
-            $table->foreign('hotel_id')->references('id')->on('hotels');
             $table->text('requests')->nullable();
             $table->string('seating_preferences')->nullable();
             $table->string('organizer_name');

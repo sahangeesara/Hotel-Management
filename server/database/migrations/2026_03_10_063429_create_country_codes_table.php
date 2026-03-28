@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('country_codes', function (Blueprint $table) {
             $table->id();
-            $table->string('country_id');
+            $table->unsignedBigInteger('country_id');
             $table->foreign('country_id')->references('id')->on('nationalities');
             $table->string('country_code');
             $table->boolean('is_active')->default(1);

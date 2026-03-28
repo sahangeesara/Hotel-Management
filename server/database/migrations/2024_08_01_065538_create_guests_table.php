@@ -21,10 +21,8 @@ return new class extends Migration
             $table->string('guest_type');
             $table->unsignedBigInteger('guide_id')->nullable();
             $table->unsignedBigInteger('country_id')->nullable();
-            $table->foreign('country_id')->references('id')->on('nationalities');
             $table->char('nic',20)->nullable()->unique();
             $table->unsignedBigInteger('cuntry_code_id')->nullable();
-            $table->foreign('cuntry_code_id')->references('id')->on('country_codes');
             $table->char('tel_no',10)->unique();
             $table->boolean('is_active')->default(1);
             $table->timestamps();

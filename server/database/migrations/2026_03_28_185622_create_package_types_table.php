@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('food_items', function (Blueprint $table) {
-            $table->longText('image')->after('food_amount');
+        Schema::create('package_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->boolean('is_active')->default(1);
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('food_items', function (Blueprint $table) {
-            $table->dropColumn('image');
-        });
+        Schema::dropIfExists('package_types');
     }
 };

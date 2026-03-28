@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('room_books', function (Blueprint $table) {
             $table->foreign('r_id')->references('id')->on('rooms');
             $table->foreign('guest_id')->references('id')->on('guests');
-            $table->foreign('package_id')->references('id')->on('packages');
         });
     }
 

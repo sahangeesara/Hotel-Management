@@ -21,7 +21,6 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->unsignedBigInteger('hotel_id')->nullable();
-            $table->foreign('hotel_id')->references('id')->on('hotels');
             $table->string('organizer_name');
             $table->char('organizer_tel_no',10)->unique();
             $table->string('organizer_email')->nullable();

@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('food_items', function (Blueprint $table) {
-            $table->longText('image')->after('food_amount');
+        Schema::table('room_books', function (Blueprint $table) {
+            $table->foreign('package_id')->references('id')->on('packages');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('food_items', function (Blueprint $table) {
-            $table->dropColumn('image');
+        Schema::table('room_books', function (Blueprint $table) {
+            $table->dropForeign(['package_id']);
         });
     }
 };

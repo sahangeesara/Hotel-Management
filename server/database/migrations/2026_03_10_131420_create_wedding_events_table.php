@@ -22,7 +22,6 @@ return new class extends Migration
             $table->time('event_time');
             $table->integer('passengers');
             $table->unsignedBigInteger('hotel_id')->nullable();
-            $table->foreign('hotel_id')->references('id')->on('hotels');
             $table->string('additional_services')->nullable();
             $table->text('requests')->nullable();
             $table->boolean('is_active')->default(1);

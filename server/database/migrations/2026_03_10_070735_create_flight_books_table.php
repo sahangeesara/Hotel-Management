@@ -25,9 +25,7 @@ return new class extends Migration
             $table->integer('infants')->nullable();
             $table->string('travel_route')->nullable();
             $table->unsignedBigInteger('currency_id')->nullable();
-            $table->foreign('currency_id')->references('id')->on('currencies');
             $table->unsignedBigInteger('class_id')->nullable();
-            $table->foreign('class_id')->references('id')->on('flight_classes');
             $table->string('airlines')->nullable();
             $table->text('requests')->nullable();
             $table->boolean('is_active')->default(1);

@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('location');
             $table->string('phone');
             $table->unsignedBigInteger('room_setups_id')->nullable();
-            $table->foreign('room_setups_id')->references('id')->on('room_setups');
             $table->integer('capacity');
             $table->boolean('is_active')->default(1);
             $table->timestamps();
