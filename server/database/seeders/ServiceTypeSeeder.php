@@ -7,7 +7,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class ServiceType extends Seeder
+class ServiceTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.

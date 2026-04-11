@@ -7,7 +7,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class Currency extends Seeder
+class CurrencySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -30,6 +30,7 @@ class Currency extends Seeder
             ['currency' => 'EUR', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now], // Italy
             ['currency' => 'ZAR', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now], // South Africa
             ['currency' => 'EUR', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now], // Spain
+            ['currency' => 'LKR', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now], // Sri Lanka
         ];
 
         DB::table('currencies')->insert($currencies);

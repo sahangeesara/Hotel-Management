@@ -16,7 +16,7 @@ return new class extends Migration
             $table->char('emp_no');
             $table->string('name');
             $table->string('address')->nullable();
-            $table->string('email')->nullable();
+            $table->string('email')->unique()->nullable();
             $table->string('city');
             $table->unsignedBigInteger('employee_type_id');
             $table->char('nic',12)->Unique();

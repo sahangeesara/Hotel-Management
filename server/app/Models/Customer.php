@@ -17,7 +17,8 @@ class Customer extends Model
         'address',
         'email',
         'city',
-        'country',
+        'country_id',
+        'cuntry_code_id',
         'nic',
         'gender_id',
         'custom_type',
@@ -28,5 +29,13 @@ class Customer extends Model
     public function gender(): BelongsTo
     {
         return $this->belongsTo(Gender::class,'gender_id');
+    }
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Nationality::class,'country_id');
+    }
+    public function countryCode(): BelongsTo
+    {
+        return $this->belongsTo(CountryCode::class,'cuntry_code_id');
     }
 }

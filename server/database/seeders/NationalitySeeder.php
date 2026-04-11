@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
-class Nationality extends Seeder
+class NationalitySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -30,6 +30,7 @@ class Nationality extends Seeder
             ['id' => 12, 'name' => 'Italian', 'created_at' => $now, 'updated_at' => $now],
             ['id' => 13, 'name' => 'South African', 'created_at' => $now, 'updated_at' => $now],
             ['id' => 14, 'name' => 'Spanish', 'created_at' => $now, 'updated_at' => $now],
+            ['id' => 15, 'name' => 'Sri Lanka', 'created_at' => $now, 'updated_at' => $now],
         ];
 
         DB::table('nationalities')->insert($nationalities);

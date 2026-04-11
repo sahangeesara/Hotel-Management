@@ -15,7 +15,7 @@ class PackageController extends Controller
     public function index()
     {
         try {
-            $eventBook = Package::with('event')
+            $eventBook = Package::with('packageType')
                 ->where('is_active',1)
                 ->orderBy('created_at',"DESC")
                 ->get();
@@ -33,7 +33,32 @@ class PackageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validate request data directly
+        $validatedData = $request->validate([
+            'name'            => 'required|max:255',
+            'description'     => 'nullable|string',
+            'package_type_id' => 'required|integer|exists:package_types,id',
+            'package_amount'  => 'required|numeric',
+        ]);
+
+        try {
+
+            $nextId = Package::max('id') + 1;
+            $pckNo = 'PCK' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+            // Create and save the new package
+            $package = Package::create([
+                'name'            => $validatedData['name'],
+                'description'     => $validatedData['description'] ?? null,
+                'package_type_id' => $validatedData['package_type_id'],
+                'package_amount'  => $validatedData['package_amount'],
+                'package_code' => $pckNo,
+            ]);
+
+            return response()->json(['message' => 'Package created successfully', 'package' => $package], 201);
+        } catch (\Exception $e) {
+            \Log::error('Package creation error: ' . $e->getMessage());
+            return response()->json(['message' => 'An error occurred while creating the package.'], 500);
+        }
     }
 
     /**
@@ -42,9 +67,9 @@ class PackageController extends Controller
     public function show(string $id)
     {
         try {
-            $employees = Package::with('event')
+            $package = Package::with('packageType')
                 ->findOrFail($id);
-            return response()->json($employees);
+            return response()->json($package);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
@@ -57,7 +82,26 @@ class PackageController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Validate request data directly
+        $validatedData = $request->validate([
+            'name'            => 'required|max:255',
+            'description'     => 'nullable|string',
+            'package_type_id' => 'required|integer|exists:package_types,id',
+            'package_amount'  => 'required|numeric',
+            'package_code' => 'required',
+        ]);
+
+        try {
+
+            // Create and save the new package
+            $package = Package::findOrFail($id);
+
+            $package->update($validatedData);
+            return response()->json(['message' => 'Package created successfully', 'package' => $package], 201);
+        } catch (\Exception $e) {
+            \Log::error('Package creation error: ' . $e->getMessage());
+            return response()->json(['message' => 'An error occurred while creating the package.'], 500);
+        }
     }
 
     /**
@@ -68,9 +112,7 @@ class PackageController extends Controller
         try {
             $package = Package::findOrFail($id);
             $package->is_active = false;
-            $package->r_book = "Canceling";
             $package->save();
-
 
             return response()->json(['message' => 'Pakage deactivated successfully.'], 200);
         } catch (\Exception $e) {

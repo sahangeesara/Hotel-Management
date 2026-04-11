@@ -7,13 +7,14 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class Languages extends Seeder
+class LanguagesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
+
         $now = Carbon::now();
         $languages = [
             ['name' => 'English', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],

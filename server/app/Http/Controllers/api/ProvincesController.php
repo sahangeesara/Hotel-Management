@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Province;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProvincesController extends Controller
 {
@@ -12,7 +14,15 @@ class ProvincesController extends Controller
      */
     public function index()
     {
-        //
+        try{
+            $provinces = Province::where('is_active',1)
+                ->paginate(20);
+
+            return response()->json($provinces);
+        }catch (\Exception $e){
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving provinces.'], 500);
+        }
     }
 
     /**
@@ -28,7 +38,13 @@ class ProvincesController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try{
+            $province = Province::findOrFail($id);
+            return response()->json($province);
+        }catch (\Exception $e){
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving province.'], 500);
+        }
     }
 
     /**

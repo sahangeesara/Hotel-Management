@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
-class CountryCode extends Seeder
+class CountryCodeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -30,6 +30,7 @@ class CountryCode extends Seeder
             ['country_id' => 12, 'country_code' => '+39', 'created_at' => $now, 'updated_at' => $now],
             ['country_id' => 13, 'country_code' => '+27', 'created_at' => $now, 'updated_at' => $now],
             ['country_id' => 14, 'country_code' => '+34', 'created_at' => $now, 'updated_at' => $now],
+            ['country_id' => 15, 'country_code' => '+94', 'created_at' => $now, 'updated_at' => $now],
         ];
 
         DB::table('country_codes')->insert($codes);

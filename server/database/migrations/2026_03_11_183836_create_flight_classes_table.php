@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('flight_classes', function (Blueprint $table) {
             $table->id();
-            $table->string('class_name');
+            $table->string('class_name')->unique();
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });

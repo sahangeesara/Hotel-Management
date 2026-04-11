@@ -20,7 +20,7 @@ class CustomerController extends Controller
     public function index()
     {
         try {
-            $customers = Customer::with('gender')
+            $customers = Customer::with('gender','countryCode','country')
                 ->where('is_active',1)
                 ->orderBy('created_at',"DESC")
                 ->paginate(20);
@@ -50,18 +50,13 @@ class CustomerController extends Controller
             'email' => 'required|email',
             'tel_no' => 'required',
             'gender_id' => 'required',
-            'country' => 'required',
+            'country_id' => 'required',
+            'cuntry_code_id' => 'required',
         ]);
 
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
-
-//        $existingBooking = Customer::where('nic', $data['nic'])
-//                                    ->first();
-//
-//        // If the booking exists, return an error message or handle the situation as needed
-//        if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
 
         $nextId = Customer::max('id') + 1; // Get the next available ID
         $rNo = 'CN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
@@ -76,7 +71,8 @@ class CustomerController extends Controller
             $customer->nic = $data['nic'];
             $customer->tel_no = $data['tel_no'];
             $customer->gender_id = $data['gender_id'];
-            $customer->country = $data['country'];
+            $customer->country_id = $data['country_id'];
+            $customer->cuntry_code_id = $data['cuntry_code_id'];
             $customer->custom_type = $data['custom_type'];
             $customer->custom_no = $rNo;
 
@@ -96,7 +92,7 @@ class CustomerController extends Controller
     public function show(string $id)
     {
         try {
-            $customer = Customer::with('gender')
+            $customer = Customer::with('gender','countryCode','country')
                 ->findOrFail($id);
             return response()->json($customer);
 
@@ -133,7 +129,8 @@ class CustomerController extends Controller
             'email' => 'required|email',
             'tel_no' => 'required',
             'gender_id' => 'required',
-            'country' => 'required',
+            'country_id' => 'required',
+            'cuntry_code_id' => 'required',
             'custom_no' => 'required',
         ]);
 
@@ -151,8 +148,8 @@ class CustomerController extends Controller
             $customer->tel_no = $data['tel_no'];
             // Set guide_id to null if empty
             $customer->gender_id = $data['gender_id'];
-            $customer->country = $data['country'];
-            $customer->custom_no = $data['custom_no'];
+            $customer->country_id = $data['country_id'];
+            $customer->cuntry_code_id = $data['cuntry_code_id'];            $customer->custom_no = $data['custom_no'];
             $customer->custom_type = $data['custom_type'];
 
             $customer->save();

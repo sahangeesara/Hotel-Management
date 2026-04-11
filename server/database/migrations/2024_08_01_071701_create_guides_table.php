@@ -16,7 +16,7 @@ return new class extends Migration
             $table->char('guide_no');
             $table->string('name');
             $table->string('address')->nullable();
-            $table->string('email')->nullable();
+            $table->string('email')->unique()->nullable();
             $table->string('city');
             $table->char('nic',12)->unique();
             $table->char('tel_no',10)->unique();

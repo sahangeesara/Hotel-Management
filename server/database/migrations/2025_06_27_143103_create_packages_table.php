@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->char('package_no')->unique();
             $table->text('description')->nullable();
-            $table->string('name');
+            $table->string('name')->unique()->nullable();
             $table->unsignedBigInteger('package_type_id');
             $table->decimal('package_amount',10,2);
             $table->boolean('is_active')->default(1);

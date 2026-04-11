@@ -1,26 +1,44 @@
 <?php
 
+use App\Http\Controllers\api\CountryCodesController;
+use App\Http\Controllers\api\CurrenciesController;
 use App\Http\Controllers\api\CustomerController;
+use App\Http\Controllers\api\DurationController;
 use App\Http\Controllers\api\EmployeeController;
 use App\Http\Controllers\api\EmployeeTypeController;
-use App\Http\Controllers\api\EventBookingController;
 use App\Http\Controllers\api\EventController;
+use App\Http\Controllers\api\EventTypesController;
+use App\Http\Controllers\api\FlightBooksController;
+use App\Http\Controllers\api\FlightClassesController;
 use App\Http\Controllers\api\FoodItemController;
 use App\Http\Controllers\api\FoodStatusController;
 use App\Http\Controllers\api\GenderController;
+use App\Http\Controllers\api\GeneralEventsController;
 use App\Http\Controllers\api\GuestController;
 use App\Http\Controllers\api\GuideController;
+use App\Http\Controllers\api\HotelController;
+use App\Http\Controllers\api\HotelEventsController;
 use App\Http\Controllers\api\ItemCategoryController;
+use App\Http\Controllers\api\LanguagesController;
+use App\Http\Controllers\api\NationalitiesController;
 use App\Http\Controllers\api\OrderController;
 use App\Http\Controllers\api\OrderStatusController;
 use App\Http\Controllers\api\PackageController;
+use App\Http\Controllers\api\ProvincesController;
+use App\Http\Controllers\api\RestaurantEventsController;
 use App\Http\Controllers\api\RoleController;
 use App\Http\Controllers\api\RoomBookController;
 use App\Http\Controllers\api\RoomsCategoryController;
 use App\Http\Controllers\api\RoomsController;
-use App\Http\Controllers\api\SupplierController;
+use App\Http\Controllers\api\RoomSetupController;
+use App\Http\Controllers\api\SectionController;
+use App\Http\Controllers\api\ServiceTypesController;
+use App\Http\Controllers\api\TourTypeController;
+use App\Http\Controllers\api\TransportBooksController;
 use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\UserProfileController;
+use App\Http\Controllers\api\VehicleTypesController;
+use App\Http\Controllers\api\WeddingEventsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\ResetPasswordController;
@@ -113,7 +131,26 @@ Route::middleware(['auth:api'])->group(function () {
         'customer' => CustomerController::class,
         'userProfile' => UserProfileController::class,
         'event' => EventController::class,
-        'eventBook' => EventBookingController::class,
         'package' => PackageController::class,
+        'cuntryCode'=> CountryCodesController:: class,
+        'currencies'=> CurrenciesController:: class,
+        'duration' => DurationController:: class,
+        'eventTypes' => EventTypesController:: class,
+        'flightBooking' => FlightBooksController:: class,
+        'flightClass' => FlightClassesController:: class,
+        'generalEvent' => GeneralEventsController::class,
+        'hotels' => HotelController::class,
+        'hotelEvent' => HotelEventsController::class,
+        'languages' => LanguagesController::class,
+        'nationality' => NationalitiesController::class,
+        'provinces' => ProvincesController::class,
+        'restaurantEvent' => RestaurantEventsController::class,
+        'roomSetup' => RoomSetupController::class,
+        'section' => SectionController::class,
+        'serviceTypes' => ServiceTypesController::class,
+        'tourType' => TourTypeController::class,
+        'transportBooking' => TransportBooksController::class,
+        'vehicleTypes' => VehicleTypesController::class,
+        'weddingEvent' => WeddingEventsController::class,
     ]);
 });

@@ -15,15 +15,13 @@ class Package extends Model
         'package_code',
         'description',
         'name',
+        'package_type_id',
         'package_amount',
-        'duration',
-        'max_guests',
-        'event_id',
         'is_active',
     ];
 
-    public function event(): BelongsTo
+    public function packageType(): BelongsTo
     {
-        return $this->belongsTo(Event::class,'event_id');
+        return $this->belongsTo(PackageType::class,'package_type_id');
     }
 }

@@ -13,5 +13,5 @@ class Language extends Model
         'name',
         'is_active',
     ];
-}
+
 }
