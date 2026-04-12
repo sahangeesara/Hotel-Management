@@ -20,13 +20,11 @@ return new class extends Migration
             $table->string('from');
             $table->dateTime('departure_Date');
             $table->dateTime('return_Date')->nullable();
-            $table->integer('adults');
-            $table->integer('children')->nullable();
-            $table->integer('infants')->nullable();
+            $table->integer('flight_passenger_counts_id')->nullable();
             $table->string('travel_route')->nullable();
             $table->unsignedBigInteger('currency_id')->nullable();
             $table->unsignedBigInteger('class_id')->nullable();
-            $table->string('airlines')->nullable();
+            $table->unsignedBigInteger('airline_ids')->nullable();
             $table->text('requests')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();

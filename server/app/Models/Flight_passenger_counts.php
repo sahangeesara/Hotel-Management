@@ -5,13 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class VehicleType extends Model
+class Flight_passenger_counts extends Model
 {
     use HasFactory;
-
-    protected $fillable = [
-        'id',
-        'name',
-        'is_active',
-    ];
 }
