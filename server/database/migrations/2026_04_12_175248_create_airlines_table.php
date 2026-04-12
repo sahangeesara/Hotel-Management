@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('airlines', function (Blueprint $table) {
             $table->id();
+            $table->char('airline_code');
             $table->string('airline_name');
             $table->timestamps();
         });
