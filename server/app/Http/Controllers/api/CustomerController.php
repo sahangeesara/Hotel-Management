@@ -59,7 +59,7 @@ class CustomerController extends Controller
         }
 
         $nextId = Customer::max('id') + 1; // Get the next available ID
-        $rNo = 'CN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
+        $cNo = 'CN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'custom_no'
 
         try {
 
@@ -74,7 +74,7 @@ class CustomerController extends Controller
             $customer->country_id = $data['country_id'];
             $customer->cuntry_code_id = $data['cuntry_code_id'];
             $customer->custom_type = $data['custom_type'];
-            $customer->custom_no = $rNo;
+            $customer->custom_no = $cNo;
 
             $customer->save();
 

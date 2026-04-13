@@ -74,7 +74,7 @@ class CurrenciesController extends Controller
 
         }catch (\Exception $e){
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while adding currency.'], 500);
+            return response()->json(['message' => 'An error occurred while update currency.'], 500);
         }
     }
 

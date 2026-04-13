@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\AirlinesController;
 use App\Http\Controllers\api\CountryCodesController;
 use App\Http\Controllers\api\CurrenciesController;
 use App\Http\Controllers\api\CustomerController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\api\EventController;
 use App\Http\Controllers\api\EventTypesController;
 use App\Http\Controllers\api\FlightBooksController;
 use App\Http\Controllers\api\FlightClassesController;
+use App\Http\Controllers\api\FlightController;
 use App\Http\Controllers\api\FoodItemController;
 use App\Http\Controllers\api\FoodStatusController;
 use App\Http\Controllers\api\GenderController;
@@ -23,6 +25,7 @@ use App\Http\Controllers\api\LanguagesController;
 use App\Http\Controllers\api\NationalitiesController;
 use App\Http\Controllers\api\OrderController;
 use App\Http\Controllers\api\OrderStatusController;
+use App\Http\Controllers\api\OrganizerDetailsController;
 use App\Http\Controllers\api\PackageController;
 use App\Http\Controllers\api\ProvincesController;
 use App\Http\Controllers\api\RestaurantEventsController;
@@ -152,5 +155,8 @@ Route::middleware(['auth:api'])->group(function () {
         'transportBooking' => TransportBooksController::class,
         'vehicleTypes' => VehicleTypesController::class,
         'weddingEvent' => WeddingEventsController::class,
+        'flights' => FlightController::class,
+        'organizers' => OrganizerDetailsController::class,
+        'airlines' => AirlinesController::class,
     ]);
 });

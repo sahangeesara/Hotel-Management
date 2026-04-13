@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('organizer_details', function (Blueprint $table) {
+        Schema::create('book_statuses', function (Blueprint $table) {
             $table->id();
-            $table->char('organizer_code');
-            $table->unsignedBigInteger('gender_id');
-            $table->foreign('gender_id')->references('id')->on('genders');
             $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone');
-            $table->char('nic');
+            $table->boolean('is_active')->default(1);
             $table->timestamps();
         });
     }
@@ -29,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('organizer_details');
+        Schema::dropIfExists('book_statuses');
     }
 };

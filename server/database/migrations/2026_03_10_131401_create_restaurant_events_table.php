@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('restaurant_events', function (Blueprint $table) {
             $table->id();
             $table->char('event_no');
+            $table->unsignedBigInteger('event_id')->nullable();
+            $table->foreign('event_id')->references('id')->on('events');
             $table->unsignedBigInteger('event_type_id')->nullable();
             $table->foreign('event_type_id')->references('id')->on('event_types');
             $table->dateTime('event_date');
@@ -25,6 +27,7 @@ return new class extends Migration
             $table->text('requests')->nullable();
             $table->string('seating_preferences')->nullable();
             $table->unsignedBigInteger('organizer_id')->unique();
+            $table->unsignedBigInteger('book_status_id')->nullable();
             $table->string('additional_services')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();

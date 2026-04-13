@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->char('event_no');
+            $table->unsignedBigInteger('event_id')->nullable();
+            $table->foreign('event_id')->references('id')->on('events');
             $table->unsignedBigInteger('event_type_id')->nullable();
             $table->foreign('event_type_id')->references('id')->on('event_types');
             $table->dateTime('event_date');
@@ -24,6 +26,7 @@ return new class extends Migration
             $table->unsignedBigInteger('organizer_id')->unique();
             $table->text('requests')->nullable();
             $table->string('additional_services')->nullable();
+            $table->unsignedBigInteger('book_status_id')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });

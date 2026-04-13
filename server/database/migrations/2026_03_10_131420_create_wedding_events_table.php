@@ -24,6 +24,7 @@ return new class extends Migration
             $table->unsignedBigInteger('hotel_id')->nullable();
             $table->unsignedBigInteger('organizer_id')->unique();
             $table->string('additional_services')->nullable();
+            $table->unsignedBigInteger('book_status_id')->nullable();
             $table->text('requests')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();

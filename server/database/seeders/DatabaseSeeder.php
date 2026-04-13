@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
         $this->call(TourTypSeedere::class);
         $this->call(VehicleTypeSeeder::class);
         $this->call(DurationsSeedeSeederr::class);
+        $this->call(BookStatusSeeder::class);
 
     }
 }

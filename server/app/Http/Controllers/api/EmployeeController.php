@@ -213,7 +213,7 @@ class EmployeeController extends Controller
             'tel_no' => 'required',
             'employee_type_id' => 'required|integer',
             'gender_id' => 'required|integer',
-            'emp_no' => 'required',
+            'emp_no' => 'required|unique:employees,emp_no,' . $id,
         ]);
 
         try {
