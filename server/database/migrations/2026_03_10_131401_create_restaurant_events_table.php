@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('restaurant_events', function (Blueprint $table) {
             $table->id();
-            $table->date('event_no');
+            $table->char('event_no');
             $table->unsignedBigInteger('event_type_id')->nullable();
             $table->foreign('event_type_id')->references('id')->on('event_types');
             $table->dateTime('event_date');
@@ -24,9 +24,7 @@ return new class extends Migration
             $table->unsignedBigInteger('hotel_id')->nullable();
             $table->text('requests')->nullable();
             $table->string('seating_preferences')->nullable();
-            $table->string('organizer_name');
-            $table->char('organizer_tel_no',10)->unique();
-            $table->string('organizer_email')->nullable();
+            $table->unsignedBigInteger('organizer_id')->unique();
             $table->string('additional_services')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();

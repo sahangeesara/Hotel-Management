@@ -10,15 +10,24 @@ class FlightBook extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'flight_id',
+        'id',
+        'booking_no',
         'guest_id',
-        'seat_no',
+        'to',
+        'from',
+        'departure_Date',
+        'return_Date',
+        'flight_passenger_counts_id',
+        'travel_route',
+        'currency_id',
         'class_id',
-        'status',
+        'flight_id',
+        'requests',
+        'is_active',
     ];
 
-     public function flight()
-    {
+     public function flight(): BelongsTo
+     {
         return $this->belongsTo(Flight::class);
     }
 
@@ -30,5 +39,19 @@ class FlightBook extends Model
      public function class(): BelongsTo
     {
         return $this->belongsTo(FlightClass::class, 'class_id');
+    }
+    public function flightClass(): BelongsTo
+    {
+        return $this->belongsTo(FlightClass::class, 'class_id');
+    }
+
+     public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class, 'currency_id');
+    }
+
+    public function flightPassengerCounts(): BelongsTo
+    {
+        return $this->belongsTo(Flight_passenger_counts::class, 'flight_passenger_counts_id');
     }
 }

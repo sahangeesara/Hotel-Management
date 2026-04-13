@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('airlines', function (Blueprint $table) {
+        Schema::create('organizer_details', function (Blueprint $table) {
             $table->id();
-            $table->char('airline_code');
-            $table->string('airline_name');
-            $table->boolean('is_active')->default(1);
+            $table->char('organizer_code');
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('phone');
+            $table->char('nic');
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('airlines');
+        Schema::dropIfExists('organizer_details');
     }
 };

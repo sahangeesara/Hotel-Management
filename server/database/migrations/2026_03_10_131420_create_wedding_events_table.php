@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('wedding_events', function (Blueprint $table) {
             $table->id();
-            $table->date('event_no');
+            $table->char('event_no');
             $table->string('bride_name');
             $table->string('groom_name');
             $table->string('email')->nullable();
@@ -22,6 +22,7 @@ return new class extends Migration
             $table->time('event_time');
             $table->integer('passengers');
             $table->unsignedBigInteger('hotel_id')->nullable();
+            $table->unsignedBigInteger('organizer_id')->unique();
             $table->string('additional_services')->nullable();
             $table->text('requests')->nullable();
             $table->boolean('is_active')->default(1);

@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('airlines', function (Blueprint $table) {
-            $table->id();
-            $table->char('airline_code');
-            $table->string('airline_name');
-            $table->boolean('is_active')->default(1);
-            $table->timestamps();
+        Schema::table('restaurant_events', function (Blueprint $table) {
+            $table->foreign('organizer_id')->references('id')->on('organizer_details');
         });
     }
 
@@ -25,6 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('airlines');
+        Schema::table('restaurant_events', function (Blueprint $table) {
+            $table->dropForeign(['organizer_id']);
+
+        });
     }
 };

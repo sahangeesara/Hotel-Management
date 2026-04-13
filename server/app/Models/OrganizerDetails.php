@@ -5,12 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Duration extends Model
+class OrganizerDetails extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'id',
-        'duration',
-        'is_active',
-    ];
 }
