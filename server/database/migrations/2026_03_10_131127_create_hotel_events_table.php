@@ -22,6 +22,7 @@ return new class extends Migration
             $table->dateTime('event_date');
             $table->time('start_time');
             $table->time('end_time');
+            $table->integer('passengers');
             $table->unsignedBigInteger('hotel_id')->nullable();
             $table->unsignedBigInteger('organizer_id')->unique();
             $table->text('requests')->nullable();

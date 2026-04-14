@@ -45,6 +45,7 @@ class HotelEventsController extends Controller
             'book_status_id'=> 'required|integer',
             'event_id'=> 'required|integer',
             'additional_services' => 'required',
+            'passengers' => 'required',
         ]);
 
         $existingBooking = HotelEvent::where('organizer_id', $validatedData['organizer_id'])
@@ -75,6 +76,7 @@ class HotelEventsController extends Controller
                     'requests' => $validatedData['requests'],
                     'additional_services' => $validatedData['additional_services'],
                     'book_status_id' => $validatedData['book_status_id'],
+                    'passengers' => $validatedData['passengers'],
                     'event_no'=> $heNo,
                 ]
             );
@@ -92,7 +94,8 @@ class HotelEventsController extends Controller
     public function show(string $id)
     {
         try{
-            $hotelEvent = HotelEvent::findOrFail($id);
+            $hotelEvent = HotelEvent::with('hotel','event','organizer','eventType','bookStatus')
+                                ->findOrFail($id);
             return response()->json($hotelEvent);
         }catch (\Exception $e){
             Log::error($e->getMessage());
@@ -115,8 +118,10 @@ class HotelEventsController extends Controller
             'organizer_id' => 'required|integer',
             'requests' => 'required',
             'additional_services' => 'required',
+            'passengers' => 'required',
             'event_id' => 'required',
             'event_no'=> 'required',
+            'book_status_id' => 'required|integer',
         ]);
         $existingBooking = HotelEvent::where('id', '<>', $id)
             ->where(function ($query) use ($validatedData) {
@@ -166,6 +171,7 @@ class HotelEventsController extends Controller
                     'requests' => $validatedData['requests'],
                     'additional_services' => $validatedData['additional_services'],
                     'book_status_id' => $validatedData['book_status_id'],
+                    'passengers' => $validatedData['passengers'],
                     'event_no'=> $validatedData['event_no'],
                     'is_active' =>$bookStatus->name === "Cancelled" ? false : $hotelEvent->is_active,
 

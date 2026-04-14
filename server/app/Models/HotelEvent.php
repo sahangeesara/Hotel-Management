@@ -18,6 +18,7 @@ class HotelEvent extends Model
         'event_date',
         'start_time',
         'end_time',
+        'passengers',
         'hotel_id',
         'organizer_id',
         'book_status_id',
