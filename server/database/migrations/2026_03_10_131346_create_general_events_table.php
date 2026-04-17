@@ -13,18 +13,20 @@ return new class extends Migration
     {
         Schema::create('general_events', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->char('event_no');
             $table->unsignedBigInteger('event_id')->nullable();
             $table->foreign('event_id')->references('id')->on('events');
+            $table->unsignedBigInteger('room_id')->nullable();
+            $table->foreign('room_id')->references('id')->on('rooms');
             $table->unsignedBigInteger('event_type_id')->nullable();
             $table->foreign('event_type_id')->references('id')->on('event_types');;
             $table->dateTime('event_date');
-            $table->time('event_time');
+            $table->time('start_time');
+            $table->time('end_time');
             $table->integer('passengers');
-            $table->text('requests')->nullable();
             $table->unsignedBigInteger('organizer_id')->unique();
             $table->unsignedBigInteger('book_status_id')->nullable();
+            $table->text('requests')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });

@@ -11,12 +11,13 @@ class GeneralEvent extends Model
     use HasFactory;
     protected $fillable = [
         'id',
-        'name',
         'event_no',
         'event_id',
         'event_type_id',
+        'room_id',
         'event_date',
-        'event_time',
+        'start_time',
+        'end_time',
         'passengers',
         'organizer_id',
         'book_status_id',
@@ -27,6 +28,10 @@ class GeneralEvent extends Model
     public function eventType(): BelongsTo
     {
         return $this->belongsTo(EventType::class, 'event_type_id');
+    }
+   public function rooms(): BelongsTo
+    {
+        return $this->belongsTo(Rooms::class, 'room_id');
     }
 
     public function organizer(): BelongsTo

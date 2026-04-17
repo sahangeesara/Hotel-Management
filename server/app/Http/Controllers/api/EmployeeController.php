@@ -40,7 +40,7 @@ class EmployeeController extends Controller
             'address' => 'required',
             'email' => 'required|email',
             'city' => 'required',
-            'nic' => 'required|unique:employees,nic', // Ensure NIC is unique
+            'nic' => 'required|unique:employees,nic',
             'tel_no' => 'required',
             'employee_type_id' => 'required|integer',
             'gender_id' => 'required|integer',

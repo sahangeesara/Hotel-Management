@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('hotel_events', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->char('event_no');
             $table->unsignedBigInteger('event_id')->nullable();
             $table->foreign('event_id')->references('id')->on('events');
+            $table->unsignedBigInteger('room_id')->nullable();
+            $table->foreign('room_id')->references('id')->on('rooms');
             $table->unsignedBigInteger('event_type_id')->nullable();
             $table->foreign('event_type_id')->references('id')->on('event_types');
             $table->dateTime('event_date');

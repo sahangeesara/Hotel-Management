@@ -16,7 +16,7 @@ class GeneralEventsController extends Controller
     public function index()
     {
         try{
-            $generalEvents= GeneralEvent::with('event','organizer','eventType','bookStatus')
+            $generalEvents= GeneralEvent::with('event','organizer','eventType','bookStatus','rooms')
                 ->where('is_active',1)
                 ->paginate(20);
 
@@ -33,21 +33,21 @@ class GeneralEventsController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|max:255',
+            'event_id'=> 'required|integer',
             'event_type_id' => 'required|integer',
             'event_date' => 'required',
             'start_time' => 'required',
             'end_time' => 'required',
-            'organizer_id' => 'required|integer',
-            'requests' => 'required',
-            'book_status_id'=> 'required|integer',
-            'event_id'=> 'required|integer',
             'passengers' => 'required',
+            'room_id' => 'required|integer',
+            'organizer_id' => 'required|integer',
+            'book_status_id'=> 'required|integer',
+            'requests' => 'required',
         ]);
 
         $existingBooking = GeneralEvent::where('organizer_id', $validatedData['organizer_id'])
             ->where('event_date', $validatedData['event_date'])
-            ->where('event_time', $validatedData['event_time'])
+            ->where('start_time', $validatedData['start_time'])
             ->where('book_status_id', $validatedData['book_status_id'])
             ->where('is_active', true)
             ->first();
@@ -62,12 +62,13 @@ class GeneralEventsController extends Controller
 
             $generalEvent= GeneralEvent::create(
                 [
-                    'name' => $validatedData['name'],
                     'event_type_id' => $validatedData['event_type_id'],
                     'event_id' => $validatedData['event_id'],
                     'event_date' => $validatedData['event_date'],
-                    'event_time' => $validatedData['event_time'],
+                    'start_time' => $validatedData['start_time'],
+                    'end_time' => $validatedData['end_time'],
                     'organizer_id' => $validatedData['organizer_id'],
+                    'room_id' => $validatedData['room_id'],
                     'requests' => $validatedData['requests'],
                     'book_status_id' => $validatedData['book_status_id'],
                     'passengers' => $validatedData['passengers'],
@@ -88,7 +89,7 @@ class GeneralEventsController extends Controller
     public function show(string $id)
     {
         try{
-            $generalEvent = GeneralEvent::with('event','organizer','eventType','bookStatus')
+            $generalEvent = GeneralEvent::with('event','organizer','eventType','bookStatus','rooms')
                                     ->findOrFail($id);
             return response()->json($generalEvent);
         }catch (\Exception $e){
@@ -103,25 +104,25 @@ class GeneralEventsController extends Controller
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'name' => 'required|max:255',
+            'event_no'=> 'required',
+            'event_id' => 'required',
             'event_type_id' => 'required|integer',
             'event_date' => 'required',
             'start_time' => 'required',
             'end_time' => 'required',
-            'organizer_id' => 'required|integer',
-            'requests' => 'required',
             'passengers' => 'required',
-            'event_id' => 'required',
-            'event_no'=> 'required',
+            'organizer_id' => 'required|integer',
+            'room_id' => 'required|integer',
             'book_status_id' => 'required|integer',
+            'requests' => 'required',
         ]);
-        $existingBooking = generalEvent::where('id', '<>', $id)
+        $existingBooking = GeneralEvent::where('id', '<>', $id)
             ->where(function ($query) use ($validatedData) {
 
                 $query->where(function ($query) use ($validatedData) {
                     $query->where('organizer_id', '<>', $validatedData['organizer_id'])
                         ->where('event_id', '<>', $validatedData['event_id'])
-                        ->where('event_type', $validatedData['event_type']);
+                        ->where('event_type_id', $validatedData['event_type_id']);
                 })
 
                     ->orWhere(function ($query) use ($validatedData) {
@@ -131,9 +132,9 @@ class GeneralEventsController extends Controller
                     })
 
                     ->orWhere(function ($query) use ($validatedData) {
-                        $query->whereBetween('end_date', [
-                            $validatedData['start_date'],
-                            $validatedData['end_date']
+                        $query->whereBetween('end_time', [
+                            $validatedData['start_time'],
+                            $validatedData['end_time']
                         ])
                             ->where('is_active', true);
                     });
@@ -149,15 +150,16 @@ class GeneralEventsController extends Controller
         $bookStatus= BookStatus::findOrFail($validatedData['book_status_id']);
 
         try {
-            $generalEvent = generalEvent::findOrFail($id);
+            $generalEvent = GeneralEvent::findOrFail($id);
             $generalEvent->update(
                 [
-                    'name' => $validatedData['name'],
                     'event_type_id' => $validatedData['event_type_id'],
                     'event_id' => $validatedData['event_id'],
                     'event_date' => $validatedData['event_date'],
-                    'event_time' => $validatedData['event_time'],
+                    'start_time' => $validatedData['start_time'],
+                    'end_time' => $validatedData['end_time'],
                     'organizer_id' => $validatedData['organizer_id'],
+                    'room_id' => $validatedData['room_id'],
                     'requests' => $validatedData['requests'],
                     'book_status_id' => $validatedData['book_status_id'],
                     'passengers' => $validatedData['passengers'],

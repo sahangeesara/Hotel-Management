@@ -328,6 +328,7 @@ export class AllServiceService {
   submitCustomer(data:any){
     return this.http.post<Customer[]>(`${this.besUrl}/customer`,data,this.getAuthHeaders());
   }
+
 //profile
   getUserProfile(){
     return this.http.get(`${this.besUrl}/userProfile`,this.getAuthHeaders());

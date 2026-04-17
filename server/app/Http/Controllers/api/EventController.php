@@ -31,19 +31,16 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        $data = json_decode($request->form, true);
-        $validatedData = Validator::make($data, [
-
+        $validatedData = $request->validate([
             'name' => 'required|max:255',
         ]);
-        if ($validatedData->fails()) {
-            return response()->json($validatedData->errors());
-        }
-        $nextId = Event::max('id') + 1;
-        $eventNo = 'EVN' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+
         try{
+            $nextId = Event::max('id') + 1;
+            $eventNo = 'EVN' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+
             $event =new Event();
-            $event->name = $data['name'];
+            $event->name = $validatedData['name'];
             $event->event_no = $eventNo;
             $event->save();
 
@@ -75,20 +72,15 @@ class EventController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $data = json_decode($request->form, true);
-        $validatedData = Validator::make($data, [
-
+        $validatedData = $request->validate([
             'name' => 'required|max:255',
             'event_no' => 'required',
-
         ]);
-        if ($validatedData->fails()) {
-            return response()->json($validatedData->errors());
-        }
+
         try{
             $event = Event::findOrFail($id);
-            $event->name = $data['name'];
-            $event->event_no = $data['event_no'];
+            $event->name = $validatedData['name'];
+            $event->event_no = $validatedData['event_no'];
             $event->save();
 
             return json_encode($event);

@@ -17,7 +17,7 @@ class HotelEventsController extends Controller
     public function index()
     {
         try{
-            $hotelEvents= HotelEvent::with('hotel','event','organizer','eventType','bookStatus')
+            $hotelEvents= HotelEvent::with('hotel','event','organizer','eventType','bookStatus','rooms')
                 ->where('is_active',1)
                 ->paginate(20);
 
@@ -34,12 +34,12 @@ class HotelEventsController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|max:255',
             'event_type_id' => 'required|integer',
             'event_date' => 'required',
             'start_time' => 'required',
             'end_time' => 'required',
             'hotel_id' => 'required|integer',
+            'room_id' => 'required|integer',
             'organizer_id' => 'required|integer',
             'requests' => 'required',
             'book_status_id'=> 'required|integer',
@@ -65,13 +65,13 @@ class HotelEventsController extends Controller
 
             $hotelEvent= HotelEvent::create(
                 [
-                    'name' => $validatedData['name'],
                     'event_type_id' => $validatedData['event_type_id'],
                     'event_id' => $validatedData['event_id'],
                     'event_date' => $validatedData['event_date'],
                     'start_time' => $validatedData['start_time'],
                     'end_time' => $validatedData['end_time'],
                     'hotel_id' => $validatedData['hotel_id'],
+                    'room_id' => $validatedData['room_id'],
                     'organizer_id' => $validatedData['organizer_id'],
                     'requests' => $validatedData['requests'],
                     'additional_services' => $validatedData['additional_services'],
@@ -94,7 +94,7 @@ class HotelEventsController extends Controller
     public function show(string $id)
     {
         try{
-            $hotelEvent = HotelEvent::with('hotel','event','organizer','eventType','bookStatus')
+            $hotelEvent = HotelEvent::with('hotel','event','organizer','eventType','bookStatus','rooms')
                                 ->findOrFail($id);
             return response()->json($hotelEvent);
         }catch (\Exception $e){
@@ -109,13 +109,13 @@ class HotelEventsController extends Controller
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'name' => 'required|max:255',
             'event_type_id' => 'required|integer',
             'event_date' => 'required',
             'start_time' => 'required',
             'end_time' => 'required',
             'hotel_id' => 'required|integer',
             'organizer_id' => 'required|integer',
+            'room_id' => 'required|integer',
             'requests' => 'required',
             'additional_services' => 'required',
             'passengers' => 'required',
@@ -129,7 +129,7 @@ class HotelEventsController extends Controller
                 $query->where(function ($query) use ($validatedData) {
                     $query->where('organizer_id', '<>', $validatedData['organizer_id'])
                         ->where('event_id', '<>', $validatedData['event_id'])
-                        ->where('event_type', $validatedData['event_type']);
+                        ->where('event_type_id', $validatedData['event_type_id']);
                 })
 
                     ->orWhere(function ($query) use ($validatedData) {
@@ -139,9 +139,9 @@ class HotelEventsController extends Controller
                     })
 
                     ->orWhere(function ($query) use ($validatedData) {
-                        $query->whereBetween('end_date', [
-                            $validatedData['start_date'],
-                            $validatedData['end_date']
+                        $query->whereBetween('end_time', [
+                            $validatedData['start_time'],
+                            $validatedData['end_time']
                         ])
                             ->where('is_active', true);
                     });
@@ -160,13 +160,13 @@ class HotelEventsController extends Controller
             $hotelEvent = HotelEvent::findOrFail($id);
             $hotelEvent->update(
                 [
-                    'name' => $validatedData['name'],
                     'event_type_id' => $validatedData['event_type_id'],
                     'event_id' => $validatedData['event_id'],
                     'event_date' => $validatedData['event_date'],
                     'start_time' => $validatedData['start_time'],
                     'end_time' => $validatedData['end_time'],
                     'hotel_id' => $validatedData['hotel_id'],
+                    'room_id' => $validatedData['room_id'],
                     'organizer_id' => $validatedData['organizer_id'],
                     'requests' => $validatedData['requests'],
                     'additional_services' => $validatedData['additional_services'],

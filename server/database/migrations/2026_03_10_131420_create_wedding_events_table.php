@@ -22,6 +22,8 @@ return new class extends Migration
             $table->time('event_time');
             $table->integer('passengers');
             $table->unsignedBigInteger('hotel_id')->nullable();
+            $table->unsignedBigInteger('room_id')->nullable();
+            $table->foreign('room_id')->references('id')->on('rooms');
             $table->unsignedBigInteger('organizer_id')->unique();
             $table->string('additional_services')->nullable();
             $table->unsignedBigInteger('book_status_id')->nullable();

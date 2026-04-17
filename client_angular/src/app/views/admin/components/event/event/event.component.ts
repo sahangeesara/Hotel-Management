@@ -1,19 +1,16 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
   ButtonDirective,
-  ColComponent,
   FormControlDirective,
   FormDirective,
   FormLabelDirective,
   FormSelectDirective, FormTextDirective, RowComponent, TableDirective
 } from "@coreui/angular";
-import {DatePipe, NgForOf, NgIf} from "@angular/common";
+import { NgForOf} from "@angular/common";
 import {IconDirective} from "@coreui/icons-angular";
-import {NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {ActivatedRoute, Router} from "@angular/router";
-import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
+import {EventService} from "../../../../../services/event.service";
 
 
 @Component({
@@ -21,8 +18,6 @@ import {ToastrService} from "ngx-toastr";
   standalone: true,
   imports: [
     ButtonDirective,
-    ColComponent,
-    DatePipe,
     FormControlDirective,
     FormDirective,
     FormLabelDirective,
@@ -30,26 +25,21 @@ import {ToastrService} from "ngx-toastr";
     FormTextDirective,
     IconDirective,
     NgForOf,
-    NgIf,
-    NgbInputDatepicker,
     ReactiveFormsModule,
-    RowComponent,
     TableDirective
   ],
   templateUrl: './event.component.html',
   styleUrl: './event.component.scss'
 })
-export class EventComponent {
+export class EventComponent implements OnInit {
 
   public error=null;
-  rooms: any[] = [];
-  roomsCategories: any[] = [];
+  events: any[] = [];
   formData = new FormData();
   eventForm: FormGroup;
-  roomData:any;
-  constructor(   private route:ActivatedRoute,
-                 private allServe: AllServiceService,
-                 private router:Router,
+  eventData:any;
+  public isEditMode = false;
+  constructor(   private eventServe: EventService,
                  private toastr: ToastrService,
                  private fb: FormBuilder,
   ) {
@@ -57,40 +47,27 @@ export class EventComponent {
     this.eventForm = this.fb.group({
 
       id: [''],
-      r_no: [''],
-      p_cost: ['', [Validators.required]],
-      eventName: ['', [Validators.required]],
-      r_category_id: ['', Validators.required],
+      event_no: [''],
+      name: ['', [Validators.required]]
     });
 
   }
-  get rmIdField(): FormControl {
-    return this.eventForm.controls['id'] as FormControl;
-  }
-  get rmNoField(): FormControl {
-    return this.eventForm.controls['r_no'] as FormControl;
-  }
-  get rmCostField(): FormControl {
-    return this.eventForm.controls['r_cost'] as FormControl;
-  }
 
-  get rmCategoryField(): FormControl {
-    return this.eventForm.controls['r_category_id'] as FormControl;
-  }
 
   clearForm() {
     this.eventForm.reset();
-    this.rmCategoryField.setValue("Select Rooms Category");
+    this.isEditMode = false;
   }
 
-  getRoomById(id:any){
-    this.allServe.getRoomById(id).subscribe(
-      (room:any) => {
-
-        this.rmIdField.setValue(room.id);
-        this.rmNoField.setValue(room.r_no);
-        this.rmCostField.setValue(room.r_cost);
-        this.rmCategoryField.setValue(room.r_category_id);
+  getEventById(id:any){
+    this.eventServe.getEventById(id).subscribe(
+      (event:any) => {
+        this.eventForm.patchValue({
+          id: event.id,
+          event_no: event.event_no,
+          name: event.name
+        });
+        this.isEditMode = true; // Enable update button
       },
       (error) => {
         console.error('Error fetching employee types:', error);
@@ -98,14 +75,14 @@ export class EventComponent {
     );
   }
 
-  updateRoom() {
+  updateEvent() {
     if (this.eventForm.valid) {
-      this.roomData = this.eventForm.getRawValue();
+      this.eventData = this.eventForm.getRawValue();
 
-      this.allServe.roomUpdate(this.roomData, this.roomData.id).subscribe(
+      this.eventServe.updateEvent(this.eventData, this.eventData.id).subscribe(
         (response) => {
           // Handle successful response
-          this.getRm();
+          this.getEvent();
           this.clearForm();
         },
         (error) => {
@@ -116,13 +93,13 @@ export class EventComponent {
     }
   }
 
-  getRm() {
-    this.allServe.getRoom().subscribe(
+  getEvent() {
+    this.eventServe.getEvent().subscribe(
       (response: any) => {
-        this.rooms = response.data;
+        this.events = response;
       },
       (error) => {
-        console.error('Error fetching rooms:', error);
+        console.error('Error fetching events:', error);
       }
     );
   }
@@ -130,12 +107,12 @@ export class EventComponent {
   onSubmit() {
     if (this.eventForm.valid) {
 
-      this.roomData = this.eventForm.getRawValue();
+      this.eventData = this.eventForm.getRawValue();
 
-      this.allServe.submitRoom(this.roomData).subscribe(
+      this.eventServe.submitEvents(this.eventData).subscribe(
         (response) => {
           // Handle successful submission
-          this.getRm();
+          this.getEvent();
           this.clearForm();
         },
         (error) => {
@@ -150,10 +127,10 @@ export class EventComponent {
     return  this.error=error.error;
   }
 
-  deleteRoom(id:any){
-    this.allServe.deleteRoom(id).subscribe(
+  deleteEvent(id:any){
+    this.eventServe.deleteEvent(id).subscribe(
       (data: any) => {
-        this.getRm();
+        this.getEvent();
       },
       (error) => {
         console.error('Error fetching employee:', error);
@@ -162,21 +139,7 @@ export class EventComponent {
 
   }
 
-
-  getRmCategory() {
-    this.allServe.getRoomsCategory().subscribe(
-      (response: any) => {
-        this.roomsCategories = response.data;
-      },
-      (error) => {
-        console.error('Error fetching rooms categories:', error);
-      }
-    );
-  }
-
-
-  ngOnInit() {
-    this.getRm();
-    this.getRmCategory();
+   ngOnInit() {
+    this.getEvent();
   }
 }

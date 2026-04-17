@@ -37,7 +37,7 @@ class OrganizerDetailsController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|max:255',
             'email' => 'required|email',
-            'nic' => 'required|unique:genders,nic',
+            'nic' => 'required|unique:organizer_details,nic',
             'phone' => 'required',
             'gender_id' => 'required|integer',
         ]);
@@ -49,11 +49,11 @@ class OrganizerDetailsController extends Controller
 
             $organizerDetails = OrganizerDetails::create(
                 [
+                    'gender_id' => $validatedData['gender_id'],
                     'name' => $validatedData['name'],
                     'email' => $validatedData['email'],
                     'nic' => $validatedData['nic'],
                     'phone' => $validatedData['phone'],
-                    'gender_id' => $validatedData['gender_id'],
                     'organizer_code' => $orgNo,
                 ]
             );
@@ -90,7 +90,7 @@ class OrganizerDetailsController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|max:255',
             'email' => 'required|email',
-            'nic' => 'required|unique:genders,nic,'. $id,
+            'nic' => 'required|unique:organizer_details,nic,'. $id,
             'phone' => 'required',
             'gender_id' => 'required|integer',
             'organizer_code' => 'required|unique:organizer_details,organizer_code,' . $id,

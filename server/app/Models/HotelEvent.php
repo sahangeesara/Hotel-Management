@@ -11,7 +11,6 @@ class HotelEvent extends Model
     use HasFactory;
     protected $fillable = [
         'id',
-        'name',
         'event_no',
         'event_id',
         'event_type_id',
@@ -20,6 +19,7 @@ class HotelEvent extends Model
         'end_time',
         'passengers',
         'hotel_id',
+        'room_id',
         'organizer_id',
         'book_status_id',
         'requests',
@@ -30,6 +30,10 @@ class HotelEvent extends Model
     public function eventType(): BelongsTo
     {
         return $this->belongsTo(EventType::class, 'event_type_id');
+    }
+    public function rooms(): BelongsTo
+    {
+        return $this->belongsTo(Rooms::class, 'room_id');
     }
 
     public function organizer(): BelongsTo
