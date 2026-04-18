@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone');
             $table->char('nic');
+            $table->string('address');
+            $table->boolean('is_active')->default(1);
             $table->timestamps();
         });
     }

@@ -17,5 +17,12 @@ export const routes: Routes = [
       title: 'Event Book'
     }
   },
+  {
+    path: 'organizer',
+    loadComponent: () => import('./organizer/organizer.component').then(m => m.OrganizerComponent),
+    data: {
+      title: 'Organizer View'
+    }
+  },
 
 ];

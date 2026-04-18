@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {
     ButtonDirective, ColComponent, FormControlDirective, FormLabelDirective, FormSelectDirective, FormTextDirective,
     ModalBodyComponent,
@@ -43,7 +43,7 @@ import {map} from "rxjs/operators";
   templateUrl: './customer-view.component.html',
   styleUrl: './customer-view.component.scss'
 })
-export class CustomerViewComponent {
+export class CustomerViewComponent implements OnInit{
   public visible = false;
   customers: any[] = [];
   customGenders: any[] = [];

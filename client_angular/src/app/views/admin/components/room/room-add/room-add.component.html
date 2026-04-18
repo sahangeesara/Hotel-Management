@@ -18,11 +18,28 @@
       </div>
     </div>
     <div class="mb-3">
+      <label cLabel for="inputCapacity-1">Room Capacity: </label>
+      <input cFormControl id="inputCapacity-1" type="text" sizing="sm" formControlName="capacity" name="capacity">
+      <div cFormText>
+        ex: 30,3
+      </div>
+    </div>
+    <div class="mb-3">
       <label cLabel for="inputCost-1">Room Category: </label>
 
       <select aria-label="Select Rooms Category " cSelect name="r_category_id" formControlName="r_category_id">
         <option selected="selected" value="">Select Rooms Category</option>
         <option *ngFor="let type of roomsCategories" [value]="type.id">
+          {{ type.name }}
+        </option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label cLabel for="inputCost-1">Hotel: </label>
+
+      <select aria-label="Select Hotel " cSelect name="hotel_id" formControlName="hotel_id">
+        <option selected="selected" value="">Select Hotel</option>
+        <option *ngFor="let type of hotels" [value]="type.id">
           {{ type.name }}
         </option>
       </select>

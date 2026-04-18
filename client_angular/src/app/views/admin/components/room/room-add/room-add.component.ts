@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
     ButtonDirective,
     FormControlDirective,
@@ -12,6 +12,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
 import { IconDirective } from '@coreui/icons-angular';
+import {HotelService} from "../../../../../services/hotel.service";
 
 @Component({
   selector: 'app-room-add',
@@ -33,16 +34,18 @@ import { IconDirective } from '@coreui/icons-angular';
   templateUrl: './room-add.component.html',
   styleUrl: './room-add.component.scss'
 })
-export class RoomAddComponent {
+export class RoomAddComponent implements OnInit {
 
   public error=null;
   rooms: any[] = [];
+  hotels: any[] = [];
   roomsCategories: any[] = [];
   formData = new FormData();
   roomForm: FormGroup;
   roomData:any;
   constructor(
                  private allServe: AllServiceService,
+                 private hotelServe: HotelService,
                  private toastr: ToastrService,
                  private fb: FormBuilder,
   ) {
@@ -51,21 +54,13 @@ export class RoomAddComponent {
 
       id: [''],
       r_no: [''],
+      hotel_id: ['',[Validators.required]],
+      capacity: ['',[Validators.required]],
       r_cost: ['', [Validators.required]],
       r_category_id: ['', Validators.required],
     });
 
   }
-  get rmIdField(): FormControl {
-    return this.roomForm.controls['id'] as FormControl;
-  }
-  get rmNoField(): FormControl {
-    return this.roomForm.controls['r_no'] as FormControl;
-  }
-  get rmCostField(): FormControl {
-    return this.roomForm.controls['r_cost'] as FormControl;
-  }
-
   get rmCategoryField(): FormControl {
     return this.roomForm.controls['r_category_id'] as FormControl;
   }
@@ -79,10 +74,7 @@ export class RoomAddComponent {
     this.allServe.getRoomById(id).subscribe(
       (room:any) => {
 
-        this.rmIdField.setValue(room.id);
-        this.rmNoField.setValue(room.r_no);
-        this.rmCostField.setValue(room.r_cost);
-        this.rmCategoryField.setValue(room.r_category_id);
+        this.roomForm.patchValue(room);
       },
       (error) => {
         console.error('Error fetching employee types:', error);
@@ -115,6 +107,16 @@ export class RoomAddComponent {
       },
       (error) => {
         console.error('Error fetching rooms:', error);
+      }
+    );
+  }
+  getHotels() {
+    this.hotelServe.getHotel().subscribe(
+      (response: any) => {
+        this.hotels = response.data;
+      },
+      (error) => {
+        console.error('Error fetching Hotel:', error);
       }
     );
   }
@@ -170,6 +172,7 @@ export class RoomAddComponent {
   ngOnInit() {
     this.getRm();
     this.getRmCategory();
+    this.getHotels();
   }
 
 }

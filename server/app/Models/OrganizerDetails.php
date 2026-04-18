@@ -15,6 +15,7 @@ class OrganizerDetails extends Model
         'organizer_code',
         'gender_id',
         'name',
+        'address',
         'email',
         'phone',
         'nic',

@@ -39,6 +39,7 @@ class OrganizerDetailsController extends Controller
             'email' => 'required|email',
             'nic' => 'required|unique:organizer_details,nic',
             'phone' => 'required',
+            'address' => 'required',
             'gender_id' => 'required|integer',
         ]);
 
@@ -54,6 +55,7 @@ class OrganizerDetailsController extends Controller
                     'email' => $validatedData['email'],
                     'nic' => $validatedData['nic'],
                     'phone' => $validatedData['phone'],
+                    'address' => $validatedData['address'],
                     'organizer_code' => $orgNo,
                 ]
             );
@@ -92,6 +94,7 @@ class OrganizerDetailsController extends Controller
             'email' => 'required|email',
             'nic' => 'required|unique:organizer_details,nic,'. $id,
             'phone' => 'required',
+            'address' => 'required',
             'gender_id' => 'required|integer',
             'organizer_code' => 'required|unique:organizer_details,organizer_code,' . $id,
         ]);

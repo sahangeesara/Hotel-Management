@@ -16,7 +16,7 @@ class RoomsController extends Controller
     public function index()
     {
         try {
-            $rooms = Rooms::with('roomCategory')
+            $rooms = Rooms::with('roomCategory','hotel')
                         ->where('is_active',1)
                         ->orderBy('created_at',"DESC")
                         ->paginate(20);
@@ -39,6 +39,8 @@ class RoomsController extends Controller
         $validatedData = $request->validate([
             'id' =>'',
             'r_no' =>'',
+            'hotel_id' =>'required|integer',
+            'capacity' =>'required|integer',
             'r_cost' => 'required|numeric',
             'r_category_id' => 'required|integer',
         ]);
@@ -52,6 +54,8 @@ class RoomsController extends Controller
             $room = Rooms::create([
                 'r_no' => $rNo,
                 'r_cost' => $validatedData['r_cost'],
+                'hotel_id' => $validatedData['hotel_id'],
+                'capacity' => $validatedData['capacity'],
                 'r_category_id' => $validatedData['r_category_id'],
             ]);
 
@@ -70,7 +74,7 @@ class RoomsController extends Controller
     public function show(string $id)
     {
         try {
-            $rooms = Rooms::with('roomCategory')
+            $rooms = Rooms::with('roomCategory','hotel')
                             ->findOrFail($id);
             return response()->json($rooms);
         } catch (\Exception $e) {
@@ -89,6 +93,8 @@ class RoomsController extends Controller
         // Validate the incoming JSON request
         $validatedData = $request->validate([
             'r_no' => 'required',
+            'hotel_id' =>'required|integer',
+            'capacity' =>'required|integer',
             'r_cost' => 'required|numeric',
             'r_category_id' => 'required|integer',
         ]);

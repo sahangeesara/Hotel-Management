@@ -97,6 +97,11 @@ export const navItems: INavData[] = [
         url: '/event/event_book',
         icon: 'nav-icon-bullet'
       },
+      {
+        name: 'Organizer View',
+        url: '/event/organizer',
+        icon: 'nav-icon-bullet'
+      },
     ]
   },
   {
@@ -140,7 +145,7 @@ export const navItems: INavData[] = [
   {
     name: 'Customer',
     url: '/customer',
-    iconComponent: { name: 'cil-bell' },
+    iconComponent: { name: 'cil-people' },
     children: [
       {
         name: 'Customer View',

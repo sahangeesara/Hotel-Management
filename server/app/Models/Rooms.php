@@ -13,6 +13,8 @@ class Rooms extends Model
     protected $fillable = [
         'id',
         'r_no',
+        'hotel_id',
+        'capacity',
         'r_cost',
         'r_category_id',
         'is_active',
@@ -21,5 +23,9 @@ class Rooms extends Model
     public function roomCategory(): BelongsTo
     {
         return $this->belongsTo(Rooms_category::class,'r_category_id');
+    }
+    public function hotel(): BelongsTo
+    {
+        return $this->belongsTo(Hotel::class,'hotel_id');
     }
 }
