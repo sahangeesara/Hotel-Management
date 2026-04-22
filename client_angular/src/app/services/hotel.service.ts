@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {TokenService} from "./token.service";
 import {Hotel} from "../entities/Hotel";
+import {RoomSetup} from "../entities/RoomSetup";
 
 @Injectable({
   providedIn: 'root'
@@ -36,5 +37,21 @@ export class HotelService {
   }
   submitHotel(data:any){
     return this.http.post<Hotel[]>(`${this.besUrl}/hotels`,data,this.getAuthHeaders());
+  }
+  //roomSetup
+  getRoomSetup(){
+    return this.http.get(`${this.besUrl}/roomSetup`,this.getAuthHeaders());
+  }
+  getRoomSetupById(data:any){
+    return this.http.get(`${this.besUrl}/roomSetup/`+data,this.getAuthHeaders());
+  }
+  deleteRoomSetup(data:any){
+    return this.http.delete(`${this.besUrl}/roomSetup/`+data,this.getAuthHeaders());
+  }
+  updateRoomSetup(data:any, id:any){
+    return this.http.put(`${this.besUrl}/roomSetup/${id}`,data,this.getAuthHeaders());
+  }
+  submitRoomSetup(data:any){
+    return this.http.post<RoomSetup[]>(`${this.besUrl}/roomSetup`,data,this.getAuthHeaders());
   }
 }

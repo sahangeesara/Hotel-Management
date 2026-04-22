@@ -32,6 +32,18 @@ export const navItems: INavData[] = [
     ]
   },
   {
+    name: 'Hotel',
+    url: '/hotel',
+    iconComponent: { name: 'cil-location-pin' },
+    children: [
+      {
+        name: 'Hotel View',
+        url: '/hotel/hotel_view',
+        icon: 'nav-icon-bullet'
+      }
+    ]
+  },
+  {
     name: 'Employee',
     url: '/employee',
     iconComponent: { name: 'cil-people' },
