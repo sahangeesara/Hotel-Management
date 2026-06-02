@@ -66,7 +66,8 @@ class HotelController extends Controller
     public function show(string $id)
     {
         try{
-            $hotel = Hotel::findOrFail($id);
+            $hotel = Hotel::with('roomSetup')
+                            ->findOrFail($id);
             return response()->json($hotel);
         }catch (\Exception $e){
             Log::error($e->getMessage());

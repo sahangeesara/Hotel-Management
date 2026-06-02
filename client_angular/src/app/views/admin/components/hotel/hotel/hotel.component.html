@@ -70,6 +70,24 @@
               </div>
             </div>
           </c-col>
+          <c-col [xs]="6">
+            <!-- capacity -->
+            <div class="mb-3">
+              <label cLabel for="capacity" class="form-label">Hotel capacity </label>
+              <input
+                cFormControl
+                type="text"
+                class="form-control"
+                id="capacity"
+                formControlName="capacity"
+                placeholder="Enter capacity "
+
+              />
+              <div *ngIf="hotelForm.get('capacity')?.invalid && hotelForm.get('capacity')?.touched" class="invalid-feedback">
+                Capacity is required
+              </div>
+            </div>
+          </c-col>
         </c-row>
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary" style="color:black" [disabled]="hotelForm.invalid">Save</button> &ngsp;
@@ -114,7 +132,7 @@
         <td>{{ type.location }}</td>
         <td>{{ type.phone }}</td>
         <td>{{ type.capacity }}</td>
-        <td>{{ type.roomSetup.name }}</td>
+        <td>{{ type.room_setup.name }}</td>
         <td>
           <button type="button" (click)="getHotelById(type.id)" cButton>  <svg cIcon name="cil-task" size="lg" title="Numbered List Icon" ></svg></button> &ngsp;
           <button type="button" (click)="deleteHotel(type.id)" cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>

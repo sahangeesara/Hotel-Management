@@ -7,10 +7,9 @@ import {
   ColComponent,
   FormControlDirective,
   FormLabelDirective,
-  FormSelectDirective, ModalBodyComponent, ModalComponent, ModalFooterComponent, ModalHeaderComponent,
-  ModalTitleDirective, RowComponent, TableDirective
+  FormSelectDirective,
+  RowComponent, TableDirective
 } from "@coreui/angular";
-import {CustomerUpdateComponent} from "../../customer/customer-update/customer-update.component";
 import {IconDirective} from "@coreui/icons-angular";
 import {NgForOf, NgIf} from "@angular/common";
 
@@ -20,21 +19,15 @@ import {NgForOf, NgIf} from "@angular/common";
   imports: [
     ButtonDirective,
     ColComponent,
-    CustomerUpdateComponent,
     FormControlDirective,
     FormLabelDirective,
     FormSelectDirective,
     IconDirective,
-    ModalBodyComponent,
-    ModalComponent,
-    ModalFooterComponent,
-    ModalHeaderComponent,
-    ModalTitleDirective,
     NgForOf,
     NgIf,
     ReactiveFormsModule,
     RowComponent,
-    TableDirective
+    TableDirective,ColComponent,
   ],
   templateUrl: './hotel.component.html',
   styleUrl: './hotel.component.scss'
@@ -109,6 +102,7 @@ export class HotelComponent implements OnInit {
     this.hotelServe.getHotel().subscribe(
       (response: any) => {
         this.hotels = response.data;
+        console.log(this.hotels);
       },
       (error) => {
         console.error('Error fetching hotels:', error);

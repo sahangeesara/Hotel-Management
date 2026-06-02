@@ -44,7 +44,7 @@ class EventController extends Controller
             $event->event_no = $eventNo;
             $event->save();
 
-            return json_encode($event);
+            return response()->json(['message'=>'Successfully submitted.', 'Event'=>$event],200);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
@@ -83,7 +83,7 @@ class EventController extends Controller
             $event->event_no = $validatedData['event_no'];
             $event->save();
 
-            return json_encode($event);
+            return response()->json(['message'=>'Successfully updated.', 'Event'=>$event],200);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());

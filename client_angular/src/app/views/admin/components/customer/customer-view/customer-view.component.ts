@@ -14,7 +14,6 @@ import {ToastrService} from "ngx-toastr";
 import {EmployeeUpdateComponent} from "../../employee/employee-update/employee-update.component";
 import {CustomerUpdateComponent} from "../customer-update/customer-update.component";
 import {IconDirective} from "@coreui/icons-angular";
-import {catchError, from, throwError} from "rxjs";
 import {map} from "rxjs/operators";
 
 @Component({
@@ -35,7 +34,6 @@ import {map} from "rxjs/operators";
         FormControlDirective,
         FormLabelDirective,
         FormSelectDirective,
-        FormTextDirective,
         NgForOf,
         ReactiveFormsModule,
         RowComponent
