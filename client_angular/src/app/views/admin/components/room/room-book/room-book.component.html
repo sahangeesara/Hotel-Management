@@ -17,6 +17,24 @@
     </c-col>
     <c-col [xs]="6">
       <div class="mb-3">
+        <label cLabel for="max_guests-1">Guest Counts: </label>
+        <input cFormControl id="max_guests-1" type="text" sizing="sm" name="max_guests" formControlName="max_guests">
+        <div cFormText>
+          ex: 10
+        </div>
+      </div>
+    </c-col>
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel for="number_of_room-1">Number of Room: </label>
+        <input cFormControl id="number_of_room-1" type="text" sizing="sm" name="number_of_room" formControlName="number_of_room">
+        <div cFormText>
+          ex: 4
+        </div>
+      </div>
+    </c-col>
+    <c-col [xs]="6">
+      <div class="mb-3">
         <label cLabel for="inputRNo-1">Room No:</label>
         <select id="inputRNo-1" aria-label="Select Room No" cSelect name="r_id" formControlName="r_id">
           <option selected="selected" value="">Select Room No</option>
@@ -26,17 +44,6 @@
         </select>
       </div>
     </c-col>
-<!--    <c-col [xs]="6">-->
-<!--      <div class="mb-3">-->
-<!--        <label cLabel for="inputGuest-1">Guest:</label>-->
-<!--        <datalist id="inputGuest-1" aria-label="Select Guest" cSelect name="guest_id" formControlName="guest_id">-->
-<!--          <option selected="selected" value="">Select Guest</option>-->
-<!--          <option *ngFor="let guest of guests" [value]="guest.id">-->
-<!--            {{ guest.nic }}-->
-<!--          </option>-->
-<!--        </datalist>-->
-<!--      </div>-->
-<!--    </c-col>-->
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="inputGuest-1">Guest:</label>
@@ -58,7 +65,18 @@
 
     <c-col [xs]="6">
       <div class="mb-3">
-        <label cLabel for="inputRBook-1">Room Booking:</label>
+        <label cLabel for="inputRBook-1">Packages :</label>
+        <select id="inputRBook-1" aria-label="Select a Package" cSelect name="package_id" formControlName="package_id">
+          <option selected="selected" value="">Select Book</option>
+          <option *ngFor="let type of packages" [value]="type.id">
+            {{ type.name }}
+          </option>
+        </select>
+      </div>
+    </c-col>
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel for="inputRBook-1">Room Booking :</label>
         <select id="inputRBook-1" aria-label="Select Book" cSelect name="r_book" formControlName="r_book">
           <option selected="selected" value="">Select Book</option>
           <option value="Booking"> Booking </option>
@@ -142,6 +160,8 @@
       <th scope="col">Room No</th>
       <th scope="col">Guest Name</th>
       <th scope="col">Guest Nic</th>
+      <th scope="col">Guest Count</th>
+      <th scope="col">Number of Room</th>
       <th scope="col"> Booking / Canceling </th>
       <th scope="col"> Check-in Date - Check-out Date: </th>
       <th scope="col">Action</th>
@@ -154,6 +174,8 @@
       <td>{{ book.room.r_no }}</td>
       <td>{{ book.guest.name }}</td>
       <td>{{ book.guest.nic }}</td>
+      <td>{{ book.guest.max_guests }}</td>
+      <td>{{ book.guest.number_of_room }}</td>
       <td>{{ book.r_book }}</td>
       <td>{{ book.booking_Date|date:"Y-MM-d" }} - {{ book.cancel_Date|date:"Y-MM-d" }}</td>
       <td>

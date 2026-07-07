@@ -42,6 +42,9 @@ class RoomBookController extends Controller
         $validatedData = $request->validate([
             'r_id' => 'required',
             'guest_id' => 'required',
+            'package_id' => 'required',
+            'max_guests' => 'required',
+            'number_of_room' => 'required',
             'r_book' => 'required',
             'booking_Date' => 'required|date',
             'cancel_Date' => 'required|date|after_or_equal:booking_Date',

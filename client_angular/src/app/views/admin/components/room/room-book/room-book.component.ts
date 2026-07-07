@@ -11,13 +11,11 @@ import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, V
 import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
-import {RoomBook} from "../../../../../entities/roomBook";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
 import {IconDirective} from "@coreui/icons-angular";
-import {catchError, from, throwError} from "rxjs";
-import {map} from "rxjs/operators";
 import {SearchService} from "../../../../../services/search.service";
+import {HotelService} from "../../../../../services/hotel.service";
 
 
 
@@ -50,14 +48,16 @@ export class RoomBookComponent {
 
   guests: any[] = [];
   rooms: any[] = [];
+  packages: any[] = [];
   roomsBooks: any[] = [];
   public error=null;
   formData = new FormData();
   rmBookForm: FormGroup;
   rmSearchBookForm: FormGroup;
-  rmBook:any;
+  roomData:any;
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
+                 private  hotelServes:HotelService,
                  private searchServe: SearchService,
                  private router:Router,
                  private toastr: ToastrService,
@@ -71,7 +71,10 @@ export class RoomBookComponent {
       r_id: ['', [Validators.required]],
       booking_no: [''],
       guest_id: ['', [Validators.required]],
+      package_id: ['', [Validators.required]],
       r_book: ['', [Validators.required]],
+      max_guests: ['', [Validators.required]],
+      number_of_room: ['', [Validators.required]],
       booking_Date: ['', [Validators.required]],
       cancel_Date: ['',[Validators.required]],
     });
@@ -82,29 +85,6 @@ export class RoomBookComponent {
 
     });
   }
-//add or update form
-  get rmBookRIdField(): FormControl {
-    return this.rmBookForm.controls['r_id'] as FormControl;
-  }
-  get rmBookIdField(): FormControl {
-    return this.rmBookForm.controls['id'] as FormControl;
-  }
-  get rmBookGIdField(): FormControl {
-    return this.rmBookForm.controls['guest_id'] as FormControl;
-  }
-  get rmBookField(): FormControl {
-    return this.rmBookForm.controls['r_book'] as FormControl;
-  }
-  get rmBookDateField(): FormControl {
-    return this.rmBookForm.controls['booking_Date'] as FormControl;
-  }
-   get rmBookCancelDateField(): FormControl {
-    return this.rmBookForm.controls['cancel_Date'] as FormControl;
-  }
-   get rmBookNumberField(): FormControl {
-    return this.rmBookForm.controls['booking_no'] as FormControl;
-  }
-
 
   //search form
   get rmBookSearchDateField(): FormControl {
@@ -120,15 +100,9 @@ export class RoomBookComponent {
   }
   onSubmit() {
     if (this.rmBookForm.valid) {
-      const rmBook = {
-        r_book: this.rmBookField.value,
-        r_id: this.rmBookRIdField.value,
-        guest_id: this.rmBookGIdField.value,
-        cancel_Date: this.formatDate(this.rmBookCancelDateField.value),
-        booking_Date: this.formatDate(this.rmBookDateField.value)
-      };
+      this.roomData = this.rmBookForm.getRawValue();
 
-      this.allServe.submitRoomsBook(rmBook).subscribe(
+      this.allServe.submitRoomsBook(this.roomData).subscribe(
         (data) => {
           // Handle successful submission
           this.getRm();
@@ -141,6 +115,17 @@ export class RoomBookComponent {
         }
       );
     }
+  }
+
+  getPackage(){
+    this.hotelServes.getPackage().subscribe(
+      (response: any) => {
+        this.packages = response;
+      },
+      (error) => {
+        console.error('Error fetching rooms Book:', error);
+      }
+    );
   }
 
   handleError(error: { error: null; }){
@@ -257,19 +242,9 @@ formatDate(obj:any){
 
   updateRmBook() {
     if (this.rmBookForm.valid) {
-      const id = this.rmBookIdField.value;
+      this.roomData = this.rmBookForm.getRawValue();
 
-      const rmBook = {
-        id: this.rmBookIdField.value,
-        r_book: this.rmBookField.value,
-        r_id: this.rmBookRIdField.value,
-        guest_id: this.rmBookGIdField.value,
-        booking_no: this.rmBookNumberField.value,
-        cancel_Date: this.formatDate(this.rmBookCancelDateField.value),
-        booking_Date: this.formatDate(this.rmBookDateField.value)
-      };
-
-      this.allServe.updateRoomBook(rmBook, id).subscribe(
+      this.allServe.updateRoomBook(this.roomData, this.roomData.id).subscribe(
         (data) => {
           // Handle successful submission
           this.getRm();
@@ -288,6 +263,7 @@ formatDate(obj:any){
     this.getRmBook();
     this.getRm();
     this.getGuest();
+    this.getPackage();
   }
 
   objectValues(obj: any): any[] {

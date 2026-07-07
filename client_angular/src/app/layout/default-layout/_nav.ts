@@ -117,6 +117,18 @@ export const navItems: INavData[] = [
     ]
   },
   {
+    name: 'package',
+    url: '/package',
+    iconComponent: { name: 'cil-spreadsheet' },
+    children: [
+      {
+        name: 'Package View',
+        url: '/package/package_view',
+        icon: 'nav-icon-bullet'
+      },
+    ]
+  },
+  {
     name: 'Restaurant',
     title: true
   },

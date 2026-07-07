@@ -12,7 +12,7 @@ class Package extends Model
 
     protected $fillable = [
         'id',
-        'package_code',
+        'package_no',
         'description',
         'name',
         'package_type_id',

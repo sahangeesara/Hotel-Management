@@ -78,6 +78,11 @@ export const routes: Routes = [
         data: { preload: true }
       },
       {
+        path: 'package',
+        loadChildren: () => import('./views/admin/components/package/routes').then((m) => m.routes),
+        data: { preload: true }
+      },
+      {
         path: 'role',
         loadChildren: () => import('./views/admin/components/routes').then((m) => m.routes),
         data: { preload: true }

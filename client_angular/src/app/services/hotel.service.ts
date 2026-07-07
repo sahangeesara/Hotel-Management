@@ -54,4 +54,40 @@ export class HotelService {
   submitRoomSetup(data:any){
     return this.http.post<RoomSetup[]>(`${this.besUrl}/roomSetup`,data,this.getAuthHeaders());
   }
+
+  //package
+  getPackage(){
+    return this.http.get(`${this.besUrl}/package`,this.getAuthHeaders());
+  }
+  getPackageById(data:any){
+    return this.http.get(`${this.besUrl}/package/`+data,this.getAuthHeaders());
+  }
+  deletePackage(data:any){
+    return this.http.delete(`${this.besUrl}/package/`+data,this.getAuthHeaders());
+  }
+  updatePackage(data:any, id:any){
+    return this.http.put(`${this.besUrl}/package/${id}`,data,this.getAuthHeaders());
+  }
+  submitPackage(data:any){
+    return this.http.post<RoomSetup[]>(`${this.besUrl}/package`,data,this.getAuthHeaders());
+  }
+
+  //package
+  getPackageType(){
+    return this.http.get(`${this.besUrl}/packageTypes`,this.getAuthHeaders());
+  }
+  getPackageTypeById(data:any){
+    return this.http.get(`${this.besUrl}/packageTypes/`+data,this.getAuthHeaders());
+  }
+  deletePackageType(data:any){
+    return this.http.delete(`${this.besUrl}/packageTypes/`+data,this.getAuthHeaders());
+  }
+  updatePackageType(data:any, id:any){
+    return this.http.put(`${this.besUrl}/packageTypes/${id}`,data,this.getAuthHeaders());
+  }
+  submitPackageType(data:any){
+    return this.http.post<RoomSetup[]>(`${this.besUrl}/packageTypes`,data,this.getAuthHeaders());
+  }
+
+
 }

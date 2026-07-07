@@ -18,6 +18,9 @@ class RoomBook extends Model
         'booking_no',
         'guest_id',
         'r_book',
+        'max_guests',
+        'number_of_room',
+        'package_id',
         'booking_Date',
         'cancel_Date',
         'is_active',
@@ -30,5 +33,8 @@ class RoomBook extends Model
     public function guest(): BelongsTo
     {
         return $this->belongsTo(Guest::class,'guest_id');
+    }public function package(): BelongsTo
+    {
+        return $this->belongsTo(Package::class,'package_id');
     }
 }

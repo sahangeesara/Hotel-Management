@@ -51,7 +51,7 @@ class PackageController extends Controller
                 'description'     => $validatedData['description'] ?? null,
                 'package_type_id' => $validatedData['package_type_id'],
                 'package_amount'  => $validatedData['package_amount'],
-                'package_code' => $pckNo,
+                'package_no' => $pckNo,
             ]);
 
             return response()->json(['message' => 'Package created successfully', 'package' => $package], 201);
@@ -88,7 +88,7 @@ class PackageController extends Controller
             'description'     => 'nullable|string',
             'package_type_id' => 'required|integer|exists:package_types,id',
             'package_amount'  => 'required|numeric',
-            'package_code' => 'required',
+            'package_no ' => 'required',
         ]);
 
         try {

@@ -27,6 +27,7 @@ use App\Http\Controllers\api\OrderController;
 use App\Http\Controllers\api\OrderStatusController;
 use App\Http\Controllers\api\OrganizerDetailsController;
 use App\Http\Controllers\api\PackageController;
+use App\Http\Controllers\api\PackageTypeController;
 use App\Http\Controllers\api\ProvincesController;
 use App\Http\Controllers\api\RestaurantEventsController;
 use App\Http\Controllers\api\RoleController;
@@ -135,6 +136,7 @@ Route::middleware(['auth:api'])->group(function () {
         'userProfile' => UserProfileController::class,
         'event' => EventController::class,
         'package' => PackageController::class,
+        'packageTypes' => PackageTypeController::class,
         'cuntryCode'=> CountryCodesController:: class,
         'currencies'=> CurrenciesController:: class,
         'duration' => DurationController:: class,
