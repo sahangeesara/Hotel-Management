@@ -2,35 +2,27 @@
 <h3> <strong> <em> Room Book Form </em> </strong></h3>
 <form cForm [formGroup]="rmBookForm" (ngSubmit)="onSubmit()">
   <c-row>
-    <div>
-      {{ error }}
-    </div>
+    <div> {{ error }}  </div>
     <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="inputNumber-1">Room Booking Number: </label>
         <input cFormControl id="inputNumber-1" type="text" sizing="sm" name="booking_no" formControlName="booking_no" readonly="">
-        <div cFormText>
-          ex: RBN0021
-        </div>
+        <div cFormText> ex: RBN0021 </div>
       </div>
     </c-col>
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="max_guests-1">Guest Counts: </label>
         <input cFormControl id="max_guests-1" type="text" sizing="sm" name="max_guests" formControlName="max_guests">
-        <div cFormText>
-          ex: 10
-        </div>
+        <div cFormText> ex: 10</div>
       </div>
     </c-col>
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="number_of_room-1">Number of Room: </label>
         <input cFormControl id="number_of_room-1" type="text" sizing="sm" name="number_of_room" formControlName="number_of_room">
-        <div cFormText>
-          ex: 4
-        </div>
+        <div cFormText>ex: 4 </div>
       </div>
     </c-col>
     <c-col [xs]="6">
@@ -38,31 +30,20 @@
         <label cLabel for="inputRNo-1">Room No:</label>
         <select id="inputRNo-1" aria-label="Select Room No" cSelect name="r_id" formControlName="r_id">
           <option selected="selected" value="">Select Room No</option>
-          <option *ngFor="let room of rooms" [value]="room.id">
-            {{ room.r_no }}
-          </option>
+          <option *ngFor="let room of rooms" [value]="room.id"> {{ room.r_no }}</option>
         </select>
       </div>
     </c-col>
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="inputGuest-1">Guest:</label>
-        <input
-          id="inputGuest-1"
-          class="form-control"
-          list="guests-list"
-          name="guest_id"
-          formControlName="guest_id"
-          placeholder="Select Guest"
-        />
+        <input id="inputGuest-1" class="form-control" list="guests-list" name="guest_id" formControlName="guest_id"placeholder="Select Guest" />
         <datalist id="guests-list">
-          <option *ngFor="let guest of guests" [value]="guest.id">
-            {{ guest.nic }}
+          <option *ngFor="let guest of guests" [value]="guest.id">{{ guest.nic }}
           </option>
         </datalist>
       </div>
     </c-col>
-
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="inputRBook-1">Packages :</label>
@@ -86,27 +67,11 @@
     </c-col>
     <c-col [xs]="6">
       <label cLabel>Check-in Date:</label>
-
-      <input
-        type="date"
-        class="form-control"
-        placeholder="yyyy-mm-dd"
-        name="booking_Date" formControlName="booking_Date"
-        ngbDatepicker
-        #d="ngbDatepicker"
-      />
+      <input type="date" class="form-control" placeholder="yyyy-mm-dd" name="booking_Date" formControlName="booking_Date" ngbDatepicker #d="ngbDatepicker" />
     </c-col>
     <c-col [xs]="6">
       <label cLabel>Check-out Date:</label>
-
-      <input
-        type="date"
-        class="form-control"
-        placeholder="yyyy-mm-dd"
-        name="cancel_Date" formControlName="cancel_Date"
-        ngbDatepicker
-        #x="ngbDatepicker"
-      />
+      <input type="date" class="form-control" placeholder="yyyy-mm-dd" name="cancel_Date" formControlName="cancel_Date" ngbDatepicker #x="ngbDatepicker" />
     </c-col>
   </c-row>
   <div  class="mb-3">
@@ -122,17 +87,8 @@
 <form cForm [formGroup]="rmSearchBookForm">
   <c-row>
 <c-col [xs]="4">
-
   <label cLabel>Room Booking Date:</label>
-
-  <input
-    type="date"
-    class="form-control"
-    placeholder="yyyy-mm-dd"
-    name="search_booking_Date" formControlName="search_booking_Date"
-    ngbDatepicker
-    #s="ngbDatepicker"
-  />
+  <input type="date" class="form-control" placeholder="yyyy-mm-dd" name="search_booking_Date" formControlName="search_booking_Date" ngbDatepicker #s="ngbDatepicker" />
 </c-col>
   <c-col [xs]="4">
     <div class="mb-3">

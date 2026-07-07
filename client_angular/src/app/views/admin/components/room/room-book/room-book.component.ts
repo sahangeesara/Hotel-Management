@@ -232,7 +232,6 @@ formatDate(obj:any){
       (response: any) => {
        this.rmBookForm.patchValue(response);
 
-        // this.roomsBooks = response.data;
       },
       (error) => {
         console.error('Error fetching rooms Book:', error);
