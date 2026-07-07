@@ -21,7 +21,7 @@ import {Customer} from "../entities/customer";
 @Injectable({
   providedIn: 'root'
 })
-export class AllServiceService {
+  export class AllServiceService {
   // private besUrl = 'http://192.168.8.182:8000/api';
   private besUrl = 'http://localhost:8000/api';
 
@@ -33,6 +33,27 @@ export class AllServiceService {
         Authorization: `Bearer ${this.tokenService.get()}`
       })
     };
+  }
+
+  //Rooms Book
+  getRoomBook(){
+    return this.http.get(`${this.besUrl}/roomBook`,this.getAuthHeaders());
+  }
+
+  getRoomBookById(data:any){
+    return this.http.get(`${this.besUrl}/roomBook/`+data,this.getAuthHeaders());
+  }
+
+  deleteRoomBook(data:any){
+    return this.http.delete(`${this.besUrl}/roomBook/`+data,this.getAuthHeaders());
+  }
+
+  updateRoomBook(data:any, id:any){
+    return this.http.put(`${this.besUrl}/roomBook/${id}`,data,this.getAuthHeaders());
+  }
+
+  submitRoomsBook(data:any){
+    return this.http.post<RoomBook[]>(`${this.besUrl}/roomBook`,data,this.getAuthHeaders());
   }
 
   // **Auth**
@@ -75,22 +96,7 @@ export class AllServiceService {
     return this.http.post<RoomsCategory[]>(`${this.besUrl}/roomsCategory`,data,this.getAuthHeaders());
   }
 
-  //Rooms Book
-  getRoomBook(){
-    return this.http.get(`${this.besUrl}/roomBook`,this.getAuthHeaders());
-  }
-  getRoomBookById(data:any){
-    return this.http.get(`${this.besUrl}/roomBook/`+data,this.getAuthHeaders());
-  }
-  deleteRoomBook(data:any){
-    return this.http.delete(`${this.besUrl}/roomBook/`+data,this.getAuthHeaders());
-  }
-  updateRoomBook(data:any, id:any){
-    return this.http.put(`${this.besUrl}/roomBook/${id}`,data,this.getAuthHeaders());
-  }
-   submitRoomsBook(data:any){
-    return this.http.post<RoomBook[]>(`${this.besUrl}/roomBook`,data,this.getAuthHeaders());
-  }
+
 
   //Rooms
   submitRoom(data:any){

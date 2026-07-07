@@ -98,6 +98,7 @@ export class RoomBookComponent {
    this.rmBookForm.reset()
 
   }
+
   onSubmit() {
     if (this.rmBookForm.valid) {
       this.roomData = this.rmBookForm.getRawValue();
@@ -131,9 +132,11 @@ export class RoomBookComponent {
   handleError(error: { error: null; }){
    return  this.error=error.error;
   }
-formatDate(obj:any){
+
+  formatDate(obj:any){
     return obj['year']+'-'+obj['month']+'-'+obj['day']
 }
+
   getGuest() {
     this.allServe.getGuests().subscribe(
       (response: any) => {
@@ -145,6 +148,7 @@ formatDate(obj:any){
       }
     );
   }
+
   getRm() {
     this.allServe.getRoom().subscribe(
       (response: any) => {
@@ -155,7 +159,6 @@ formatDate(obj:any){
       }
     );
   }
-
 
   deleteRmBook(id:any) {
     this.allServe.deleteRoomBook(id).subscribe(
@@ -168,6 +171,7 @@ formatDate(obj:any){
       }
     );
   }
+
   getRmBook() {
     this.allServe.getRoomBook().subscribe(
       (response: any) => {
@@ -178,6 +182,7 @@ formatDate(obj:any){
       }
     );
   }
+
   search() {
     let val = this.rmBookSearchDateField.value;
     let s_r_id = this.rmBookSearchRIdField.value;
@@ -220,12 +225,12 @@ formatDate(obj:any){
       this.roomsBooks = [];
     }
   }
+
   clearSearchForm() {
     this.rmBookSearchDateField.setValue("");
     this.rmBookSearchRIdField.setValue("Select Room No");
     this.getRmBook();
   }
-
 
   getRmBookById(id:any) {
     this.allServe.getRoomBookById(id).subscribe(
