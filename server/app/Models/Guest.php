@@ -19,9 +19,10 @@ class Guest extends Model
         'city',
         'nic',
         'guest_type',
+        'country_id',
+        'cuntry_code_id',
         'guide_id',
         'gender_id',
-        'country',
         'tel_no',
         'is_active',
 
@@ -34,5 +35,13 @@ class Guest extends Model
     public function gender(): BelongsTo
     {
         return $this->belongsTo(Gender::class,'gender_id');
+    }
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Nationality::class,'country_id');
+    }
+    public function countryCode(): BelongsTo
+    {
+        return $this->belongsTo(CountryCode::class,'country_code_id');
     }
 }

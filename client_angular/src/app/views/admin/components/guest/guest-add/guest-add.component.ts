@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
     ButtonDirective,
     ColComponent,
@@ -16,6 +16,7 @@ import {Guide} from "../../../../../entities/guide";
 import {Guest} from "../../../../../entities/guest";
 import {catchError, from, throwError} from "rxjs";
 import {map} from "rxjs/operators";
+import {CuntryService} from "../../../../../services/cuntry.service";
 
 @Component({
   selector: 'app-guest-add',
@@ -35,16 +36,19 @@ import {map} from "rxjs/operators";
   templateUrl: './guest-add.component.html',
   styleUrl: './guest-add.component.scss'
 })
-export class GuestAddComponent {
+export class GuestAddComponent implements OnInit {
   public error=null;
 
   guest:any;
   guestGenders: any[] = [];
   guides: any[] = [];
+  countryCodes: any[] = [];
+  countries: any[] = [];
   formData = new FormData();
   guestForm: FormGroup;
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
+                 private countryService: CuntryService,
                  private router:Router,
                  private toastr: ToastrService,
                  private fb: FormBuilder,
@@ -59,10 +63,11 @@ export class GuestAddComponent {
       city: ['', [Validators.required]],
       tel_no: ['', [Validators.required, Validators.maxLength(10)]],
       gender_id: ['', Validators.required],
+      country_id: ['', Validators.required],
+      cuntry_code_id: ['', Validators.required],
       guide_id: [''],
       guest_type: ['', Validators.required],
-      country: ['', Validators.required],
-    });
+      });
 
   }
 
@@ -114,6 +119,39 @@ export class GuestAddComponent {
       }
     );
   }
+  setCountryCode(event: Event) {
+    const countryId = Number((event.target as HTMLSelectElement).value);
+
+    const countryCode = this.countryCodes.find(
+      x => x.cuntry_id === countryId
+    );
+
+    if (countryCode) {
+      this.guestForm.patchValue({
+        cuntry_code_id: countryCode.id
+      });
+    }
+  }
+  getCountryCode() {
+    this.countryService.getCuntryCode().subscribe(
+      (response: any) => {
+        this.countryCodes = response.data;
+      },
+      (error) => {
+        console.error('Error fetching Guest Gender:', error);
+      }
+    );
+  }
+  getCountries() {
+    this.countryService.getNationality().subscribe(
+      (response: any) => {
+        this.countries = response.data;
+      },
+      (error) => {
+        console.error('Error fetching Guest Gender:', error);
+      }
+    );
+  }
   getGuide() {
     this.allServe.getGuideByAssign().subscribe(
       (data: any) => {
@@ -129,5 +167,7 @@ export class GuestAddComponent {
   ngOnInit() {
     this.getGuestGen();
     this.getGuide();
+    this.getCountryCode();
+    this.getCountries();
   }
 }

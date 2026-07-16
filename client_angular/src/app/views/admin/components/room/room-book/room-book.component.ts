@@ -77,7 +77,7 @@ export class RoomBookComponent {
       number_of_room: ['', [Validators.required]],
       booking_Date: ['', [Validators.required]],
       cancel_Date: ['',[Validators.required]],
-    });
+    }, { validators: RoomBookComponent.dateValidator });
 
     this.rmSearchBookForm  = this.fb.group({
       search_booking_Date: [''],
@@ -94,6 +94,21 @@ export class RoomBookComponent {
     return this.rmSearchBookForm.controls['search_r_id'] as FormControl;
   }
 
+  static dateValidator(group: FormGroup) {
+    const bookingDate = group.get('booking_Date')?.value;
+    const cancelDate = group.get('cancel_Date')?.value;
+
+    if (bookingDate && cancelDate) {
+      const booking = new Date(bookingDate);
+      const cancel = new Date(cancelDate);
+
+      if (cancel < booking) {
+        return { cancelDateInvalid: true };
+      }
+    }
+    return null;
+  }
+
   clearForm() {
    this.rmBookForm.reset()
 
@@ -102,6 +117,16 @@ export class RoomBookComponent {
   onSubmit() {
     if (this.rmBookForm.valid) {
       this.roomData = this.rmBookForm.getRawValue();
+
+      // Format dates from NgbDatepicker format to YYYY-MM-DD
+      if (this.roomData.booking_Date && typeof this.roomData.booking_Date === 'object') {
+        this.roomData.booking_Date = this.formatDate(this.roomData.booking_Date);
+      }
+      if (this.roomData.cancel_Date && typeof this.roomData.cancel_Date === 'object') {
+        this.roomData.cancel_Date = this.formatDate(this.roomData.cancel_Date);
+      }
+
+      console.log(this.roomData);
 
       this.allServe.submitRoomsBook(this.roomData).subscribe(
         (data) => {
@@ -134,7 +159,9 @@ export class RoomBookComponent {
   }
 
   formatDate(obj:any){
-    return obj['year']+'-'+obj['month']+'-'+obj['day']
+    const month = String(obj['month']).padStart(2, '0');
+    const day = String(obj['day']).padStart(2, '0');
+    return `${obj['year']}-${month}-${day}`;
 }
 
   getGuest() {
@@ -247,6 +274,14 @@ export class RoomBookComponent {
   updateRmBook() {
     if (this.rmBookForm.valid) {
       this.roomData = this.rmBookForm.getRawValue();
+
+      // Format dates from NgbDatepicker format to YYYY-MM-DD
+      if (this.roomData.booking_Date && typeof this.roomData.booking_Date === 'object') {
+        this.roomData.booking_Date = this.formatDate(this.roomData.booking_Date);
+      }
+      if (this.roomData.cancel_Date && typeof this.roomData.cancel_Date === 'object') {
+        this.roomData.cancel_Date = this.formatDate(this.roomData.cancel_Date);
+      }
 
       this.allServe.updateRoomBook(this.roomData, this.roomData.id).subscribe(
         (data) => {

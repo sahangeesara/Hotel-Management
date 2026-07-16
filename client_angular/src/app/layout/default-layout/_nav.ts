@@ -217,6 +217,36 @@ export const navItems: INavData[] = [
     title: true
   },
   {
+    name: 'Booking Room Report',
+    url: '/report/booking_room_report',
+    icon: 'nav-icon-bullet'
+  },
+  {
+    name: 'Room Trend Report',
+    url: '/report/booking_room_trend_report',
+    icon: 'nav-icon-bullet'
+  },  {
+    name: 'Orders Report',
+    url: '/report/orders_report',
+    icon: 'nav-icon-bullet'
+  },  {
+    name: 'Event Booking Report',
+    url: '/report/booking_event_report',
+    icon: 'nav-icon-bullet'
+  },  {
+    name: 'Travel Booking Report',
+    url: '/report/booking_travel_report',
+    icon: 'nav-icon-bullet'
+  },  {
+    name: 'Income & Revenue Report',
+    url: '/report/income_report',
+    icon: 'nav-icon-bullet'
+  },  {
+    name: 'Payment Collection Report',
+    url: '/report/payment_report',
+    icon: 'nav-icon-bullet'
+  },
+  {
     name: 'Setting',
     title: true
   },

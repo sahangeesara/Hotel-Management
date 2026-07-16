@@ -1,0 +1,26 @@
+<c-row>
+  <c-col xs="12" lg="8">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Transport Booking Trend</strong>
+      </c-card-header>
+      <c-card-body>
+        <div style="height: 400px;">
+          <c-chart type="line" [data]="lineChartData" [options]="lineChartOptions"></c-chart>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  <c-col xs="12" lg="4">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Breakdown by Type</strong>
+      </c-card-header>
+      <c-card-body>
+        <div style="height: 400px;">
+          <c-chart type="doughnut" [data]="pieChartData" [options]="pieChartOptions"></c-chart>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

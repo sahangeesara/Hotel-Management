@@ -76,7 +76,7 @@
       <td>{{ guest.nic }}</td>
       <td>{{ guest.tel_no }}</td>
       <td>{{ guest.guide ? guest.guide.name : 'Not Assign' }}</td>
-      <td>{{ guest.country }}</td>
+      <td>{{ guest.country.name }}</td>
       <td>
         <button type="button" (click)="getShow(guest.id)" cButton>  <svg cIcon name="cil-task" size="lg" title="Numbered List Icon" ></svg></button>
        <button type="button" (click)="guestDelete(guest.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>

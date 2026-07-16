@@ -23,7 +23,7 @@ class GuestController extends Controller
     public function index()
     {
         try {
-           $guests = Guest::with('guide','gender')
+           $guests = Guest::with('guide','gender','country','countryCode')
                             ->where('is_active', 1)
                            ->orderBy('created_at',"DESC")
                            ->paginate(20);
@@ -56,7 +56,6 @@ class GuestController extends Controller
             'gender_id' => 'required',
             'country_id' => 'required',
             'cuntry_code_id' => 'required',
-            'country' => 'required',
             'guest_type' => 'required',
         ]);
 
@@ -100,7 +99,6 @@ class GuestController extends Controller
             $guest->country_id = $data['country_id'];
             $guest->cuntry_code_id = $data['cuntry_code_id'];
             $guest->guest_type = $data['guest_type'];
-            $guest->country = $data['country'];
             $guest->guest_no = $rNo;
 
             $guest->save();
@@ -126,7 +124,7 @@ class GuestController extends Controller
     public function show(string $id)
     {
         try {
-            $guests = Guest::with('guide','gender')
+            $guests = Guest::with('guide','gender','country','countryCode')
                             ->findOrFail($id);
             return response()->json($guests);
 
@@ -211,7 +209,6 @@ class GuestController extends Controller
             'country_id' => 'required',
             'cuntry_code_id' => 'required',
             'guide_id' => '',
-            'country' => 'required',
             'guest_type' => 'required',
             'guide_status' => '',
 
@@ -254,7 +251,6 @@ class GuestController extends Controller
             $guest->country_id = $data['country_id'];
             $guest->cuntry_code_id = $data['cuntry_code_id'];
             $guest->guest_type = $data['guest_type'];
-            $guest->country = $data['country'];
             $guest->guest_no = $data['guest_no'];
 
             $guest->save();

@@ -1,0 +1,41 @@
+<c-row>
+
+  <!-- Monthly Collection -->
+  <c-col lg="8" md="12">
+    <c-card class="mb-4 shadow-sm">
+      <c-card-header>
+        <strong>Monthly Payment Collection</strong>
+      </c-card-header>
+
+      <c-card-body>
+        <div class="bar-chart">
+          <c-chart
+            type="line"
+            [data]="barChartData"
+            [options]="barChartOptions">
+          </c-chart>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+
+  <!-- Payment Methods -->
+  <c-col lg="5" md="12">
+    <c-card class="mb-4 shadow-sm">
+      <c-card-header>
+        <strong>Payment Collection Summary</strong>
+      </c-card-header>
+
+      <c-card-body>
+        <div class="pie-chart">
+          <c-chart
+            type="doughnut"
+            [data]="pieChartData"
+            [options]="pieChartOptions">
+          </c-chart>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+
+</c-row>

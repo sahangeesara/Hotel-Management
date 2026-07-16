@@ -37,7 +37,7 @@ export class EventService {
   submitEvents(data:any){
     return this.http.post<EventEntity[]>(`${this.besUrl}/event`,data,this.getAuthHeaders());
   }
-  //Events
+  //Organizer
   getOrganizer(){
     return this.http.get(`${this.besUrl}/organizers`,this.getAuthHeaders());
   }

@@ -47,15 +47,35 @@
       <c-col [xs]="6">
         <div class="mb-3">
           <label cLabel for="inputCountry-1">Guide Country</label>
-          <input cFormControl id="inputCountry-1" type="text" name="country" formControlName="country" sizing="sm">
-          <div cFormText>
-            ex: Sri Lanka
-          </div>
+          <select
+          cSelect
+          formControlName="country_id"
+          #countrySelect
+          (change)="setCountryCode($event)"
+          >
+          <option value="">Select Country</option>
+          <option *ngFor="let country of countries" [value]="country.id">
+            {{ country.name }}
+          </option>
+        </select>
+
         </div>
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
           <label cLabel for="inputTel_no-1">Guest tel no:</label>
+          <c-col [xs]="3">
+            <div class="mb-3">
+              <label cLabel>Country Code:</label>
+
+              <select cSelect formControlName="cuntry_code_id">
+                <option value="">Select Country Code</option>
+                <option *ngFor="let code of countryCodes" [value]="code.id">
+                  {{ code.country_code }}
+                </option>
+              </select>
+            </div>
+          </c-col>
           <input cFormControl id="inputTel_no-1" type="text" name="tel_no" formControlName="tel_no" sizing="sm">
           <div cFormText>
             ex: 078654545
@@ -93,7 +113,9 @@
         </div>
       </c-col>
       <div  class="mb-3">
-        <input cButton color="primary" type="submit">&ngsp;
+        <button cButton color="primary" type="submit">
+          Submit
+        </button>&ngsp;
         <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">
       </div>
     </c-row>

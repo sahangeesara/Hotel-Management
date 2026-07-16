@@ -32,12 +32,12 @@ class RoomBookController extends Controller
             return response()->json(['message' => 'An error occurred while retrieving room book.'], 500);
         }
     }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
+
         // Validate request data directly
         $validatedData = $request->validate([
             'r_id' => 'required',
@@ -46,6 +46,7 @@ class RoomBookController extends Controller
             'max_guests' => 'required',
             'number_of_room' => 'required',
             'r_book' => 'required',
+
             'booking_Date' => 'required|date',
             'cancel_Date' => 'required|date|after_or_equal:booking_Date',
         ]);
@@ -83,8 +84,6 @@ class RoomBookController extends Controller
             return response()->json(['message' => 'An error occurred while booking the room.'], 500);
         }
     }
-
-
     /**
      * Display the specified resource.
      */
@@ -161,8 +160,8 @@ class RoomBookController extends Controller
             'booking_no' => 'nullable|string',
             'guest_id' => 'required',
             'r_book' => 'required',
-            'booking_Date' => 'required|date',
-            'cancel_Date' => 'required|date|after_or_equal:booking_Date',
+            'booking_Date' => 'required',
+            'cancel_Date' => 'required|after_or_equal:booking_Date',
         ]);
 
         // Check if a conflicting booking exists
@@ -209,16 +208,12 @@ class RoomBookController extends Controller
             return response()->json(['message' => 'An error occurred while updating room booking.'], 500);
         }
     }
-
-
     public function countRoomBooking(){
         $roomBookingCount = RoomBook::where('is_active', 1)
                                 ->count();
 
         return response()->json(['roomBookingCount' =>$roomBookingCount]);
     }
-
-
     /**
      * Remove the specified resource from storage.
      */
@@ -238,7 +233,6 @@ class RoomBookController extends Controller
             return response()->json(['message' => 'An error occurred while deactivating the room book.'], 500);
         }
     }
-
     public function scheduleBookingCancellation(Schedule $schedule): void
     {
         $schedule->call(function () {
@@ -255,6 +249,5 @@ class RoomBookController extends Controller
             }
         })->daily();
     }
-
 
 }
