@@ -7,8 +7,7 @@ import { iconSubset } from './icons/icon-subset';
 
 @Component({
   selector: 'app-root',
-  template: '@if(loading){<div  class="loading-spinner">Loading...</div>}\n' +
-    '    <router-outlet></router-outlet>',
+  template:'<router-outlet></router-outlet>',
   standalone: true,
   imports: [RouterOutlet]
 })

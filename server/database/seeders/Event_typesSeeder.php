@@ -17,7 +17,6 @@ class Event_typesSeeder extends Seeder
         $now = Carbon::now();
         $types = [
             ['name' => 'Room Stay', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Wedding', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'Conference', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'Seminar', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'Birthday Party', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],

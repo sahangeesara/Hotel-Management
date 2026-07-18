@@ -89,5 +89,22 @@ export class HotelService {
     return this.http.post<RoomSetup[]>(`${this.besUrl}/packageTypes`,data,this.getAuthHeaders());
   }
 
+  //sections
+  getSections(){
+    return this.http.get(`${this.besUrl}/section`,this.getAuthHeaders());
+  }
+  getSectionsById(data:any){
+    return this.http.get(`${this.besUrl}/section/`+data,this.getAuthHeaders());
+  }
+  deleteSections(data:any){
+    return this.http.delete(`${this.besUrl}/section/`+data,this.getAuthHeaders());
+  }
+  updateSections(data:any, id:any){
+    return this.http.put(`${this.besUrl}/section/${id}`,data,this.getAuthHeaders());
+  }
+  submitSections(data:any){
+    return this.http.post<RoomSetup[]>(`${this.besUrl}/section`,data,this.getAuthHeaders());
+  }
+
 
 }

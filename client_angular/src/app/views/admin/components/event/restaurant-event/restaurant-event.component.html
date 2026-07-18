@@ -1,0 +1,127 @@
+<form [formGroup]="restaurantEvent" (ngSubmit)="onSubmit()">
+  <c-row>
+
+    <c-col [md]="6" class="mb-3">
+      <label cLabel>Event No</label>
+      <input cFormControl type="text" formControlName="event_no">
+    </c-col>
+
+    <c-col [md]="6" class="mb-3">
+      <label cLabel>Event</label>
+      <input cFormControl type="text" formControlName="event_id">
+    </c-col>
+
+    <c-col [md]="6" class="mb-3">
+      <label cLabel>Event Type</label>
+      <input cFormControl type="text" formControlName="event_type_id">
+    </c-col>
+
+    <c-col [md]="6" class="mb-3">
+      <label cLabel>Event Date</label>
+      <input cFormControl type="date" formControlName="event_date">
+    </c-col>
+
+    <c-col [md]="6" class="mb-3">
+      <label cLabel>Start Time</label>
+      <input cFormControl type="time" formControlName="start_time">
+    </c-col>
+
+    <c-col [md]="6" class="mb-3">
+      <label cLabel>End Time</label>
+      <input cFormControl type="time" formControlName="end_time">
+    </c-col>
+
+    <c-col [md]="6" class="mb-3">
+      <label cLabel>Passengers</label>
+      <input cFormControl type="number" formControlName="passengers">
+    </c-col>
+
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel for="inputHotel-1">Hotel:</label>
+
+        <select
+          cSelect
+          id="inputHotel-1"
+          formControlName="hotel_id">
+          <option value="">Select Section</option>
+          <option *ngFor="let hotel of hotels" [value]="hotel.id">
+            {{ hotel.name }}
+          </option>
+        </select>
+      </div>
+    </c-col>
+
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel for="inputRoom-1">Room:</label>
+
+        <select
+          cSelect
+          id="inputRoom-1"
+          formControlName="room_id">
+          <option value="">Select Organizer</option>
+          <option *ngFor="let room of rooms" [value]="room.id">
+            {{ room.r_no }}
+          </option>
+        </select>
+      </div>
+    </c-col>
+
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel for="inputSections-1">Section:</label>
+
+        <select
+          cSelect
+          id="inputSections-1"
+          formControlName="section_id">
+          <option value="">Select Section</option>
+          <option *ngFor="let section of sections" [value]="section.id">
+            {{ section.name }}
+          </option>
+        </select>
+      </div>
+    </c-col>
+
+    <c-col [md]="6" class="mb-3">
+      <label cLabel>Seating Preferences</label>
+      <input cFormControl type="text" formControlName="seating_preferences">
+    </c-col>
+
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel for="inputOrganizer-1">Organizer:</label>
+
+        <select
+          cSelect
+          id="inputOrganizer-1"
+          formControlName="organizer_id"  class="form-control">
+          <option value="">Select Organizer</option>
+          <option *ngFor="let organizer of organizers" [value]="organizer.id">
+            {{ organizer.nic }}
+          </option>
+        </select>
+      </div>
+    </c-col>
+
+    <c-col [md]="6" class="mb-3">
+      <label cLabel>Booking Status</label>
+      <input cFormControl type="text" formControlName="book_status_id">
+    </c-col>
+
+    <c-col [md]="12" class="mb-3">
+      <label cLabel>Requests</label>
+      <textarea cFormControl rows="3" formControlName="requests"></textarea>
+    </c-col>
+
+    <c-col [md]="12" class="mb-3">
+      <label cLabel>Additional Services</label>
+      <textarea cFormControl rows="3" formControlName="additional_services"></textarea>
+    </c-col>
+    <div  class="mb-3">
+      <input cButton color="primary" type="submit">&ngsp;
+      <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">
+    </div>
+  </c-row>
+</form>

@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {
   ButtonDirective,
@@ -18,7 +18,7 @@ import {
 } from "@coreui/angular";
 import { IconDirective } from '@coreui/icons-angular';
 import {EmployeeUpdateComponent} from "../employee-update/employee-update.component";
-import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ToastrService} from "ngx-toastr";
 import {NgForOf, NgIf} from "@angular/common";
 import {SearchService} from "../../../../../services/search.service";
@@ -51,7 +51,7 @@ import {SearchService} from "../../../../../services/search.service";
   templateUrl: './employee-view.component.html',
   styleUrl: './employee-view.component.scss'
 })
-export class EmployeeViewComponent {
+export class EmployeeViewComponent implements OnInit{
   @ViewChild(EmployeeUpdateComponent) employeeUpdateComponent : EmployeeUpdateComponent | undefined;
   employees: any[] = [];
   public visible = false;
