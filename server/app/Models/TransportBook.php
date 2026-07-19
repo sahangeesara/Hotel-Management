@@ -11,8 +11,8 @@ class TransportBook extends Model
     use HasFactory;
     protected $fillable = [
         'id',
+        'booking_no',
         'guest_id',
-        'customer_id',
         'province_id',
         'passengers',
         'service_type_id',
@@ -48,10 +48,6 @@ class TransportBook extends Model
     public function guest(): BelongsTo
     {
         return $this->belongsTo(Guest::class, 'guest_id');
-    }
-     public function customer(): BelongsTo
-    {
-        return $this->belongsTo(Customer::class, 'customer_id');
     }
      public function province(): BelongsTo
     {

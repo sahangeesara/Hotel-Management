@@ -17,7 +17,7 @@ class FlightBook extends Model
         'from',
         'departure_Date',
         'return_Date',
-        'flight_passenger_counts_id',
+        'number_of_passengers',
         'travel_route',
         'currency_id',
         'class_id',
@@ -36,10 +36,6 @@ class FlightBook extends Model
         return $this->belongsTo(Guest::class, 'guest_id');
     }
 
-     public function class(): BelongsTo
-    {
-        return $this->belongsTo(FlightClass::class, 'class_id');
-    }
     public function flightClass(): BelongsTo
     {
         return $this->belongsTo(FlightClass::class, 'class_id');
@@ -50,8 +46,4 @@ class FlightBook extends Model
         return $this->belongsTo(Currency::class, 'currency_id');
     }
 
-    public function flightPassengerCounts(): BelongsTo
-    {
-        return $this->belongsTo(Flight_passenger_counts::class, 'flight_passenger_counts_id');
-    }
 }

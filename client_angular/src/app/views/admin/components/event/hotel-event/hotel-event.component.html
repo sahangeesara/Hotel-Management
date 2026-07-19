@@ -1,4 +1,4 @@
-<form [formGroup]="restaurantEvent" (ngSubmit)="onSubmit()">
+<form [formGroup]="hotelEvent" (ngSubmit)="onSubmit()">
   <c-row>
 
     <c-col [md]="6" class="mb-3">
@@ -88,27 +88,6 @@
           </option>
         </select>
       </div>
-    </c-col>
-
-    <c-col [xs]="6">
-      <div class="mb-3">
-        <label cLabel for="inputSections-1">Section:</label>
-
-        <select
-          cSelect
-          id="inputSections-1"
-          formControlName="section_id">
-          <option value="">Select Section</option>
-          <option *ngFor="let section of sections" [value]="section.id">
-            {{ section.name }}
-          </option>
-        </select>
-      </div>
-    </c-col>
-
-    <c-col [md]="6" class="mb-3">
-      <label cLabel>Seating Preferences</label>
-      <input cFormControl type="text" formControlName="seating_preferences">
     </c-col>
 
     <c-col [xs]="6">

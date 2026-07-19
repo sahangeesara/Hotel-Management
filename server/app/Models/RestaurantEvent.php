@@ -28,6 +28,11 @@ class RestaurantEvent extends Model
         'additional_services',
         'is_active',
     ];
+    protected $casts = [
+        'event_date' => 'datetime',
+        'start_time' => 'datetime:H:i:s',
+        'end_time' => 'datetime:H:i:s',
+    ];
 
     public function eventType(): BelongsTo
     {

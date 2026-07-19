@@ -16,6 +16,7 @@ import {RoomsCategory} from "../entities/roomsCategory";
 import {EmployeeType} from "../entities/employeeTypee";
 import {Role} from "../entities/Role";
 import {Customer} from "../entities/customer";
+import {BookStatusEntity} from "../entities/bookStatusEntity";
 
 
 @Injectable({
@@ -33,27 +34,6 @@ import {Customer} from "../entities/customer";
         Authorization: `Bearer ${this.tokenService.get()}`
       })
     };
-  }
-
-  //Rooms Book
-  getRoomBook(){
-    return this.http.get(`${this.besUrl}/roomBook`,this.getAuthHeaders());
-  }
-
-  getRoomBookById(data:any){
-    return this.http.get(`${this.besUrl}/roomBook/`+data,this.getAuthHeaders());
-  }
-
-  deleteRoomBook(data:any){
-    return this.http.delete(`${this.besUrl}/roomBook/`+data,this.getAuthHeaders());
-  }
-
-  updateRoomBook(data:any, id:any){
-    return this.http.put(`${this.besUrl}/roomBook/${id}`,data,this.getAuthHeaders());
-  }
-
-  submitRoomsBook(data:any){
-    return this.http.post<RoomBook[]>(`${this.besUrl}/roomBook`,data,this.getAuthHeaders());
   }
 
   // **Auth**
@@ -78,6 +58,26 @@ import {Customer} from "../entities/customer";
     return this.http.get(`${this.besUrl}/me`, this.getAuthHeaders());
 
   }
+  //Rooms Book
+  getRoomBook(){
+    return this.http.get(`${this.besUrl}/roomBook`,this.getAuthHeaders());
+  }
+
+  getRoomBookById(data:any){
+    return this.http.get(`${this.besUrl}/roomBook/`+data,this.getAuthHeaders());
+  }
+
+  deleteRoomBook(data:any){
+    return this.http.delete(`${this.besUrl}/roomBook/`+data,this.getAuthHeaders());
+  }
+
+  updateRoomBook(data:any, id:any){
+    return this.http.put(`${this.besUrl}/roomBook/${id}`,data,this.getAuthHeaders());
+  }
+
+  submitRoomsBook(data:any){
+    return this.http.post<RoomBook[]>(`${this.besUrl}/roomBook`,data,this.getAuthHeaders());
+  }
 
   //Rooms Category
   getRoomsCategory(){
@@ -95,8 +95,6 @@ import {Customer} from "../entities/customer";
   submitRoomsCategory(data:any){
     return this.http.post<RoomsCategory[]>(`${this.besUrl}/roomsCategory`,data,this.getAuthHeaders());
   }
-
-
 
   //Rooms
   submitRoom(data:any){
@@ -351,6 +349,23 @@ import {Customer} from "../entities/customer";
   }
   submitUserProfile(data:any){
     return this.http.post<Customer[]>(`${this.besUrl}/userProfile`,data,this.getAuthHeaders());
+  }
+
+  //BookStatus
+  getBookStatus(){
+    return this.http.get(`${this.besUrl}/bookStatus`,this.getAuthHeaders());
+  }
+  getBookStatusById(data:any){
+    return this.http.get(`${this.besUrl}/bookStatus/`+data,this.getAuthHeaders());
+  }
+  deleteBookStatus(data:any){
+    return this.http.delete(`${this.besUrl}/bookStatus/`+data,this.getAuthHeaders());
+  }
+  updateBookStatus(data:any, id:any){
+    return this.http.put(`${this.besUrl}/bookStatus/${id}`,data,this.getAuthHeaders());
+  }
+  submitBookStatus(data:any){
+    return this.http.post<BookStatusEntity[]>(`${this.besUrl}/bookStatus`,data,this.getAuthHeaders());
   }
 }
 

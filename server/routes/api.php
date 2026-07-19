@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\AirlinesController;
+use App\Http\Controllers\api\BookStatusController;
 use App\Http\Controllers\api\CountryCodesController;
 use App\Http\Controllers\api\CurrenciesController;
 use App\Http\Controllers\api\CustomerController;
@@ -160,5 +161,6 @@ Route::middleware(['auth:api'])->group(function () {
         'flights' => FlightController::class,
         'organizers' => OrganizerDetailsController::class,
         'airlines' => AirlinesController::class,
+        'bookStatus' => BookStatusController::class,
     ]);
 });

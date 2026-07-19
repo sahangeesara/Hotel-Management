@@ -17,6 +17,7 @@ import {SearchService} from "../../../../../services/search.service";
 import {ToastrService} from "ngx-toastr";
 import {EventService} from "../../../../../services/event.service";
 import {RestaurantEventComponent} from "../restaurant-event/restaurant-event.component";
+import {HotelEventComponent} from "../hotel-event/hotel-event.component";
 
 @Component({
   selector: 'app-event-book',
@@ -38,7 +39,8 @@ import {RestaurantEventComponent} from "../restaurant-event/restaurant-event.com
     ReactiveFormsModule,
     RowComponent,
     TableDirective,
-    RestaurantEventComponent
+    RestaurantEventComponent,
+    HotelEventComponent
   ],
   templateUrl: './event-book.component.html',
   styleUrl: './event-book.component.scss'
@@ -85,6 +87,7 @@ export class EventBookComponent implements OnInit {
 
   clearForm() {
     this.eventBook.reset();
+    this.selectedOrganizer = false;
   }
 
   ngOnInit() {
@@ -114,8 +117,5 @@ export class EventBookComponent implements OnInit {
         console.error('Error fetching rooms:', error);
       }
     );
-  }
-  objectValues(obj: any): any[] {
-    return Object.values(obj);
   }
 }

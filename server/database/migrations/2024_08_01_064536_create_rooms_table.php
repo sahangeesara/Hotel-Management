@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->char('r_no');
             $table->decimal('r_cost');
+            $table->integer('r_capacity');
             $table->unsignedBigInteger('r_category_id');
             $table->boolean('is_active')->default(1);
             $table->timestamps();

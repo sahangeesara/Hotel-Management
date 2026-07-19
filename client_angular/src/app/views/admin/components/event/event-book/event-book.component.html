@@ -26,7 +26,7 @@
     </c-col>
 
     <!-- Organizer Details -->
-    <div *ngIf="selectedOrganizer" class="card p-3 mt-3">
+    <div *ngIf="selectedOrganizer" class="card p-3 mt-3 mb-5">
       <h6>Organizer Details</h6>
 
       <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="organizer_id" formControlName="organizer_id" value="{{ selectedOrganizer.id }}">
@@ -35,6 +35,8 @@
       <p><strong>Email:</strong> {{ selectedOrganizer.email }}</p>
       <p><strong>Phone:</strong> {{ selectedOrganizer.phone }}</p>
     </div>
+
+      <button cButton color="warning" (click)="clearForm()">Clear</button>
 
     <hr style="margin-top: 40px; margin-bottom: 20px;" />
       <div *ngIf="!selectedEvent">
@@ -60,24 +62,23 @@
 
       <!-- Wedding -->
       <div *ngIf="selectedEvent === 'wedding'">
-        <h1>Wedding</h1>
-
-        <!-- Wedding Details -->
 
         <button cButton color="secondary" (click)="back()">
           ← Back
         </button>
+
+        <h1>Wedding</h1>
+
       </div>
 
       <!-- Hotel -->
       <div *ngIf="selectedEvent === 'hotel'">
-        <h1>Hotel Event</h1>
-
-        <!-- Hotel Details -->
-
         <button cButton color="secondary" (click)="back()">
           ← Back
         </button>
+
+        <h1>Hotel Event</h1>
+        <app-hotel-event [organizer_id]="eventBook.get('organizer_id')?.value"></app-hotel-event>
       </div>
 
       <!-- Restaurant -->

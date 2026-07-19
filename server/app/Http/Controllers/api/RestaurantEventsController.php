@@ -182,7 +182,8 @@ class RestaurantEventsController extends Controller
                     'is_active' =>$bookStatus->name === "Cancelled" ? false : $restaurantEvent->is_active,
 
                 ]
-            );            return response()->json(['message' =>'Restaurant Event update successfully','restaurantEvent'=>$restaurantEvent], 200);
+            );
+            return response()->json(['message' =>'Restaurant Event update successfully','restaurantEvent'=>$restaurantEvent], 200);
         }catch (\Exception $e){
             Log::error($e->getMessage());
             return response()->json(['message' => 'An error occurred while update Restaurant Event.'], 500);

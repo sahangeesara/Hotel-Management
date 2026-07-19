@@ -25,7 +25,10 @@ class RoomBook extends Model
         'cancel_Date',
         'is_active',
     ];
-
+    protected $casts = [
+        'booking_Date' => 'datetime',
+        'cancel_Date' => 'datetime',
+    ];
     public function room(): BelongsTo
     {
         return $this->belongsTo(Rooms::class,'r_id');

@@ -16,8 +16,6 @@ return new class extends Migration
             $table->char('booking_no');
             $table->unsignedBigInteger('guest_id')->nullable();
             $table->foreign('guest_id')->references('id')->on('guests');
-            $table->unsignedBigInteger('customer_id')->nullable();
-            $table->foreign('customer_id')->references('id')->on('customers');
             $table->unsignedBigInteger('province_id');
             $table->unsignedBigInteger('vehicle_type_id');
             $table->integer('passengers');

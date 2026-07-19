@@ -40,7 +40,7 @@ class RoomsController extends Controller
             'id' =>'',
             'r_no' =>'',
             'hotel_id' =>'required|integer',
-            'capacity' =>'required|integer',
+            'r_capacity' =>'required|integer',
             'r_cost' => 'required|numeric',
             'r_category_id' => 'required|integer',
         ]);
@@ -55,7 +55,7 @@ class RoomsController extends Controller
                 'r_no' => $rNo,
                 'r_cost' => $validatedData['r_cost'],
                 'hotel_id' => $validatedData['hotel_id'],
-                'capacity' => $validatedData['capacity'],
+                'r_capacity' => $validatedData['r_capacity'],
                 'r_category_id' => $validatedData['r_category_id'],
             ]);
 
@@ -94,7 +94,7 @@ class RoomsController extends Controller
         $validatedData = $request->validate([
             'r_no' => 'required',
             'hotel_id' =>'required|integer',
-            'capacity' =>'required|integer',
+            'r_capacity' =>'required|integer',
             'r_cost' => 'required|numeric',
             'r_category_id' => 'required|integer',
         ]);

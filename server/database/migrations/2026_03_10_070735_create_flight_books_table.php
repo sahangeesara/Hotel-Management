@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('from');
             $table->dateTime('departure_Date');
             $table->dateTime('return_Date')->nullable();
-            $table->unsignedBigInteger('flight_passenger_counts_id')->nullable();
+            $table->integer('number_of_passengers');
             $table->string('travel_route')->nullable();
             $table->unsignedBigInteger('currency_id')->nullable();
             $table->unsignedBigInteger('class_id')->nullable();
