@@ -55,7 +55,7 @@ export class RoomAddComponent implements OnInit {
       id: [''],
       r_no: [''],
       hotel_id: ['',[Validators.required]],
-      capacity: ['',[Validators.required]],
+      r_capacity: ['',[Validators.required]],
       r_cost: ['', [Validators.required]],
       r_category_id: ['', Validators.required],
     });

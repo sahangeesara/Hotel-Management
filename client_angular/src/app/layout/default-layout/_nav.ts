@@ -32,6 +32,23 @@ export const navItems: INavData[] = [
     ]
   },
   {
+    name: 'Travel',
+    url: '/travel',
+    iconComponent: { name: 'cil-location-pin' },
+    children: [
+      {
+        name: 'Transport Book',
+        url: '/travel/transport_book',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Flight Book',
+        url: '/travel/flight_book',
+        icon: 'nav-icon-bullet'
+      },
+    ]
+  },
+  {
     name: 'Hotel',
     url: '/hotel',
     iconComponent: { name: 'cil-location-pin' },
@@ -225,7 +242,8 @@ export const navItems: INavData[] = [
     name: 'Room Trend Report',
     url: '/report/booking_room_trend_report',
     icon: 'nav-icon-bullet'
-  },  {
+  },
+  {
     name: 'Orders Report',
     url: '/report/orders_report',
     icon: 'nav-icon-bullet'

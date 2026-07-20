@@ -46,7 +46,6 @@ class RoomBookController extends Controller
             'max_guests' => 'required',
             'number_of_room' => 'required',
             'r_book' => 'required',
-
             'booking_Date' => 'required|date',
             'cancel_Date' => 'required|date|after_or_equal:booking_Date',
         ]);
@@ -73,6 +72,9 @@ class RoomBookController extends Controller
                 'r_id' => $validatedData['r_id'],
                 'guest_id' => $validatedData['guest_id'],
                 'r_book' => $validatedData['r_book'],
+                'number_of_room' => $validatedData['number_of_room'],
+                'max_guests' => $validatedData['max_guests'],
+                'package_id' => $validatedData['package_id'],
                 'booking_Date' => $validatedData['booking_Date'],
                 'cancel_Date' => $validatedData['cancel_Date'],
                 'booking_no' => $rNo,
@@ -160,6 +162,9 @@ class RoomBookController extends Controller
             'booking_no' => 'nullable|string',
             'guest_id' => 'required',
             'r_book' => 'required',
+            'max_guests' => 'required',
+            'number_of_room' => 'required',
+            'package_id' => 'required',
             'booking_Date' => 'required',
             'cancel_Date' => 'required|after_or_equal:booking_Date',
         ]);
@@ -196,6 +201,9 @@ class RoomBookController extends Controller
                 'r_id' => $validatedData['r_id'],
                 'guest_id' => $validatedData['guest_id'],
                 'r_book' => $validatedData['r_book'],
+                'number_of_room' => $validatedData['number_of_room'],
+                'max_guests' => $validatedData['max_guests'],
+                'package_id' => $validatedData['package_id'],
                 'booking_Date' => $validatedData['booking_Date'],
                 'cancel_Date' => $validatedData['cancel_Date'],
                 'booking_no' => $validatedData['booking_no'],
