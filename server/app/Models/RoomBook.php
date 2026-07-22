@@ -14,7 +14,6 @@ class RoomBook extends Model
 
     protected $fillable = [
         'id',
-        'r_id',
         'booking_no',
         'guest_id',
         'r_book',
@@ -29,15 +28,19 @@ class RoomBook extends Model
         'booking_Date' => 'datetime',
         'cancel_Date' => 'datetime',
     ];
-    public function room(): BelongsTo
-    {
-        return $this->belongsTo(Rooms::class,'r_id');
-    }
+
     public function guest(): BelongsTo
     {
-        return $this->belongsTo(Guest::class,'guest_id');
-    }public function package(): BelongsTo
+        return $this->belongsTo(Guest::class, 'guest_id');
+    }
+
+    public function package(): BelongsTo
     {
-        return $this->belongsTo(Package::class,'package_id');
+        return $this->belongsTo(Package::class, 'package_id');
+    }
+
+    public function bookingRooms(): HasMany
+    {
+        return $this->hasMany(BookingRooms::class, 'booking_id');
     }
 }

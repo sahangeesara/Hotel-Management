@@ -69,6 +69,7 @@
       <th scope="col">Room Number</th>
       <th scope="col">Room Cost</th>
       <th scope="col">Room Category</th>
+      <th scope="col">Hotel Name</th>
       <th scope="col">Action</th>
     </tr>
     </thead>
@@ -81,6 +82,7 @@
       <td>{{ room.r_no }}</td>
       <td>{{ room.r_cost }}</td>
       <td>{{ room.room_category.name }}</td>
+      <td>{{ room.hotel.name }}</td>
       <td>
        <button (click)="getRoomById(room.id)" cButton><svg cIcon name="cil-task" size="lg" title="Numbered List Icon"></svg></button>&ngsp;&ngsp;
     <button type="button" (click)="deleteRoom(room.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>    </td>

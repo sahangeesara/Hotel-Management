@@ -15,6 +15,7 @@ import {ToastrService} from "ngx-toastr";
 import {Guest} from "../../../../../entities/guest";
 import {catchError, from, throwError} from "rxjs";
 import {map} from "rxjs/operators";
+import {CuntryService} from "../../../../../services/cuntry.service";
 
 @Component({
   selector: 'app-guest-update',
@@ -40,16 +41,19 @@ export class GuestUpdateComponent {
   public error=null;
   guestGenders: any[] = [];
   guides: any[] = [];
+  countryCodes: any[] = [];
+  countries: any[] = [];
   formData = new FormData();
-  guestUpadeForm: FormGroup;
+  guestUpdateForm: FormGroup;
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private router:Router,
                  private toastr: ToastrService,
+                 private countryService: CuntryService,
                  private fb: FormBuilder,
   ) {
 
-    this.guestUpadeForm = this.fb.group({
+    this.guestUpdateForm = this.fb.group({
 
       id: [''],
       name: ['', [Validators.required]],
@@ -63,23 +67,24 @@ export class GuestUpdateComponent {
       guide_id: [''],
       guest_type: ['', Validators.required],
       guide_status: [''],
-      country: ['', Validators.required],
+      country_id: ['', Validators.required],
+      cuntry_code_id: ['', Validators.required],
     });
 
   }
 
   get guestGenField(): FormControl {
-    return this.guestUpadeForm.controls['gender_id'] as FormControl;
+    return this.guestUpdateForm.controls['gender_id'] as FormControl;
   }
   get guideField(): FormControl {
-    return this.guestUpadeForm.controls['guide_id'] as FormControl;
+    return this.guestUpdateForm.controls['guide_id'] as FormControl;
   }
   get guideStatusField(): FormControl {
-    return this.guestUpadeForm.controls['guide_status'] as FormControl;
+    return this.guestUpdateForm.controls['guide_status'] as FormControl;
   }
 
   getData(data:any){
-    this.guestUpadeForm.patchValue(data);
+    this.guestUpdateForm.patchValue(data);
 
     if (data.guide) {
       this.guideStatusField.setValue(data.guide.guide_status);
@@ -88,7 +93,39 @@ export class GuestUpdateComponent {
       this.guideStatusField.setValue('');
     }
   }
+  getCountryCode() {
+    this.countryService.getCuntryCode().subscribe(
+      (response: any) => {
+        this.countryCodes = response.data;
+      },
+      (error: any) => {
+        console.error('Error fetching Guest Gender:', error);
+      }
+    );
+  }
+  setCountryCode(event: Event) {
+    const countryId = Number((event.target as HTMLSelectElement).value);
 
+    const countryCode = this.countryCodes.find(
+      x => x.cuntry_id === countryId
+    );
+
+    if (countryCode) {
+      this.guestUpdateForm.patchValue({
+        cuntry_code_id: countryCode.id
+      });
+    }
+  }
+  getCountries() {
+    this.countryService.getNationality().subscribe(
+      (response: any) => {
+        this.countries = response.data;
+      },
+      (error) => {
+        console.error('Error fetching Guest Gender:', error);
+      }
+    );
+  }
 
 
   geGuestGen() {
@@ -116,15 +153,16 @@ export class GuestUpdateComponent {
   ngOnInit() {
     this.geGuestGen();
     this.getGuide();
-
+    this.getCountries();
+    this.getCountryCode();
   }
 
 
   guestUpdate() {
     this.formData = new FormData();
-    if (this.guestUpadeForm.valid) {
+    if (this.guestUpdateForm.valid) {
 
-      this.guest = this.guestUpadeForm.getRawValue();
+      this.guest = this.guestUpdateForm.getRawValue();
 
       this.allServe.updateGuests(this.guest, this.guest.id).subscribe(
         (response) => {
@@ -143,7 +181,7 @@ export class GuestUpdateComponent {
   }
 
   clearForm() {
-    this.guestUpadeForm.reset();
+    this.guestUpdateForm.reset();
     this.guestGenField.setValue("Select Guest Gender");
     this.guideField.setValue("Select Guide");
     this.guideStatusField.setValue("Select Guide Status");

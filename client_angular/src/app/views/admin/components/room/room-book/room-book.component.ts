@@ -1,11 +1,14 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
   ButtonDirective,
   ColComponent,
   FormControlDirective,
   FormDirective,
-  FormLabelDirective, FormSelectDirective, FormTextDirective,
-  RowComponent, TableDirective, TemplateIdDirective,
+  FormLabelDirective,
+  FormSelectDirective,
+  FormTextDirective,
+  RowComponent,
+  TableDirective,
 } from "@coreui/angular";
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -16,7 +19,6 @@ import {NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
 import {IconDirective} from "@coreui/icons-angular";
 import {SearchService} from "../../../../../services/search.service";
 import {HotelService} from "../../../../../services/hotel.service";
-
 
 
 @Component({
@@ -35,7 +37,6 @@ import {HotelService} from "../../../../../services/hotel.service";
     FormSelectDirective,
     NgForOf,
     NgIf,
-    TemplateIdDirective,
     NgbInputDatepicker,
     IconDirective,
     DatePipe,
@@ -44,12 +45,14 @@ import {HotelService} from "../../../../../services/hotel.service";
   templateUrl: './room-book.component.html',
   styleUrl: './room-book.component.scss'
 })
-export class RoomBookComponent {
+export class RoomBookComponent implements OnInit{
 
   guests: any[] = [];
   rooms: any[] = [];
   packages: any[] = [];
   roomsBooks: any[] = [];
+  booksRooms: any[] = [];
+  roomCategories: any[] = [];
   public error=null;
   formData = new FormData();
   rmBookForm: FormGroup;
@@ -68,7 +71,6 @@ export class RoomBookComponent {
     this.rmBookForm = this.fb.group({
 
       id: [''],
-      r_id: ['', [Validators.required]],
       booking_no: [''],
       guest_id: ['', [Validators.required]],
       package_id: ['', [Validators.required]],
@@ -77,6 +79,9 @@ export class RoomBookComponent {
       number_of_room: ['', [Validators.required]],
       booking_Date: ['', [Validators.required]],
       cancel_Date: ['',[Validators.required]],
+      room_category_id: [''],
+      no_of_rooms: [''],
+
     }, { validators: RoomBookComponent.dateValidator });
 
     this.rmSearchBookForm  = this.fb.group({
@@ -110,7 +115,9 @@ export class RoomBookComponent {
   }
 
   clearForm() {
-   this.rmBookForm.reset()
+   this.rmBookForm.reset();
+    // @ts-ignore
+    this.removeRoom()
 
   }
 
@@ -118,7 +125,10 @@ export class RoomBookComponent {
     if (this.rmBookForm.valid) {
       this.roomData = this.rmBookForm.getRawValue();
 
-      // Format dates from NgbDatepicker format to YYYY-MM-DD
+      let data = this.booksRooms;
+
+      this.formData = new FormData();
+// Format dates from NgbDatepicker format to YYYY-MM-DD
       if (this.roomData.booking_Date && typeof this.roomData.booking_Date === 'object') {
         this.roomData.booking_Date = this.formatDate(this.roomData.booking_Date);
       }
@@ -126,14 +136,19 @@ export class RoomBookComponent {
         this.roomData.cancel_Date = this.formatDate(this.roomData.cancel_Date);
       }
 
-      console.log(this.roomData);
+      this.formData.append('form', JSON.stringify(this.roomData));
+      this.formData.append('room', JSON.stringify(data));
 
-      this.allServe.submitRoomsBook(this.roomData).subscribe(
+
+      this.allServe.submitRoomsBook( this.formData).subscribe(
         (data) => {
           // Handle successful submission
           this.getRm();
           this.getRmBook();
           this.clearForm();
+
+          // @ts-ignore
+          this.removeRoom();
         },
         (error) => {
           // Handle errors
@@ -141,6 +156,8 @@ export class RoomBookComponent {
         }
       );
     }
+
+
   }
 
   getPackage(){
@@ -185,6 +202,74 @@ export class RoomBookComponent {
         console.error('Error fetching rooms:', error);
       }
     );
+  }
+  getRmCat() {
+    this.allServe.getRoomsCategory().subscribe(
+      (response: any) => {
+          this.roomCategories = response.data;
+      },
+      (error) => {
+        console.error('Error fetching rooms Categories:', error);
+      }
+    );
+  }
+
+  addSelectedRoom() {
+    const selectedRoomCategoryId = this.rmBookForm.get('room_category_id')?.value;
+    const numberOfRooms = Number(this.rmBookForm.get('no_of_rooms')?.value);
+
+    if (!selectedRoomCategoryId) {
+      alert('Please select a room category.');
+      return;
+    }
+
+    if (numberOfRooms <= 0 || isNaN(numberOfRooms)) {
+      alert('Please enter a valid room count.');
+      return;
+    }
+
+    const room = this.roomCategories.find(
+      (r: any) => String(r.id) === String(selectedRoomCategoryId)
+    );
+
+    if (!room) {
+      alert('Selected room category not found.');
+      return;
+    }
+
+    this.allServe.getRoomCategoryById(selectedRoomCategoryId).subscribe({
+      next: (roomCat: any) => {
+
+        const existing = this.booksRooms.find(
+          (r: any) => String(r.room_category_id) === String(selectedRoomCategoryId)
+        );
+
+        if (existing) {
+          // Increase room count if already added
+          existing.no_of_rooms += numberOfRooms;
+        } else {
+          this.booksRooms.push({
+            ...room,
+            room_category_id: selectedRoomCategoryId,
+            name: roomCat.name,
+            no_of_rooms: numberOfRooms
+          });
+        }
+
+        this.rmBookForm.patchValue({
+          room_category_id: '',
+          no_of_rooms: ''
+        });
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Failed to load room category details.');
+      }
+    });
+  }
+
+  removeRoom(index: number) {
+       this.booksRooms.splice(index, 1);
   }
 
   deleteRmBook(id:any) {
@@ -303,6 +388,8 @@ export class RoomBookComponent {
     this.getRm();
     this.getGuest();
     this.getPackage();
+    this.getRmCat();
+
   }
 
   objectValues(obj: any): any[] {

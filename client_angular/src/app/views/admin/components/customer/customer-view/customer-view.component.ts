@@ -1,20 +1,15 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {
-    ButtonDirective, ColComponent, FormControlDirective, FormLabelDirective, FormSelectDirective, FormTextDirective,
-    ModalBodyComponent,
-    ModalComponent,
-    ModalFooterComponent,
-    ModalHeaderComponent, ModalTitleDirective, RowComponent, TableDirective
+    ButtonDirective, ColComponent, FormControlDirective, FormLabelDirective, FormSelectDirective,
+    RowComponent, TableDirective
 } from "@coreui/angular";
 import {NgForOf, NgIf} from "@angular/common";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {SearchService} from "../../../../../services/search.service";
 import {ToastrService} from "ngx-toastr";
-import {EmployeeUpdateComponent} from "../../employee/employee-update/employee-update.component";
-import {CustomerUpdateComponent} from "../customer-update/customer-update.component";
 import {IconDirective} from "@coreui/icons-angular";
-import {map} from "rxjs/operators";
+import {CuntryService} from "../../../../../services/cuntry.service";
 
 @Component({
   selector: 'app-customer-view',
@@ -22,14 +17,8 @@ import {map} from "rxjs/operators";
     imports: [
         IconDirective,
         ButtonDirective,
-        ModalBodyComponent,
-        ModalComponent,
-        ModalFooterComponent,
-        ModalHeaderComponent,
-        ModalTitleDirective,
         NgIf,
         TableDirective,
-        CustomerUpdateComponent,
         ColComponent,
         FormControlDirective,
         FormLabelDirective,
@@ -45,17 +34,21 @@ export class CustomerViewComponent implements OnInit{
   public visible = false;
   customers: any[] = [];
   customGenders: any[] = [];
-  customerAddForm:FormGroup;
+  customerForm:FormGroup;
   public error=null;
   customData:any;
-  @ViewChild(CustomerUpdateComponent) customerUpdateComponent : CustomerUpdateComponent | undefined;
+  countryCodes: any[] = [];
+  countries: any[] = [];
+  formData = new FormData();
+
   constructor(
     private allServe: AllServiceService,
     private fb: FormBuilder,
+    private countryService: CuntryService,
     private searchServe: SearchService,
     private toastr: ToastrService,){
-    this.customerAddForm = this.fb.group({
-
+    this.customerForm = this.fb.group({
+      id: [''],
       custom_type: [''],
       name: ['', [Validators.required]],
       email: ['', [Validators.required]],
@@ -63,24 +56,40 @@ export class CustomerViewComponent implements OnInit{
       tel_no: ['', [Validators.required]],
       gender_id: ['', [Validators.required]],
       nic: ['', [Validators.required]],
-      country: ['', [Validators.required]],
+      country_id: ['', [Validators.required]],
+      cuntry_code_id: ['', [Validators.required]],
       city: ['', [Validators.required]],
     });
   }
-  handleLiveDemoChange(event: any) { this.visible = event; }
-  toggleLiveDemo() { this.visible = !this.visible;}
 
   getCustom() {
     this.allServe.getCustomer().subscribe((response: any) => { this.customers = response.data;},
       (error) => { console.error('Error fetching supplier:', error); });
   }
+  customUpdate() {
+    if (this.customerForm.valid) {
 
+      const customerData = this.customerForm.getRawValue();
+
+      this.allServe.updateCustomer(customerData, customerData.id).subscribe({
+        next: (response: any) => {
+          this.getCustom();
+          this.clearForm();
+
+          alert('Customer updated successfully.');
+        },
+        error: (error: any) => {
+          console.error(error);
+          this.handleError(error);
+        }
+      });
+    }
+  }
   getShow(id:any) {
     this.allServe.getCustomerById(id).subscribe(
       (data: any) => {
 
-        this.customerUpdateComponent?.getData(data);
-        this.toggleLiveDemo();
+        this.customerForm.patchValue(data);
 
       },
       (error) => {
@@ -89,11 +98,7 @@ export class CustomerViewComponent implements OnInit{
     );
   }
   clearForm() {
-
-    this.customerAddForm.reset();
-    // this.empTypeField.setValue("Select Employee Type");
-    // this.empGenField.setValue("Select Employee Gender");
-
+    this.customerForm.reset();
   }
 
   customerDelete(id:any){
@@ -109,9 +114,9 @@ export class CustomerViewComponent implements OnInit{
   }
 
   onSubmit() {
-    if (this.customerAddForm.valid) {
+    if (this.customerForm.valid) {
 
-      this.customData = this.customerAddForm.getRawValue();
+      this.customData = this.customerForm.getRawValue();
 
       this.allServe.submitCustomer(this.customData).subscribe(
         (response) => {
@@ -140,8 +145,45 @@ export class CustomerViewComponent implements OnInit{
       }
     );
   }
+
+
+  setCountryCode(event: Event) {
+    const countryId = Number((event.target as HTMLSelectElement).value);
+
+    const countryCode = this.countryCodes.find(
+      x => x.cuntry_id === countryId
+    );
+
+    if (countryCode) {
+      this.customerForm.patchValue({
+        cuntry_code_id: countryCode.id
+      });
+    }
+  }
+  getCountryCode() {
+    this.countryService.getCuntryCode().subscribe(
+      (response: any) => {
+        this.countryCodes = response.data;
+      },
+      (error) => {
+        console.error('Error fetching Guest Gender:', error);
+      }
+    );
+  }
+  getCountries() {
+    this.countryService.getNationality().subscribe(
+      (response: any) => {
+        this.countries = response.data;
+      },
+      (error) => {
+        console.error('Error fetching Guest Gender:', error);
+      }
+    );
+  }
   ngOnInit() {
     this.getCustom();
     this.getCustomGen();
+    this.getCountryCode();
+    this.getCountries();
   }
 }

@@ -2,7 +2,7 @@
 <h3> <strong> <em> Room Book Form </em> </strong></h3>
 <form cForm [formGroup]="rmBookForm" (ngSubmit)="onSubmit()">
   <c-row>
-    <div *ngIf="error"> {{ error }}  </div>
+<!--    <div *ngIf="message"> {{ message }}  </div>-->
     <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
     <c-col [xs]="6">
       <div class="mb-3">
@@ -23,15 +23,6 @@
         <label cLabel for="number_of_room-1">Number of Room: </label>
         <input cFormControl id="number_of_room-1" type="text" sizing="sm" name="number_of_room" formControlName="number_of_room">
         <div cFormText>ex: 4 </div>
-      </div>
-    </c-col>
-    <c-col [xs]="6">
-      <div class="mb-3">
-        <label cLabel for="inputRNo-1">Room No:</label>
-        <select id="inputRNo-1" aria-label="Select Room No" cSelect name="r_id" formControlName="r_id">
-          <option selected="selected" value="">Select Room No</option>
-          <option *ngFor="let room of rooms" [value]="room.id"> {{ room.r_no }}</option>
-        </select>
       </div>
     </c-col>
     <c-col [xs]="6">
@@ -74,7 +65,69 @@
       <input type="date" class="form-control" placeholder="yyyy-mm-dd" name="cancel_Date" formControlName="cancel_Date" ngbDatepicker #x="ngbDatepicker" />
     </c-col>
   </c-row>
-  <div  class="mb-3">
+
+  <hr class="mt-4">
+  <b>Room Counts</b>
+  <hr class="mt-2">
+  <div>
+    <c-row>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel>Room Category:</label>
+          <select aria-label="Select room Category" cSelect name="room_category_id" formControlName="room_category_id" >
+            <option value="" selected>Select Room Category...</option>
+            <option *ngFor="let category of roomCategories " [value]="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+      </c-col>
+
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="txtNo_of_rooms">Quantity : </label>
+          <input
+            cFormControl
+            id="txtNo_of_rooms"
+            type="number"
+            name="no_of_rooms"
+            formControlName="no_of_rooms"
+            sizing="sm"
+            min="0"
+          />
+        </div>
+      </c-col>
+    </c-row>
+    <button type="button" cButton color="primary" (click)="addSelectedRoom()">Add Room</button>
+  </div>
+
+  <hr class="mt-4 mb-4">
+
+  <table [striped]="true" cTable>
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col" >Room Category Id</th>
+      <th scope="col" >Room Category Name</th>
+      <th scope="col">Room Count</th>
+      <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr *ngFor="let room of  booksRooms; let i = index">
+      <th scope="row">{{ i + 1 }}</th>
+      <td>{{ room.room_category_id }}</td>
+      <td >
+        {{room.name }}
+      </td>
+      <td>{{ room.no_of_rooms }}</td>
+      <td>  <input cButton color="danger" style="color: white" type="button" value="Remove room" (click)="removeRoom(i)"></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div  class="mb-3 mt-4">
     <input cButton color="primary" type="submit">&ngsp;
     <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear"> &ngsp;
     <input cButton color="secondary" style="color: white" type="button" (click)="updateRmBook()" [disabled]="rmBookForm.invalid" value="Update">
@@ -107,38 +160,84 @@
 </form>
 <hr />
 <div>
-  <h3> <strong><em>Room Book Table</em></strong> </h3>
-  <table cTable style="width:900px" >
+  <h3><strong><em>Room Book Table</em></strong></h3>
+
+  <table cTable style="width:100%">
     <thead>
     <tr>
-      <th scope="col">#</th>
-      <th scope="col"> Book Number</th>
-      <th scope="col">Room No</th>
-      <th scope="col">Guest Name</th>
-      <th scope="col">Guest Nic</th>
-      <th scope="col">Guest Count</th>
-      <th scope="col">Number of Room</th>
-      <th scope="col"> Booking / Canceling </th>
-      <th scope="col"> Check-in Date - Check-out Date: </th>
-      <th scope="col">Action</th>
+      <th>#</th>
+      <th>Booking No</th>
+      <th>Room No</th>
+      <th>Room Category</th>
+      <th>Guest Name</th>
+      <th>Guest NIC</th>
+      <th>Guest Count</th>
+      <th>No of Rooms</th>
+      <th>Booking Type</th>
+      <th>Booking Date</th>
+      <th>Cancel Date</th>
+      <th>Action</th>
     </tr>
     </thead>
-    <tbody *ngIf="roomsBooks">
-    <tr  *ngFor="let book of objectValues(roomsBooks); let i = index">
-      <th scope="row">{{i + 1}}</th>
+
+    <tbody *ngIf="roomsBooks?.length">
+
+    <tr *ngFor="let book of roomsBooks; let i = index">
+
+      <td>{{ i + 1 }}</td>
+
       <td>{{ book.booking_no }}</td>
-      <td>{{ book.room.r_no }}</td>
-      <td>{{ book.guest.name }}</td>
-      <td>{{ book.guest.nic }}</td>
-      <td>{{ book.max_guests }}</td>
-      <td>{{ book.number_of_room }}</td>
-      <td>{{ book.r_book }}</td>
-      <td>{{ book.booking_Date|date:"Y-MM-d" }} - {{ book.cancel_Date|date:"Y-MM-d" }}</td>
+
       <td>
-        <button (click)="getRmBookById(book.id)" cButton><svg cIcon name="cil-task" size="lg" title="Numbered List Icon"></svg></button>&ngsp;&ngsp;
-        <button type="button" (click)="deleteRmBook(book.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
+        <div *ngFor="let room of book.booking_rooms">
+          {{ room.r_no }}
+        </div>
       </td>
+
+      <td>
+        <div *ngFor="let room of book.booking_rooms">
+          {{ room.room_category?.name }}
+        </div>
+      </td>
+
+      <td>{{ book.guest?.name }}</td>
+
+      <td>{{ book.guest?.nic }}</td>
+
+      <td>{{ book.max_guests }}</td>
+
+      <td>
+        <div>
+          {{ book.number_of_room }}
+        </div>
+      </td>
+
+      <td>{{ book.r_book }}</td>
+
+      <td>{{ book.booking_Date | date:'yyyy-MM-dd' }}</td>
+
+      <td>{{ book.cancel_Date | date:'yyyy-MM-dd' }}</td>
+
+      <td>
+        <button
+          cButton
+          color="primary"
+          (click)="getRmBookById(book.id)">
+          <svg cIcon name="cil-task" size="lg"></svg>
+        </button>
+
+        &nbsp;
+
+        <button
+          cButton
+          color="danger"
+          (click)="deleteRmBook(book.id)">
+          <svg cIcon name="cil-trash" size="lg"></svg>
+        </button>
+      </td>
+
     </tr>
+
     </tbody>
   </table>
 </div>

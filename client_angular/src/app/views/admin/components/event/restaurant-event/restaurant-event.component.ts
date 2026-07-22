@@ -28,7 +28,7 @@ import {HotelService} from "../../../../../services/hotel.service";
 @Component({
   selector: 'app-restaurant-event',
   standalone: true,
-  imports: [FormControlDirective, FormDirective,
+  imports: [FormControlDirective,
     FormsModule, ColComponent, RowComponent, ReactiveFormsModule, FormSelectDirective, FormLabelDirective, NgForOf, ButtonDirective],
   templateUrl: './restaurant-event.component.html',
   styleUrl: './restaurant-event.component.scss'

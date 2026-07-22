@@ -1,1 +1,375 @@
-<p>transport-book works!</p>
+<div id="AddForm">
+
+  <c-row>
+
+    <h2>
+      <strong><em>Transport Booking Form</em></strong>
+    </h2>
+
+    <c-col [xs]="12">
+
+      <form [formGroup]="transportForm" (ngSubmit)="onSubmit()">
+
+        <input
+          cFormControl
+          type="hidden"
+          formControlName="id">
+
+        <c-row>
+
+          <!-- Guest -->
+
+          <c-col [xs]="6">
+            <div class="mb-3">
+              <label cLabel>Guest</label>
+
+              <select cSelect formControlName="guest_id">
+
+                <option value="">Select Guest</option>
+
+                <option
+                  *ngFor="let guest of guests"
+                  [value]="guest.id">
+                  {{guest.name}}
+                </option>
+              </select>
+
+            </div>
+          </c-col>
+
+          <!-- Province -->
+
+          <c-col [xs]="6">
+            <div class="mb-3">
+              <label cLabel>Province</label>
+
+              <select cSelect formControlName="province_id">
+
+                <option value="">Select Province</option>
+
+                <option
+                  *ngFor="let province of provinces"
+                  [value]="province.id">
+
+                  {{province.name}}
+
+                </option>
+
+              </select>
+
+            </div>
+          </c-col>
+
+          <!-- Passengers -->
+
+          <c-col [xs]="6">
+
+            <div class="mb-3">
+
+              <label cLabel>Passengers</label>
+
+              <input
+                cFormControl
+                type="number"
+                formControlName="passengers">
+
+            </div>
+
+          </c-col>
+
+          <!-- Service -->
+
+          <c-col [xs]="6">
+
+            <div class="mb-3">
+
+              <label cLabel>Service Type</label>
+
+              <select
+                cSelect
+                formControlName="service_type_id">
+
+                <option value="">Select Service</option>
+
+                <option
+                  *ngFor="let service of serviceTypes"
+                  [value]="service.id">
+
+                  {{service.name}}
+
+                </option>
+
+              </select>
+
+            </div>
+
+          </c-col>
+
+          <!-- Vehicle -->
+
+          <c-col [xs]="6">
+
+            <div class="mb-3">
+
+              <label cLabel>Vehicle Type</label>
+
+              <select
+                cSelect
+                formControlName="vehicle_type_id">
+
+                <option value="">Select Vehicle</option>
+
+                <option
+                  *ngFor="let vehicle of vehicleTypes"
+                  [value]="vehicle.id">
+
+                  {{vehicle.name}}
+
+                </option>
+
+              </select>
+
+            </div>
+
+          </c-col>
+
+          <!-- Tour -->
+
+          <c-col [xs]="6">
+
+            <div class="mb-3">
+
+              <label cLabel>Tour Type</label>
+
+              <select
+                cSelect
+                formControlName="tour_type_id">
+
+                <option value="">Select Tour</option>
+
+                <option
+                  *ngFor="let tour of tourTypes"
+                  [value]="tour.id">
+
+                  {{tour.name}}
+
+                </option>
+
+              </select>
+
+            </div>
+
+          </c-col>
+
+          <!-- Pickup -->
+
+          <c-col [xs]="6">
+
+            <div class="mb-3">
+
+              <label cLabel>Pickup Location</label>
+
+              <input
+                cFormControl
+                type="text"
+                formControlName="pickup_location">
+
+            </div>
+
+          </c-col>
+
+          <!-- Drop -->
+
+          <c-col [xs]="6">
+
+            <div class="mb-3">
+
+              <label cLabel>Drop Location</label>
+
+              <input
+                cFormControl
+                type="text"
+                formControlName="drop_location">
+
+            </div>
+
+          </c-col>
+
+          <!-- Pickup Date -->
+
+          <c-col [xs]="6">
+
+            <div class="mb-3">
+
+              <label cLabel>Pickup Date</label>
+
+              <input
+                cFormControl
+                type="date"
+                formControlName="pickup_date">
+
+            </div>
+
+          </c-col>
+
+          <!-- Pickup Time -->
+
+          <c-col [xs]="6">
+
+            <div class="mb-3">
+              <label cLabel>Pickup Time</label>
+              <input
+                cFormControl
+                type="time"
+                formControlName="pickup_time">
+            </div>
+          </c-col>
+
+          <!-- Duration -->
+
+          <c-col [xs]="6">
+
+            <div class="mb-3">
+
+              <label cLabel>Duration</label>
+              <select
+                cSelect
+                formControlName="duration_id">
+                <option value="">Select Duration</option>
+                <option
+                  *ngFor="let duration of durations"
+                  [value]="duration.id">
+                  {{duration.duration}}
+                </option>
+              </select>
+
+            </div>
+
+          </c-col>
+
+          <!-- Custom Duration -->
+
+          <c-col [xs]="6">
+            <div class="mb-3">
+              <label cLabel>Custom Duration</label>
+              <input
+                cFormControl
+                type="text"
+                formControlName="custom_duration">
+            </div>
+          </c-col>
+          <!-- Request -->
+
+          <c-col [xs]="12">
+
+            <div class="mb-3">
+
+              <label cLabel>Special Request</label>
+
+              <textarea
+                cFormControl
+                rows="4"
+                formControlName="requests">
+              </textarea>
+            </div>
+          </c-col>
+        </c-row>
+        <button class="btn btn-primary" type="submit">
+          Save
+        </button>
+        &nbsp;
+        <button
+          class="btn btn-warning"
+          type="button"
+          (click)="clearForm()">
+          Clear
+        </button>
+        &nbsp;
+        <button
+          class="btn btn-danger"
+          type="button"
+          (click)="updateTransport()">
+          Update
+        </button>
+      </form>
+    </c-col>
+  </c-row>
+</div>
+
+<hr>
+
+<h3>
+
+  <strong><em>Transport Booking Table</em></strong>
+
+</h3>
+
+<table cTable [striped]="true">
+  <thead>
+
+  <tr>
+
+    <th>#</th>
+    <th>Booking No</th>
+    <th>Guest</th>
+    <th>Province</th>
+    <th>Passengers</th>
+    <th>Service</th>
+    <th>Vehicle</th>
+    <th>Tour</th>
+    <th>Pickup</th>
+    <th>Drop</th>
+    <th>Date</th>
+    <th>Time</th>
+    <th>Duration</th>
+    <th>Action</th>
+
+  </tr>
+
+  </thead>
+
+  <tbody>
+
+    @for(book of transportBooks; track book; let i = $index){
+
+      <tr>
+        <td>{{i+1}}</td>
+        <td>{{book.booking_no}}</td>
+        <td>{{book.guest.name}}</td>
+        <td>{{book.province.name}}</td>
+        <td>{{book.passengers}}</td>
+        <td>{{book.serviceType.name}}</td>
+        <td>{{book.vehicleType.name}}</td>
+        <td>{{book.tourType.name}}</td>
+        <td>{{book.pickup_location}}</td>
+        <td>{{book.drop_location}}</td>
+        <td>{{book.pickup_date | date:'yyyy-MM-dd'}}</td>
+        <td>{{book.pickup_time}}</td>
+        <td>
+          {{book.duration.name}}
+          <span *ngIf="book.custom_duration">
+          ({{book.custom_duration}})
+          </span>
+        </td>
+        <td>
+          <button
+            cButton
+            (click)="getTransport(book.id)">
+            <svg cIcon name="cil-task" size="lg"></svg>
+          </button>
+          &nbsp;
+          <button
+            cButton
+            color="danger"
+            (click)="deleteTransport(book.id)">
+            <svg
+              cIcon
+              name="cil-trash"
+              size="lg">
+            </svg>
+          </button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

@@ -149,7 +149,7 @@ export class OrderAddComponent  implements OnInit{
         this.foods = data;
       },
       (error) => {
-        console.error('Error fetching Item Category:', error);
+        console.error('Error fetching Food:', error);
       }
     );
   }
@@ -169,31 +169,25 @@ export class OrderAddComponent  implements OnInit{
       return;
     }
 
-    // find selected food from foods list
     const food = this.foods.find((f: any) => String(f.id) === String(selectedFoodId));
     if (!food) {
       alert('Selected food not found in available list.');
       return;
     }
 
-    // check if already added
     const existing = this.foodItems.find(f => String(f.id) === String(food.id));
     if (existing) {
-      // if exists, just update quantity instead of blocking
       // @ts-ignore
       existing.quantity += quantity;
     } else {
-      // add new item
       this.foodItems.push({
         ...food,
         quantity: quantity,
       });
     }
 
-    // reset fields for next entry
     this.orderForm.patchValue({ quantity: '', food_id: '' });
 
-    // recalculate total
     this.updateTotalAmount();
   }
 
@@ -239,7 +233,6 @@ export class OrderAddComponent  implements OnInit{
     this.getFoodStatus();
 
   }
-// Remove a food item dynamically
   removeFoodItem(index: number,amount:any) {
     let quantity = this.foodItems[index].quantity;
     const foodAmount = Number(amount) || 0;

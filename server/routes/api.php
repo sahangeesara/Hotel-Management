@@ -162,5 +162,6 @@ Route::middleware(['auth:api'])->group(function () {
         'organizers' => OrganizerDetailsController::class,
         'airlines' => AirlinesController::class,
         'bookStatus' => BookStatusController::class,
+        'durations' => DurationController::class,
     ]);
 });

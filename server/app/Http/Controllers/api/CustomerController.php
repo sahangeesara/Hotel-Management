@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 
 class CustomerController extends Controller
 {
@@ -115,53 +116,62 @@ class CustomerController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * @throws \Throwable
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        $data = $request->all(); // Decode JSON data from request
+        $customer = Customer::findOrFail($id);
 
-        // Validate request data
-        $validatedData = Validator::make($data, [
+        if (!$customer) {
+            return response()->json([
+                'message' => 'Customer not found.'
+            ], 404);
+        }
+
+        $validatedData = $request->validate([
             'name' => 'required',
             'address' => 'required',
             'city' => 'required',
-            'nic' => 'required|unique:customers,nic,'.$id,
-            'email' => 'required|email',
+            'nic' => [
+                'required',
+                Rule::unique('customers', 'nic')->ignore($customer->id),
+            ],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('customers', 'email')->ignore($customer->id),
+            ],
             'tel_no' => 'required',
             'gender_id' => 'required',
             'country_id' => 'required',
             'cuntry_code_id' => 'required',
-            'custom_no' => 'required',
+            'custom_no' => '',
+            'custom_type' => 'nullable',
         ]);
 
-        if ($validatedData->fails()) {
-            return response()->json($validatedData->errors());
-        }
+        DB::beginTransaction();
 
         try {
 
-            $customer =Customer::findOrFail($id);
-            $customer->name = $data['name'];
-            $customer->address = $data['address'];
-            $customer->city = $data['city'];
-            $customer->nic = $data['nic'];
-            $customer->tel_no = $data['tel_no'];
-            // Set guide_id to null if empty
-            $customer->gender_id = $data['gender_id'];
-            $customer->country_id = $data['country_id'];
-            $customer->cuntry_code_id = $data['cuntry_code_id'];            $customer->custom_no = $data['custom_no'];
-            $customer->custom_type = $data['custom_type'];
+            $customer->update($validatedData);
 
-            $customer->save();
+            DB::commit();
 
+            return response()->json([
+                'message' => 'Successfully Updated.',
+                'customer' => $customer
+            ], 200);
 
-            return response()->json(['message' => 'Successfully Updated.', 'customer' => $customer]);
         } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json(['error' => 'An error occurred while processing the request.', 'exception' => $e->getMessage()]);
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Update failed.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
-
     /**
      * Remove the specified resource from storage.
      */
