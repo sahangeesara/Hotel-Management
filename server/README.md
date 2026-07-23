@@ -64,3 +64,120 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Hotel Management System - Setup Instructions
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+```bash
+composer install
+```
+
+3. Copy environment file:
+```bash
+cp .env.example .env
+```
+
+4. Generate application key:
+```bash
+php artisan key:generate
+```
+
+5. Configure database in `.env` file
+
+6. Run migrations:
+```bash
+php artisan migrate
+```
+
+7. Seed the database:
+```bash
+php artisan db:seed
+```
+
+### Password Reset with Queue
+
+This application uses Laravel Queue for sending password reset emails asynchronously.
+
+#### Setup Queue Tables
+
+Run the following commands to create the queue tables:
+
+```bash
+php artisan queue:table
+php artisan migrate
+```
+
+#### Queue Configuration
+
+The application is configured to use database queue driver. Ensure your `.env` file has:
+
+```env
+QUEUE_CONNECTION=database
+```
+
+#### Start Queue Worker
+
+To process queued jobs (including password reset emails), run:
+
+```bash
+php artisan queue:work
+```
+
+For production, use a process manager like Supervisor to keep the queue worker running.
+
+#### Password Reset Logging
+
+Password reset links and tokens are automatically logged to `storage/logs/laravel.log` for development purposes. Each password reset request will log:
+- Recipient email address
+- Reset token
+- Full reset URL
+- Complete email content in readable format
+
+**Example log output:**
+```
+[2026-07-23 09:00:00] local.DEBUG: From: Laravel <hello@example.com>
+To: user@example.com
+Subject: Reset Password Mail
+
+# Hello!
+
+You are receiving this email because we received a password reset request for your account.
+
+Reset Password: http://localhost:4200/response-password-reset?token=YOUR_TOKEN_HERE
+
+Token: YOUR_TOKEN_HERE
+
+This password reset link will expire in 60 minutes.
+```
+
+Check the logs at `storage/logs/laravel.log` to view the password reset links during development.
+
+### Features
+
+- **User Authentication**: JWT-based authentication system
+- **Role-based Access Control**: Multiple user roles with different permissions
+- **Room Management**: Manage hotel rooms, categories, and bookings
+- **Guest Management**: Track guest information and bookings
+- **Event Management**: Handle hotel events, weddings, and restaurant bookings
+- **Travel Booking**: Manage transport bookings for guests
+- **Order Management**: Food ordering system
+- **Employee Management**: Track hotel staff and their roles
+- **Package Management**: Create and manage tour packages
+- **Queue System**: Asynchronous email processing with logging
+
+### Running the Application
+
+```bash
+php artisan serve
+```
+
+The API will be available at `http://localhost:8000`
+
+Don't forget to run the queue worker in a separate terminal:
+
+```bash
+php artisan queue:work
+```

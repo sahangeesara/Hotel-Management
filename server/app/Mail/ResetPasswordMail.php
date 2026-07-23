@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ResetPasswordMail extends Mailable
+class ResetPasswordMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -39,11 +39,13 @@ class ResetPasswordMail extends Mailable
      */
     public function content($token = null): Content
     {
+        $tokenString = is_object($this->token) ? $this->token->token : $this->token;
+
         return new Content(
             markdown: 'Email.passwordReset',
             with: [
                 'token' => $this->token,
-                'url' => 'http://localhost:4200/response-password-reset?token=' . $this->token->token
+                'url' => 'http://localhost:4200/response-password-reset?token=' . $tokenString
             ]
         );
     }

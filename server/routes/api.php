@@ -142,8 +142,6 @@ Route::middleware(['auth:api'])->group(function () {
         'currencies'=> CurrenciesController:: class,
         'duration' => DurationController:: class,
         'eventTypes' => EventTypesController:: class,
-        'flightBooking' => FlightBooksController:: class,
-        'flightClass' => FlightClassesController:: class,
         'generalEvent' => GeneralEventsController::class,
         'hotels' => HotelController::class,
         'hotelEvent' => HotelEventsController::class,
@@ -158,9 +156,7 @@ Route::middleware(['auth:api'])->group(function () {
         'transportBooking' => TransportBooksController::class,
         'vehicleTypes' => VehicleTypesController::class,
         'weddingEvent' => WeddingEventsController::class,
-        'flights' => FlightController::class,
         'organizers' => OrganizerDetailsController::class,
-        'airlines' => AirlinesController::class,
         'bookStatus' => BookStatusController::class,
         'durations' => DurationController::class,
     ]);

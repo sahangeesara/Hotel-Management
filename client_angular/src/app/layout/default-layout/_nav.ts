@@ -41,11 +41,6 @@ export const navItems: INavData[] = [
         url: '/travel/transport_book',
         icon: 'nav-icon-bullet'
       },
-      {
-        name: 'Flight Book',
-        url: '/travel/flight_book',
-        icon: 'nav-icon-bullet'
-      },
     ]
   },
   {

@@ -24,7 +24,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CountryCodeSeeder::class);
         $this->call(CurrencySeeder::class);
         $this->call(Event_typesSeeder::class);
-        $this->call(FlightClassSeeder::class);
         $this->call(LanguagesSeeder::class);
         $this->call(ProvincesSeeder::class);
         $this->call(RoomsCategorySeeder::class);

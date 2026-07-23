@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Mail\ResetPasswordMail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -26,6 +27,22 @@ class ResetPasswordController extends Controller
     public function send($email)
     {
         $token =$this->createToken($email);
+        $tokenString = is_object($token) ? $token->token : $token;
+        $resetUrl = 'http://localhost:4200/response-password-reset?token=' . $tokenString;
+
+        // Log the password reset link in a readable format
+        Log::debug("From: Laravel <hello@example.com>\nTo: {$email}\nSubject: Reset Password Mail\n\n" .
+            "# Hello!\n\n" .
+            "You are receiving this email because we received a password reset request for your account.\n\n" .
+            "Reset Password: {$resetUrl}\n\n" .
+            "Token: {$tokenString}\n\n" .
+            "This password reset link will expire in 60 minutes.\n\n" .
+            "If you did not request a password reset, no further action is required.\n\n" .
+            "Regards,\nLaravel\n\n" .
+            "If you're having trouble clicking the \"Reset Password\" button, copy and paste the URL below\n" .
+            "into your web browser: {$resetUrl}"
+        );
+
         Mail::to($email)->send(new ResetPasswordMail($token));
     }
     public function createToken($email)

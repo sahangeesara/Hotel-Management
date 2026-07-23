@@ -8,11 +8,4 @@ export const routes: Routes = [
       title: 'Transport Book'
     }
   },
-  {
-    path: 'flight_book',
-    loadComponent: () => import('./flight-book/flight-book.component').then(m => m.FlightBookComponent),
-    data: {
-      title: 'Flight Book'
-    }
-  }
 ];
