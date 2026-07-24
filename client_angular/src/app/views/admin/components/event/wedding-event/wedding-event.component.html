@@ -1,0 +1,217 @@
+    <form [formGroup]="weddingForm" (ngSubmit)="onSubmit()">
+      <c-row>
+        <c-col [md]="6" class="mb-3">
+          <label cLabel>Event No</label>
+          <input cFormControl type="text" formControlName="event_no" placeholder="Event No generated systematically ">
+        </c-col>
+        <c-col md="6">
+          <label>Bride Name</label>
+          <input
+            class="form-control"
+            formControlName="bride_name">
+        </c-col>
+
+        <c-col md="6">
+          <label>Groom Name</label>
+          <input
+            class="form-control"
+            formControlName="groom_name">
+        </c-col>
+      </c-row>
+
+      <br>
+
+      <c-row>
+        <c-col md="6">
+          <label>Email</label>
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email">
+        </c-col>
+
+        <c-col md="6">
+          <label>Phone</label>
+          <input
+            class="form-control"
+            formControlName="phone">
+        </c-col>
+      </c-row>
+      <br>
+      <c-row>
+        <c-col md="6">
+          <label>Event Date</label>
+          <input
+            type="date"
+            class="form-control"
+            formControlName="event_date">
+        </c-col>
+
+        <c-col md="6">
+          <label>Event Time</label>
+          <input
+            type="time"
+            class="form-control"
+            formControlName="event_time">
+        </c-col>
+      </c-row>
+
+      <br>
+
+      <c-row>
+        <c-col md="4">
+          <label>Passengers</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="passengers">
+        </c-col>
+
+        <c-col md="4">
+          <label>Hotel</label>
+          <select
+            class="form-select"
+            formControlName="hotel_id">
+            <option value="">Select Hotel</option>
+            <option
+              *ngFor="let hotel of hotels"
+              [value]="hotel.id">
+              {{hotel.name}}
+            </option>
+          </select>
+
+        </c-col>
+        <c-col md="4">
+          <label>Room</label>
+          <select
+            class="form-select"
+            formControlName="room_id">
+            <option value="">Select Room</option>
+            <option
+              *ngFor="let room of rooms"
+              [value]="room.id">
+              {{room.room_no}}
+            </option>
+          </select>
+        </c-col>
+      </c-row>
+
+      <br>
+
+      <c-row>
+        <c-col md="6">
+          <label>Organizer</label>
+          <select
+            class="form-select"
+            formControlName="organizer_id">
+            <option value="">Select Organizer</option>
+            <option
+              *ngFor="let organizer of organizers"
+              [value]="organizer.id">
+              {{organizer.name}}
+            </option>
+          </select>
+        </c-col>
+
+        <c-col md="6">
+          <label>Status</label>
+          <select
+            class="form-select"
+            formControlName="book_status_id">
+            <option value="">Select Status</option>
+            <option
+              *ngFor="let status of statuses"
+              [value]="status.id">
+              {{status.name}}
+            </option>
+          </select>
+        </c-col>
+      </c-row>
+
+      <br>
+      <c-row>
+        <c-col md="6">
+          <label>Additional Services</label>
+          <textarea
+            rows="3"
+            class="form-control"
+            formControlName="additional_services">
+                    </textarea>
+        </c-col>
+
+        <c-col md="6">
+
+          <label>Special Requests</label>
+
+          <textarea
+            rows="3"
+            class="form-control"
+            formControlName="requests">
+                    </textarea>
+
+        </c-col>
+
+      </c-row>
+
+      <br>
+      <button
+        cButton
+        type="submit"
+        color="primary">
+        Save Booking
+      </button>
+    </form>
+<br>
+<c-card>
+  <c-card-header class="d-flex justify-content-between align-items-center border-bottom-0 bg-info text-white">
+    <h4>Wedding Event List</h4>
+  </c-card-header>
+  <c-card-body>
+
+    <table
+      cTable
+      bordered
+      hover
+      striped>
+
+      <thead>
+
+      <tr>
+
+        <th>#</th>
+        <th>Event No</th>
+        <th>Bride</th>
+        <th>Groom</th>
+        <th>Hotel</th>
+        <th>Room</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Guests</th>
+        <th>Status</th>
+      </tr>
+      </thead>
+      <tbody>
+
+      <tr
+        *ngFor="let item of weddingEvents; let i=index">
+
+        <td>{{i+1}}</td>
+        <td>{{item.event_no}}</td>
+        <td>{{item.bride_name}}</td>
+        <td>{{item.groom_name}}</td>
+        <td>{{item.hotel?.name}}</td>
+        <td>{{item.room?.room_no}}</td>
+        <td>{{item.event_date | date:'yyyy-MM-dd'}}</td>
+        <td>{{item.event_time}}</td>
+        <td>{{item.passengers}}</td>
+        <td>{{item.book_status?.name}}</td>
+
+      </tr>
+
+      </tbody>
+
+    </table>
+
+  </c-card-body>
+
+</c-card>

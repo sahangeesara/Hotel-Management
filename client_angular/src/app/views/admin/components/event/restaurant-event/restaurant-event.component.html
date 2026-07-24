@@ -3,7 +3,7 @@
 
     <c-col [md]="6" class="mb-3">
       <label cLabel>Event No</label>
-      <input cFormControl type="text" formControlName="event_no">
+      <input cFormControl type="text" formControlName="event_no" placeholder="Event No generated systematically ">
     </c-col>
 
     <c-col [xs]="6">
@@ -121,7 +121,7 @@
           formControlName="organizer_id"  class="form-control">
           <option value="">Select Organizer</option>
           <option *ngFor="let organizer of organizers" [value]="organizer.id">
-            {{ organizer.nic }}
+            {{ organizer.name }}
           </option>
         </select>
       </div>

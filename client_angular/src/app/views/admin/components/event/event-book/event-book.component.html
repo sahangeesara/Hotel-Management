@@ -66,8 +66,8 @@
         <button cButton color="secondary" (click)="back()">
           ← Back
         </button>
-
         <h1>Wedding</h1>
+        <app-wedding-event [organizer_id]="eventBook.get('organizer_id')?.value"></app-wedding-event>
 
       </div>
 

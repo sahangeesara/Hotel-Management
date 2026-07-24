@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
@@ -33,7 +33,7 @@ import {NgForOf} from "@angular/common";
   templateUrl: './hotel-event.component.html',
   styleUrl: './hotel-event.component.scss'
 })
-export class HotelEventComponent {
+export class HotelEventComponent implements OnInit{
   organizers:any[] = [];
   hotelEvent:FormGroup;
   formData = new FormData();
@@ -120,6 +120,8 @@ export class HotelEventComponent {
     });
 
     this.hotelEvent.get('organizer_id')?.disable();
+    this.hotelEvent.get('event_no')?.disable();
+
     this.getOrganizer();
     this.getRm();
     this.getHotel();

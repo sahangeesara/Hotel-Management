@@ -123,6 +123,7 @@ export class RestaurantEventComponent implements OnInit {
     });
 
     this.restaurantEvent.get('organizer_id')?.disable();
+    this.restaurantEvent.get('event_no')?.disable();
     this.getOrganizer();
     this.getRm();
     this.getSection();

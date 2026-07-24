@@ -141,5 +141,6 @@ export class EventComponent implements OnInit {
 
    ngOnInit() {
     this.getEvent();
-  }
+     this.eventForm.get('event_no')?.disable();
+   }
 }

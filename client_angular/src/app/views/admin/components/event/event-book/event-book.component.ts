@@ -18,6 +18,7 @@ import {ToastrService} from "ngx-toastr";
 import {EventService} from "../../../../../services/event.service";
 import {RestaurantEventComponent} from "../restaurant-event/restaurant-event.component";
 import {HotelEventComponent} from "../hotel-event/hotel-event.component";
+import {WeddingEventComponent} from "../wedding-event/wedding-event.component";
 
 @Component({
   selector: 'app-event-book',
@@ -40,7 +41,8 @@ import {HotelEventComponent} from "../hotel-event/hotel-event.component";
     RowComponent,
     TableDirective,
     RestaurantEventComponent,
-    HotelEventComponent
+    HotelEventComponent,
+    WeddingEventComponent
   ],
   templateUrl: './event-book.component.html',
   styleUrl: './event-book.component.scss'
