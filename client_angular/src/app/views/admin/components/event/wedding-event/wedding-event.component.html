@@ -90,7 +90,7 @@
             <option
               *ngFor="let room of rooms"
               [value]="room.id">
-              {{room.room_no}}
+              {{room.r_no}}
             </option>
           </select>
         </c-col>
@@ -169,15 +169,10 @@
   <c-card-body>
 
     <table
-      cTable
-      bordered
-      hover
-      striped>
-
+      [striped]="true" cTable>
       <thead>
 
       <tr>
-
         <th>#</th>
         <th>Event No</th>
         <th>Bride</th>
@@ -194,13 +189,12 @@
 
       <tr
         *ngFor="let item of weddingEvents; let i=index">
-
         <td>{{i+1}}</td>
         <td>{{item.event_no}}</td>
         <td>{{item.bride_name}}</td>
         <td>{{item.groom_name}}</td>
         <td>{{item.hotel?.name}}</td>
-        <td>{{item.room?.room_no}}</td>
+        <td>{{item.room?.r_no}}</td>
         <td>{{item.event_date | date:'yyyy-MM-dd'}}</td>
         <td>{{item.event_time}}</td>
         <td>{{item.passengers}}</td>

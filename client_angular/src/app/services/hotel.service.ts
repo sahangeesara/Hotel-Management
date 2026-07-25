@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {TokenService} from "./token.service";
 import {Hotel} from "../entities/Hotel";
 import {RoomSetup} from "../entities/RoomSetup";
+import {Section} from "../entities/section";
 
 @Injectable({
   providedIn: 'root'
@@ -103,7 +104,7 @@ export class HotelService {
     return this.http.put(`${this.besUrl}/section/${id}`,data,this.getAuthHeaders());
   }
   submitSections(data:any){
-    return this.http.post<RoomSetup[]>(`${this.besUrl}/section`,data,this.getAuthHeaders());
+    return this.http.post<Section[]>(`${this.besUrl}/section`,data,this.getAuthHeaders());
   }
 
 

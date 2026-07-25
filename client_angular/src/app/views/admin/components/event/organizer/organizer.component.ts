@@ -118,9 +118,7 @@ export class OrganizerComponent implements OnInit {
   }
   organizerUpdate(){
     if (this.organizerForm.valid) {
-
       this.organizerData = this.organizerForm.getRawValue();
-
       this.eventServe.updateOrganizer(this.organizerData, this.organizerData.id).subscribe(
         (response) => {
           // Handle successful update

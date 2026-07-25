@@ -41,12 +41,12 @@ class RestaurantEventsController extends Controller
             'passengers' => 'required',
             'hotel_id' => 'required|integer',
             'section_id'=> 'required|integer',
-            'seating_preferences' => 'required',
+            'seating_preferences' => '',
             'organizer_id' => 'required|integer',
             'room_id' => 'required|integer',
             'book_status_id'=> 'required|integer',
-            'requests' => 'required',
-            'additional_services' => 'required',
+            'requests' => '',
+            'additional_services' => '',
         ]);
 
         $existingBooking = RestaurantEvent::where('organizer_id', $validatedData['organizer_id'])
@@ -112,47 +112,33 @@ class RestaurantEventsController extends Controller
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'event_no'=> 'required|integer',
-            'event_id'=> 'required|integer',
+            'event_no' => 'required',
+            'event_id' => 'required|integer',
             'event_type_id' => 'required|integer',
             'event_date' => 'required',
             'start_time' => 'required',
             'end_time' => 'required',
             'passengers' => 'required',
             'hotel_id' => 'required|integer',
-            'section_id'=> 'required|integer',
-            'seating_preferences' => 'required',
+            'section_id' => 'required|integer',
+            'seating_preferences' => '',
             'organizer_id' => 'required|integer',
             'room_id' => 'required|integer',
-            'book_status_id'=> 'required|integer',
-            'requests' => 'required',
-            'additional_services' => 'required',
+            'book_status_id' => 'required|integer',
+            'requests' => '',
+            'additional_services' => '',
         ]);
 
+        // Fixed booking conflict overlap check
         $existingBooking = RestaurantEvent::where('id', '<>', $id)
+            ->where('room_id', $validatedData['room_id'])
+            ->where('event_date', $validatedData['event_date'])
+            ->where('is_active', true)
             ->where(function ($query) use ($validatedData) {
-
-                $query->where(function ($query) use ($validatedData) {
-                    $query->where('organizer_id', '<>', $validatedData['organizer_id'])
-                        ->where('event_id', '<>', $validatedData['event_id'])
-                        ->where('event_type_id', $validatedData['event_type_id']);
-                })
-
-                    ->orWhere(function ($query) use ($validatedData) {
-                        $query->where('event_id', $validatedData['event_id'])
-                            ->where('event_date', $validatedData['event_date'])
-                            ->where('is_active', true);
-                    })
-
-                    ->orWhere(function ($query) use ($validatedData) {
-                        $query->whereBetween('end_time', [
-                            $validatedData['start_time'],
-                            $validatedData['end_time']
-                        ])
-                            ->where('is_active', true);
-                    });
-
+                $query->where('start_time', '<', $validatedData['end_time'])
+                    ->where('end_time', '>', $validatedData['start_time']);
             })->first();
+
         if ($existingBooking) {
             Log::info('Conflicting Booking Found:', [
                 'existingBooking' => $existingBooking,
@@ -160,36 +146,40 @@ class RestaurantEventsController extends Controller
             ]);
             return response()->json(['error' => 'This Date is Booking..'], 409);
         }
-        $bookStatus= BookStatus::findOrFail($validatedData['book_status_id']);
+
+        $bookStatus = BookStatus::findOrFail($validatedData['book_status_id']);
 
         try {
             $restaurantEvent = RestaurantEvent::findOrFail($id);
-            $restaurantEvent->update(
-                [
-                    'event_type_id' => $validatedData['event_type_id'],
-                    'event_id' => $validatedData['event_id'],
-                    'event_date' => $validatedData['event_date'],
-                    'start_time' => $validatedData['start_time'],
-                    'end_time' => $validatedData['end_time'],
-                    'hotel_id' => $validatedData['hotel_id'],
-                    'room_id' => $validatedData['room_id'],
-                    'organizer_id' => $validatedData['organizer_id'],
-                    'requests' => $validatedData['requests'],
-                    'additional_services' => $validatedData['additional_services'],
-                    'book_status_id' => $validatedData['book_status_id'],
-                    'passengers' => $validatedData['passengers'],
-                    'event_no'=> $validatedData['event_no'],
-                    'is_active' =>$bookStatus->name === "Cancelled" ? false : $restaurantEvent->is_active,
+            $restaurantEvent->update([
+                'event_type_id' => $validatedData['event_type_id'],
+                'event_id' => $validatedData['event_id'],
+                'event_date' => $validatedData['event_date'],
+                'start_time' => $validatedData['start_time'],
+                'end_time' => $validatedData['end_time'],
+                'hotel_id' => $validatedData['hotel_id'],
+                'room_id' => $validatedData['room_id'],
+                'organizer_id' => $validatedData['organizer_id'],
+                'requests' => $validatedData['requests'],
+                'additional_services' => $validatedData['additional_services'],
+                'book_status_id' => $validatedData['book_status_id'],
+                'passengers' => $validatedData['passengers'],
+                'event_no' => $validatedData['event_no'],
+                'is_active' => $bookStatus->name === "Cancelled" ? false : $restaurantEvent->is_active,
+            ]);
 
-                ]
-            );
-            return response()->json(['message' =>'Restaurant Event update successfully','restaurantEvent'=>$restaurantEvent], 200);
-        }catch (\Exception $e){
+            return response()->json([
+                'message' => 'Restaurant Event update successfully',
+                'restaurantEvent' => $restaurantEvent
+            ], 200);
+
+        } catch (\Exception $e) {
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while update Restaurant Event.'], 500);
+            return response()->json([
+                'message' => 'An error occurred while update Restaurant Event.'
+            ], 500);
         }
     }
-
     /**
      * Remove the specified resource from storage.
      */

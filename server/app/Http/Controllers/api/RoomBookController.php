@@ -143,8 +143,12 @@ class RoomBookController extends Controller
     public function show(string $id)
     {
         try {
-            $roomBook = RoomBook::with('guest')
-                                 ->findOrFail($id);
+            $roomBook = RoomBook::with([
+                'guest',
+                'package',
+                'BookingRooms.roomCategory'
+            ])->findOrFail($id);
+
             return response()->json($roomBook);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response

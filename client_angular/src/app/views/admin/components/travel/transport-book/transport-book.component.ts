@@ -147,6 +147,7 @@ export class TransportBookComponent implements OnInit {
     this.travelServes.getTransportBookings().subscribe(
       (response: any) => {
         this.transportBooks = response.data;
+        console.log(this.transportBooks);
       },
       (error) => {
         console.error('Error fetching guest:', error);
@@ -170,10 +171,8 @@ export class TransportBookComponent implements OnInit {
 
   onSubmit() {
     if (this.transportForm.valid) {
-
       this.bookingData = this.transportForm.getRawValue();
-
-      this.allServe.submitCustomer(this.bookingData).subscribe(
+      this.travelServes.submitTransportBookings(this.bookingData).subscribe(
         (response) => {
           // Handle successful submission
           this.getTransportBookings();
@@ -192,16 +191,36 @@ export class TransportBookComponent implements OnInit {
   }
 
   updateTransport() {
+    this.formData = new FormData();
+    if (this.transportForm.valid) {
 
+      this.bookingData = this.transportForm.getRawValue();
+
+      this.travelServes.updateTransportBookings(this.bookingData, this.bookingData.id).subscribe(
+        (response) => {
+          this.getTransportBookings()
+          this.clearForm();
+        },
+        (error) => {
+          // Handle errors
+          this.handleError(error);
+        }
+      );
+    }
   }
 
   getTransport(id: any) {
     this.travelServes.getTransportBookingsById(id).subscribe(
-      (response: any) => {
-        this.transportBooks = response.data;
+      (data: any) => {
+        this.transportForm.patchValue({
+          ...data,
+          pickup_date: data.pickup_date
+            ? new Date(data.pickup_date).toISOString().split('T')[0]
+            : null
+        });
       },
       (error) => {
-        console.error('Error fetching guest:', error);
+        console.error('Error fetching transport Booking:', error);
       }
     );
   }

@@ -7,14 +7,15 @@ import {HotelService} from "../../../../../services/hotel.service";
 import {EventService} from "../../../../../services/event.service";
 import {ToastrService} from "ngx-toastr";
 import {
-  ButtonDirective,
+  ButtonDirective, CardBodyComponent, CardComponent, CardHeaderComponent,
   ColComponent,
   FormControlDirective,
   FormLabelDirective,
   FormSelectDirective,
-  RowComponent
+  RowComponent, TableDirective
 } from "@coreui/angular";
-import {NgForOf} from "@angular/common";
+import {DatePipe, NgForOf} from "@angular/common";
+import {IconDirective} from "@coreui/icons-angular";
 
 @Component({
   selector: 'app-hotel-event',
@@ -28,7 +29,13 @@ import {NgForOf} from "@angular/common";
     FormSelectDirective,
     NgForOf,
     ReactiveFormsModule,
-    ButtonDirective
+    ButtonDirective,
+    CardBodyComponent,
+    CardComponent,
+    CardHeaderComponent,
+    DatePipe,
+    TableDirective,
+    IconDirective
   ],
   templateUrl: './hotel-event.component.html',
   styleUrl: './hotel-event.component.scss'
@@ -40,10 +47,12 @@ export class HotelEventComponent implements OnInit{
   @Input() organizer_id!: number;
   rooms: any[] = [];
   hotels: any[] = [];
+  hotelsBooks: any[] = [];
   bookStatus: any[] = [];
   events: any[] = [];
   eventTypes: any[] = [];
-
+  hotelData:any
+  private error: null | undefined;
   constructor(
                  private allServe: AllServiceService,
                  private searchServe: SearchService,
@@ -55,6 +64,7 @@ export class HotelEventComponent implements OnInit{
 
   ) {
     this.hotelEvent = this.fb.group({
+      id:[''],
       event_no: [''],
       event_id: [''],
       event_type_id: [''],
@@ -84,7 +94,7 @@ export class HotelEventComponent implements OnInit{
   getBookStatus() {
     this.allServe.getBookStatus().subscribe(
       (response: any) => {
-        this.bookStatus = response.data;
+        this.bookStatus = response;
       },
       (error) => {
         console.error('Error fetching Book Status:', error);
@@ -111,6 +121,38 @@ export class HotelEventComponent implements OnInit{
       }
     );
   }
+  getHotelEventBook() {
+    this.eventService.getHotelEvent().subscribe(
+      (response: any) => {
+        this.hotelsBooks = response.data;
+      },
+      (error) => {
+        console.error('Error fetching Event:', error);
+      }
+    );
+  }
+  handleError(error: { error: null; }){
+    return  this.error=error.error;
+  }
+  updateHotelBook(){
+    this.formData = new FormData();
+    if (this.hotelEvent.valid) {
+
+      this.hotelData = this.hotelEvent.getRawValue();
+
+      this.eventService.updateHotelEvent(this.hotelData, this.hotelData.id).subscribe(
+        (response) => {
+          this.getHotelEventBook()
+          this.clearForm();
+        },
+        (error) => {
+          // Handle errors
+          this.handleError(error);
+        }
+      );
+    }
+  }
+
   clearForm() {
     this.hotelEvent.reset();
   }
@@ -128,6 +170,7 @@ export class HotelEventComponent implements OnInit{
     this.getBookStatus();
     this.getEventTypes();
     this.getEvent();
+    this.getHotelEventBook();
   }
   getRm() {
     this.allServe.getRoom().subscribe(
@@ -151,6 +194,47 @@ export class HotelEventComponent implements OnInit{
   }
 
   onSubmit(){
+    if (this.hotelEvent.valid) {
+      this.hotelData = this.hotelEvent.getRawValue();
 
+      this.eventService.submitHotelEvent(this.hotelData).subscribe(
+        (response: any) => {
+          this.getHotelEventBook();
+          this.toastr.success('Event Created Successfully', response.message,);
+          this.clearForm();
+        },
+        (error) => {
+          console.error('Error submitting event:', error);
+        }
+      )
+    }
+  }
+
+
+   deleteHotelBook(id:any) {
+     this.eventService.deleteHotelEvent(id).subscribe(
+       (data: any) => {
+         this.getHotelEventBook()
+       },
+       (error) => {
+         console.error('Error fetching Hotel Event:', error);
+       }
+     );
+  }
+
+  getHotelBookById(id:any) {
+    this.eventService.getHotelEventById(id).subscribe(
+      (data: any) => {
+        this.hotelEvent.patchValue({
+          ...data,
+          event_date: data.event_date
+            ? new Date(data.event_date).toISOString().split('T')[0]
+            : null
+        });
+      },
+      (error) => {
+        console.error('Error fetching hotel event:', error);
+      }
+    );
   }
 }

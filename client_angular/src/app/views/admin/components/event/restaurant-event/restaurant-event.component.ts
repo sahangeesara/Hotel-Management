@@ -9,10 +9,10 @@ import {
   FormGroup,
   FormControl,
   FormsModule,
-  ReactiveFormsModule,
+  ReactiveFormsModule, Validators,
 } from "@angular/forms";
 import {
-  ButtonDirective,
+  ButtonDirective, CardBodyComponent, CardComponent, CardHeaderComponent,
   ColComponent,
   FormControlDirective,
   FormDirective,
@@ -22,18 +22,21 @@ import {
   RowComponent,
   TableDirective
 } from "@coreui/angular";
-import {NgForOf} from "@angular/common";
+import {DatePipe, NgForOf} from "@angular/common";
 import {HotelService} from "../../../../../services/hotel.service";
+import {IconDirective} from "@coreui/icons-angular";
+import {update} from "lodash-es";
 
 @Component({
   selector: 'app-restaurant-event',
   standalone: true,
   imports: [FormControlDirective,
-    FormsModule, ColComponent, RowComponent, ReactiveFormsModule, FormSelectDirective, FormLabelDirective, NgForOf, ButtonDirective],
+    FormsModule, ColComponent, RowComponent, ReactiveFormsModule, FormSelectDirective, FormLabelDirective, NgForOf, ButtonDirective, CardBodyComponent, CardComponent, CardHeaderComponent, DatePipe, TableDirective, IconDirective],
   templateUrl: './restaurant-event.component.html',
   styleUrl: './restaurant-event.component.scss'
 })
 export class RestaurantEventComponent implements OnInit {
+
   organizers:any[] = [];
   restaurantEvent:FormGroup;
   formData = new FormData();
@@ -44,6 +47,9 @@ export class RestaurantEventComponent implements OnInit {
   bookStatus: any[] = [];
   events: any[] = [];
   eventTypes: any[] = [];
+  restaurantData:any;
+  restaurantEventBooks:any [] = [];
+  private error: null | undefined;
 
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
@@ -56,19 +62,20 @@ export class RestaurantEventComponent implements OnInit {
 
   ) {
     this.restaurantEvent = this.fb.group({
+      id:[''],
       event_no: [''],
-      event_id: [''],
-      event_type_id: [''],
-      event_date: [''],
-      start_time: [''],
-      end_time: [''],
-      passengers: [''],
-      hotel_id: [''],
-      room_id: [''],
-      section_id: [''],
+      event_id: ['',[Validators.required]],
+      event_type_id: ['',[Validators.required]],
+      event_date: ['',[Validators.required]],
+      start_time: ['',[Validators.required]],
+      end_time: ['',[Validators.required]],
+      passengers: ['',[Validators.required]],
+      hotel_id: ['',[Validators.required]],
+      room_id: ['',[Validators.required]],
+      section_id: ['',[Validators.required]],
       seating_preferences: [''],
-      organizer_id: [''],
-      book_status_id: [''],
+      organizer_id: ['',[Validators.required]],
+      book_status_id: ['',[Validators.required]],
       requests: [''],
       additional_services: [''],
     });
@@ -87,7 +94,7 @@ export class RestaurantEventComponent implements OnInit {
   getBookStatus() {
     this.allServe.getBookStatus().subscribe(
       (response: any) => {
-        this.bookStatus = response.data;
+        this.bookStatus = response;
       },
       (error) => {
         console.error('Error fetching Book Status:', error);
@@ -131,11 +138,23 @@ export class RestaurantEventComponent implements OnInit {
     this.getBookStatus();
     this.getEventTypes();
     this.getEvent();
+    this.getRestaurantEventBook();
   }
+
   getRm() {
     this.allServe.getRoom().subscribe(
       (response: any) => {
         this.rooms = response.data;
+      },
+      (error) => {
+        console.error('Error fetching rooms:', error);
+      }
+    );
+  }
+  getRestaurantEventBook() {
+    this.eventService.getRestaurantEvent().subscribe(
+      (response: any) => {
+        this.restaurantEventBooks = response.data;
       },
       (error) => {
         console.error('Error fetching rooms:', error);
@@ -165,6 +184,67 @@ export class RestaurantEventComponent implements OnInit {
   }
 
   onSubmit(){
+    this.restaurantData = this.restaurantEvent.getRawValue();
 
+    this.eventService.submitRestaurantEvent( this.restaurantData).subscribe(
+      (response: any) => {
+        this.getRestaurantEventBook()
+        this.toastr.success('Event Created Successfully',response.message,);
+        this.clearForm();
+      },
+      (error) => {
+        console.error('Error submitting event:', error);
+      }
+    )
   }
+
+  handleError(error: { error: null; }){
+    return  this.error=error.error;
+  }
+  updateRmBook(){
+    this.formData = new FormData();
+    if (this.restaurantEvent.valid) {
+
+      this.restaurantData = this.restaurantEvent.getRawValue();
+
+      this.eventService.updateRestaurantEvent(this.restaurantData, this.restaurantData.id).subscribe(
+        (response) => {
+          this.getRestaurantEventBook()
+          this.clearForm();
+        },
+        (error) => {
+          // Handle errors
+          this.handleError(error);
+        }
+      );
+    }
+  }
+  deleteRmBook(id: any) {
+    this.eventService.deleteRestaurantEvent(id).subscribe(
+      (data: any) => {
+        this.getRestaurantEventBook()
+      },
+      (error) => {
+        console.error('Error fetching Restaurant Event:', error);
+      }
+    );
+  }
+
+
+  getRmBookById(id: any) {
+    this.eventService.getRestaurantEventById(id).subscribe(
+      (data: any) => {
+        this.restaurantEvent.patchValue({
+          ...data,
+          event_date: data.event_date
+            ? new Date(data.event_date).toISOString().split('T')[0]
+            : null
+        });
+      },
+      (error) => {
+        console.error('Error fetching restaurant event:', error);
+      }
+    );
+  }
+
 }

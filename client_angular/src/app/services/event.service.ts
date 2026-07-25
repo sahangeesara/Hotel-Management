@@ -2,8 +2,11 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {TokenService} from "./token.service";
 import {EventEntity} from "../entities/EventEntity";
-import {EventTypeEntity} from "../entities/EventTypeEntity";
-import {Organizer} from "../entities/Organizer";
+import {EventTypeEntity} from "../entities/eventTypeEntity";
+import {Organizer} from "../entities/organizer";
+import {WeddingEvent} from "../entities/weddingEvent";
+import {Hotel} from "../entities/Hotel";
+import {RestaurantEvent} from "../entities/restaurantEvent";
 
 @Injectable({
   providedIn: 'root'
@@ -71,5 +74,56 @@ export class EventService {
   }
   submitOrganizer(data:any){
     return this.http.post<Organizer[]>(`${this.besUrl}/organizers`,data,this.getAuthHeaders());
+  }
+
+  //Wedding Event
+  getWeddingEvent(){
+    return this.http.get(`${this.besUrl}/weddingEvent`,this.getAuthHeaders());
+  }
+  getWeddingEventById(data:any){
+    return this.http.get(`${this.besUrl}/weddingEvent/`+data,this.getAuthHeaders());
+  }
+  deleteWeddingEvent(data:any){
+    return this.http.delete(`${this.besUrl}/weddingEvent/`+data,this.getAuthHeaders());
+  }
+  updateWeddingEvent(data:any, id:any){
+    return this.http.put(`${this.besUrl}/weddingEvent/${id}`,data,this.getAuthHeaders());
+  }
+  submitWeddingEvent(data:any){
+    return this.http.post<WeddingEvent[]>(`${this.besUrl}/weddingEvent`,data,this.getAuthHeaders());
+  }
+
+  //hotel Event
+  getHotelEvent(){
+    return this.http.get(`${this.besUrl}/hotelEvent`,this.getAuthHeaders());
+  }
+  getHotelEventById(data:any){
+    return this.http.get(`${this.besUrl}/hotelEvent/`+data,this.getAuthHeaders());
+  }
+  deleteHotelEvent(data:any){
+    return this.http.delete(`${this.besUrl}/hotelEvent/`+data,this.getAuthHeaders());
+  }
+  updateHotelEvent(data:any, id:any){
+    return this.http.put(`${this.besUrl}/hotelEvent/${id}`,data,this.getAuthHeaders());
+  }
+  submitHotelEvent(data:any){
+    return this.http.post<Hotel[]>(`${this.besUrl}/hotelEvent`,data,this.getAuthHeaders());
+  }
+
+  //restaurantEvent
+  getRestaurantEvent(){
+    return this.http.get(`${this.besUrl}/restaurantEvent`,this.getAuthHeaders());
+  }
+  getRestaurantEventById(data:any){
+    return this.http.get(`${this.besUrl}/restaurantEvent/`+data,this.getAuthHeaders());
+  }
+  deleteRestaurantEvent(data:any){
+    return this.http.delete(`${this.besUrl}/restaurantEvent/`+data,this.getAuthHeaders());
+  }
+  updateRestaurantEvent(data:any, id:any){
+    return this.http.put(`${this.besUrl}/restaurantEvent/${id}`,data,this.getAuthHeaders());
+  }
+  submitRestaurantEvent(data:any){
+    return this.http.post<RestaurantEvent[]>(`${this.besUrl}/restaurantEvent`,data,this.getAuthHeaders());
   }
 }

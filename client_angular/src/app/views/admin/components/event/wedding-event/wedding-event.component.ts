@@ -46,6 +46,7 @@ export class WeddingEventComponent implements OnInit {
   statuses: any[] = [];
   @Input() organizer_id!: number;
   weddingEvents: any[] = [];
+  weddingData: any;
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private searchServe: SearchService,
@@ -88,7 +89,7 @@ export class WeddingEventComponent implements OnInit {
   getBookStatus() {
     this.allServe.getBookStatus().subscribe(
       (response: any) => {
-        this.statuses = response.data;
+        this.statuses = response;
       },
       (error) => {
         console.error('Error fetching Book Status:', error);
@@ -116,8 +117,35 @@ export class WeddingEventComponent implements OnInit {
       }
     );
   }
-  onSubmit(){
 
+  getWeddingEventBook() {
+    this.eventService.getWeddingEvent().subscribe(
+      (response: any) => {
+        this.weddingEvents = response.data;
+      },
+      (error) => {
+        console.error('Error fetching rooms:', error);
+      }
+    );
+  }
+  clearForm() {
+    this.weddingForm.reset();
+  }
+  onSubmit(){
+    if (this.weddingForm.valid) {
+      this.weddingData = this.weddingForm.getRawValue();
+
+      this.eventService.submitWeddingEvent(this.weddingData).subscribe(
+        (response: any) => {
+          this.getWeddingEventBook()
+          this.toastr.success('Event Created Successfully', response.message,);
+          this.clearForm();
+        },
+        (error) => {
+          console.error('Error submitting event:', error);
+        }
+      )
+    }
   }
 
   ngOnInit(): void {
@@ -128,6 +156,7 @@ export class WeddingEventComponent implements OnInit {
     this.weddingForm.get('organizer_id')?.disable();
     this.weddingForm.get('event_no')?.disable();
     this.getOrganizer();
+    this.getWeddingEventBook();
     this.getBookStatus();
     this.getHotels();
     this.getRm();

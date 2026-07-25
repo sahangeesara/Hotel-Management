@@ -44,7 +44,7 @@ class TransportBooksController extends Controller
             'pickup_location' => 'required|string|max:255',
             'drop_location' => 'required|string|max:255',
             'pickup_date' => 'required|date',
-            'pickup_time' => 'required|date_format:H:i:s',
+            'pickup_time' => 'required|date_format:H:i',
             'requests' => 'required|string',
             'custom_duration' => 'nullable|string|max:255',
         ]);

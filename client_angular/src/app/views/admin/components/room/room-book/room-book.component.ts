@@ -344,10 +344,27 @@ export class RoomBookComponent implements OnInit{
     this.getRmBook();
   }
 
-  getRmBookById(id:any) {
+  getRmBookById(id: any) {
     this.allServe.getRoomBookById(id).subscribe(
       (response: any) => {
-       this.rmBookForm.patchValue(response);
+
+        this.rmBookForm.patchValue({
+          ...response,
+          booking_Date: response.booking_Date
+            ? new Date(response.booking_Date).toISOString().split('T')[0]
+            : null,
+
+          cancel_Date: response.cancel_Date
+            ? new Date(response.cancel_Date).toISOString().split('T')[0]
+            : null
+        });
+
+        // Load Booking Rooms
+        this.booksRooms = response.booking_rooms.map((room: any) => ({
+          room_category_id: room.room_category_id,
+          name: room.room_category?.name,
+          no_of_rooms: room.no_of_rooms
+        }));
 
       },
       (error) => {
