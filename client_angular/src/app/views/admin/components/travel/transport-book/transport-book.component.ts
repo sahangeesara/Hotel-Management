@@ -51,12 +51,9 @@ export class TransportBookComponent implements OnInit {
   bookingData:any;
 
 
-  constructor(   private route:ActivatedRoute,
-                 private allServe: AllServiceService,
-                 private hotelServes:HotelService,
+  constructor(  private allServe: AllServiceService,
                  private travelServes:TravelBookingService,
                  private searchServe: SearchService,
-                 private router:Router,
                  private toastr: ToastrService,
                  private fb: FormBuilder,
 
