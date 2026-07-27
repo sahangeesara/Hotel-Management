@@ -42,7 +42,6 @@ Authentication and authorization are secured using **JWT (JSON Web Token)**.
 
 * Tour packages
 * Transport bookings
-* Flight bookings
 * Guides management
 
 ### 🍽️ Restaurant Management
