@@ -142,6 +142,42 @@ class GuestController extends Controller
         return response()->json(['guestsCount' =>$guestsCount]);
     }
 
+    public function searchGuest(Request $request)
+    {
+        try {
+            $guests = Guest::with('guide','gender','country','countryCode')
+                ->where('is_active', true)
+
+                ->when($request->filled('name'), function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->name . '%');
+                })
+
+                ->when($request->filled('created_at'), function ($query) use ($request) {
+                    $query->where('created_at', $request->gDate);
+                })
+
+                ->when($request->filled('country_id'), function ($query) use ($request) {
+                    $query->where('country_id', $request->country_id);
+                })
+
+                ->when($request->filled('gender_id'), function ($query) use ($request) {
+                    $query->where('gender_id', $request->gender_id);
+                })
+
+                ->get();
+
+            return response()->json($guests);
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'message' => 'An error occurred while retrieving guests.'
+            ], 500);
+        }
+    }
+
+
     public function getGuide(){
         try {
             $guide = Guides::with('gender')
@@ -157,38 +193,6 @@ class GuestController extends Controller
         }
     }
 
-    public function searchByDate(String $gDate){
-
-        try {
-            $guest = Guest::with(['gender', 'guide'])
-                ->whereDate('created_at', $gDate)
-                ->where('is_active', true)
-                ->get();
-
-            return response()->json($guest);
-
-        } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving room book.'], 500);
-        }
-    }
-    public function searchGuestByGender(string $gen_id)
-    {
-        try {
-            $guest = Guest::with('gender', 'guide')
-                ->where('gender_id', $gen_id)
-                ->where('is_active', true)
-                ->get();
-
-            return response()->json($guest);
-        } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving employees.'], 500);
-        }
-
-    }
     /**
      * Update the specified resource in storage.
      */

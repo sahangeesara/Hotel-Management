@@ -1,7 +1,8 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {
-    ButtonDirective, ColComponent, FormControlDirective, FormLabelDirective, FormSelectDirective,
-    RowComponent, TableDirective
+  ButtonDirective, ColComponent, FormControlDirective, FormDirective, FormLabelDirective, FormSelectDirective,
+  FormTextDirective,
+  RowComponent, TableDirective
 } from "@coreui/angular";
 import {NgForOf, NgIf} from "@angular/common";
 import {AllServiceService} from "../../../../../services/all-service.service";
@@ -14,19 +15,21 @@ import {CuntryService} from "../../../../../services/cuntry.service";
 @Component({
   selector: 'app-customer-view',
   standalone: true,
-    imports: [
-        IconDirective,
-        ButtonDirective,
-        NgIf,
-        TableDirective,
-        ColComponent,
-        FormControlDirective,
-        FormLabelDirective,
-        FormSelectDirective,
-        NgForOf,
-        ReactiveFormsModule,
-        RowComponent
-    ],
+  imports: [
+    IconDirective,
+    ButtonDirective,
+    NgIf,
+    TableDirective,
+    ColComponent,
+    FormControlDirective,
+    FormLabelDirective,
+    FormSelectDirective,
+    NgForOf,
+    ReactiveFormsModule,
+    RowComponent,
+    FormDirective,
+    FormTextDirective
+  ],
   templateUrl: './customer-view.component.html',
   styleUrl: './customer-view.component.scss'
 })
@@ -35,6 +38,7 @@ export class CustomerViewComponent implements OnInit{
   customers: any[] = [];
   customGenders: any[] = [];
   customerForm:FormGroup;
+  custSearchForm:FormGroup;
   public error=null;
   customData:any;
   countryCodes: any[] = [];
@@ -59,6 +63,12 @@ export class CustomerViewComponent implements OnInit{
       country_id: ['', [Validators.required]],
       cuntry_code_id: ['', [Validators.required]],
       city: ['', [Validators.required]],
+    });
+
+    this.custSearchForm = this.fb.group({
+      name: [''],
+      gender_id:[''],
+      country_id:[''],
     });
   }
 
@@ -111,6 +121,43 @@ export class CustomerViewComponent implements OnInit{
       }
     );
 
+  }
+
+  search() {
+    const filters = {
+      name: this.custSearchForm.get('name')?.value?.trim() || '',
+      country_id: this.custSearchForm.get('country_id')?.value || '',
+      gender_id: this.custSearchForm.get('gender_id')?.value || ''
+    };
+
+    if (!filters.name && !filters.country_id && !filters.gender_id) {
+      this.getCustom();
+      return;
+    }
+
+    this.searchServe.getCustomer(filters).subscribe({
+      next: (data: any) => {
+        this.customers = data;
+      },
+      error: (error) => {
+        console.error('Error fetching employees:', error);
+      }
+    });
+  }
+
+  clearSearchForm() {
+  this.custSearchForm.reset();
+    this.getCustom();
+    this.getCountryCode();
+    this.getCountries();
+    this.getCustomGen();
+    this.custSearchForm.patchValue(
+      {
+        name: '',
+        gender_id: '',
+        country_id: '',
+      }
+    )
   }
 
   onSubmit() {

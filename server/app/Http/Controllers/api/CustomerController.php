@@ -103,6 +103,37 @@ class CustomerController extends Controller
             return response()->json(['message' => 'An error occurred while retrieving customer.'], 500);
         }
     }
+    public function searchCustomer(Request $request)
+    {
+        try {
+            $customers = Customer::with('gender','countryCode','country')
+                ->where('is_active', true)
+
+                ->when($request->filled('name'), function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->name . '%');
+                })
+
+                ->when($request->filled('country_id'), function ($query) use ($request) {
+                    $query->where('country_id', $request->country_id);
+                })
+
+                ->when($request->filled('gender_id'), function ($query) use ($request) {
+                    $query->where('gender_id', $request->gender_id);
+                })
+
+                ->get();
+
+            return response()->json($customers);
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'message' => 'An error occurred while retrieving customers.'
+            ], 500);
+        }
+    }
+
 
     public function countCustomer()
     {

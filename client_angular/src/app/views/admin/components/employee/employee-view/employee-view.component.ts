@@ -81,70 +81,27 @@ export class EmployeeViewComponent implements OnInit{
   get empSearchTypeField(): FormControl {
     return this.empSearchForm.controls['employee_type_id'] as FormControl;
   }
-
-  // search() {
-  //   const filters: { name?: any; gender?: any; type?: any } = {};
-  //
-  //   if (this.empSearchNameField.value) {
-  //     filters.name = this.empSearchNameField.value;
-  //   }
-  //   if (this.empSearchGenderField.value) {
-  //     filters.gender = this.empSearchGenderField.value;
-  //   }
-  //   if (this.empSearchTypeField.value) {
-  //     filters.type = this.empSearchTypeField.value;
-  //   }
-  //
-  //   this.searchServe.getEmployees(filters).subscribe(
-  //     (data: any) => { this.employees = data; },
-  //     (error) => { console.error('Error fetching employees:', error); }
-  //   );
-  // }
-
-
   search() {
-    let s_name = this.empSearchNameField.value;
-    let s_gender = this.empSearchGenderField.value;
-    let s_type = this.empSearchTypeField.value;
+    const filters = {
+      name: this.empSearchNameField.value?.trim() || '',
+      employee_type_id: this.empSearchTypeField.value || '',
+      gender_id: this.empSearchGenderField.value || ''
+    };
 
-    if(s_type && s_gender && !(s_name)){
-      this.searchServe.getEmployeeByTypeAndGender(s_type,s_gender).subscribe(
-        (data: any) => { this.employees = data; },
-        (error) => {console.error('Error fetchingEmployee Type and Gender:', error);});
-    }
-    else if(s_name && s_gender && !(s_type)){
-      this.searchServe.getEmployeeByNameAndGender(s_name,s_gender).subscribe(
-        (data: any) => {this.employees = data; },
-        (error) => {console.error('Error fetching Employee name and Gender:', error); });
-    }
-    else if(s_name && s_type && !(s_gender)){
-      this.searchServe.getEmployeeByNameAndType(s_name,s_type).subscribe(
-        (data: any) => {this.employees = data; },
-        (error) => {console.error('Error fetching Employee name and Type:', error); });
-    }
-    else if(s_name && !(s_type) && !(s_gender)){
-      this.searchServe.getEmployeeByName(s_name).subscribe(
-        (data: any) => {this.employees = data; },
-        (error) => {console.error('Error fetching Employee name:', error); });
-    }
-    else if(s_gender && !(s_name) && !(s_type) ){
-      this.searchServe.getEmployeeByGender(s_gender).subscribe(
-        (data: any) => { this.employees = data; },
-        (error) => {console.error('Error fetching Employee gender:', error);});
-    }
-    else if(s_type && !(s_name) && !(s_gender)){
-      this.searchServe.getEmployeeByType(s_type).subscribe(
-        (data: any) => { this.employees = data; },
-        (error) => {console.error('Error fetching Employee Type:', error);});
-    }
-    else if(s_name && s_gender && s_type){
-      this.searchServe.getEmployeeByNameAndTypeAndGender(s_name,s_type,s_gender).subscribe(
-        (data: any) => {this.employees = data; },
-        (error) => {console.error('Error fetching Employee name and Type and Gender:', error); });
-    }
-    else if(!(s_name) && !(s_gender) && !(s_type)){
+    // If no filters, load all employees
+    if (!filters.name && !filters.employee_type_id && !filters.gender_id) {
       this.getEmp();
+      return;
     }
+
+    this.searchServe.getEmployees(filters).subscribe({
+      next: (data: any) => {
+        this.employees = data;
+      },
+      error: (error) => {
+        console.error('Error fetching employees:', error);
+      }
+    });
   }
 
   clearSearchForm() {

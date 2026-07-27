@@ -1,6 +1,7 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {
-  ButtonDirective, ColComponent, FormDirective, FormLabelDirective, FormSelectDirective,
+  ButtonDirective, ColComponent, FormControlDirective, FormDirective, FormLabelDirective, FormSelectDirective,
+  FormTextDirective,
   ModalBodyComponent,
   ModalComponent,
   ModalFooterComponent, ModalHeaderComponent, ModalTitleDirective, RowComponent,
@@ -13,6 +14,7 @@ import {GuestUpdateComponent} from "../guest-update/guest-update.component";
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
 import {SearchService} from "../../../../../services/search.service";
+import {CuntryService} from "../../../../../services/cuntry.service";
 
 @Component({
   selector: 'app-guest-view',
@@ -36,12 +38,14 @@ import {SearchService} from "../../../../../services/search.service";
     ReactiveFormsModule,
     FormDirective,
     FormSelectDirective,
-    NgForOf
+    NgForOf,
+    FormControlDirective,
+    FormTextDirective
   ],
   templateUrl: './guest-view.component.html',
   styleUrl: './guest-view.component.scss'
 })
-export class GuestViewComponent {
+export class GuestViewComponent implements OnInit{
   @ViewChild(GuestUpdateComponent) guestUpdateComponent : GuestUpdateComponent | undefined;
 
   public visible = false;
@@ -50,26 +54,25 @@ export class GuestViewComponent {
   guests: any[] = [];
   searchGuestForm:FormGroup
   guestGenders: any[] = [];
+  countries: any[] = [];
 
   constructor(  private allServe: AllServiceService,
                 private fb: FormBuilder,
                 private searchServe: SearchService,
+                private countryService: CuntryService
 
   ) {
 
     this.searchGuestForm  = this.fb.group({
       search_Date: [''],
       gender_id: [''],
+      country_id: [''],
+      name: [''],
 
     });
   }
 
-  get searchDateField(): FormControl {
-    return this.searchGuestForm.controls['search_Date'] as FormControl;
-  }
-  get searchGuestGenderField(): FormControl {
-    return this.searchGuestForm.controls['gender_id'] as FormControl;
-  }
+
   getGuest() {
     this.allServe.getGuests().subscribe(
       (response: any) => {
@@ -100,7 +103,16 @@ export class GuestViewComponent {
   handleLiveDemoChange(event: any) {
     this.visible = event;
   }
-
+  getCountries() {
+    this.countryService.getNationality().subscribe(
+      (response: any) => {
+        this.countries = response.data;
+      },
+      (error) => {
+        console.error('Error fetching Guest Gender:', error);
+      }
+    );
+  }
   getShow(id:any) {
     this.allServe.getGuestById(id).subscribe(
       (data: any) => {
@@ -114,34 +126,37 @@ export class GuestViewComponent {
       }
     );
   }
-  formatDate(obj:any){
-    return obj['year']+'-'+obj['month']+'-'+obj['day']
-  }
-  search() {
-    let val = this.searchDateField.value;
-    let g_gender_id = this.searchGuestGenderField.value;
 
-    if (val) {
-      let date =this.formatDate(val);
-      // Only date is provided, use the date-based search
-      this.searchServe.getGuestByDate(date).subscribe(
-        (data: any) => {
-          this.guests = data;
-        },
-        (error) => {
-          console.error('Error fetching rooms Book:', error);
-        }
-      );
+  search() {
+    const filters = {
+      name: this.searchGuestForm.get('name')?.value?.trim() || '',
+      country_id: this.searchGuestForm.get('country_id')?.value || '',
+      gender_id: this.searchGuestForm.get('gender_id')?.value || '',
+      search_Date: this.searchGuestForm.get('search_Date')?.value || ''
+    };
+
+    if (!filters.name && !filters.country_id && !filters.gender_id && !filters.search_Date ) {
+      this.getGuest();
+      return;
     }
-    else if(g_gender_id && !(val)){
-      this.searchServe.getGuestByGender(g_gender_id).subscribe(
-        (data: any) => { this.guests = data; },
-        (error) => {console.error('Error fetching Guest gender:', error);});
-    }
+
+    this.searchServe.getGuestData(filters).subscribe({
+      next: (data: any) => {
+        this.guests = data;
+      },
+      error: (error) => {
+        console.error('Error fetching employees:', error);
+      }
+    });
   }
   clearSearchForm() {
-    this.searchDateField.setValue("");
-    this.searchGuestGenderField.setValue("Select a Gender");
+    this.searchGuestForm.reset();
+    this.searchGuestForm.patchValue(  {
+      name: '',
+      gender_id: '',
+      country_id: '',
+      search_Date: '',
+    });
     this.getGuest();
   }
   getGuestGen() {
@@ -160,10 +175,9 @@ export class GuestViewComponent {
   ngOnInit() {
     this.getGuest();
     this.getGuestGen();
+    this.getCountries();
   }
-  objectValues(obj: any): any[] {
-    return Object.values(obj);
-  }
+
 
 
 }

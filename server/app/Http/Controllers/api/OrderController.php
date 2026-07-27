@@ -31,7 +31,7 @@ class OrderController extends Controller
                 ->orderBy('created_at',"DESC")
                 ->get();
 
-            return response()->json($orders);
+            return response()->json([$orders,$orderItems]);
 
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
@@ -96,15 +96,12 @@ class OrderController extends Controller
                     }
                     $food->save();
                 }
-//                broadcast(new OrderSuccess($order->id));
                 return json_encode($order);
-                }else{
-                    return (response()->json(['error' => 'Date not valid.']));
                 }
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving order.'], 500);
+            return response()->json(['message' => 'An error occurred while retrieving order add.'], 500);
         }
     }
 
@@ -191,8 +188,6 @@ class OrderController extends Controller
                     $food->save();
                 }
                 return json_encode($order);
-            }else{
-                return (response()->json(['error' => 'Date not valid.']));
             }
         } catch (\Exception $e) {
             // Log the error and return an appropriate response

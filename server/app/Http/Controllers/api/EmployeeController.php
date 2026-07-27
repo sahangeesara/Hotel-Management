@@ -88,115 +88,35 @@ class EmployeeController extends Controller
         }
     }
 
-    public function searchEmployeeByName(string $eName){
-        try {
-            $employees = Employees::with('employeeType','gender')
-                ->where('name', 'like', '%' . $eName . '%')
-                ->where('is_active', true)
-                ->get();
-
-            return response()->json($employees);
-        } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving employees.'], 500);
-        }
-    }
-    public function searchEmployeeByNameAndGender(string $eName,string $gen_id){
-        try {
-            $employees = Employees::with('employeeType','gender')
-                ->where('name', 'like', '%' . $eName . '%')
-                ->where('gender_id', $gen_id)
-                ->where('is_active', true)
-                ->get();
-
-            return response()->json($employees);
-        } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving employees.'], 500);
-        }
-    }
-    public function searchEmployeeByNameAndType(string $eName,string $type_id){
-        try {
-            $employees = Employees::with('employeeType','gender')
-                ->where('name', 'like', '%' . $eName . '%')
-                ->where('employee_type_id', $type_id)
-                ->where('is_active', true)
-                ->get();
-
-            return response()->json($employees);
-        } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving employees.'], 500);
-        }
-    }
-    public function searchEmployeeByNameAndTypeAndGender(string $eName,string $type_id,string $gen_id){
-        try {
-            $employees = Employees::with('employeeType','gender')
-                ->where('name', 'like', '%' . $eName . '%')
-                ->where('employee_type_id', $type_id)
-                ->where('gender_id', $gen_id)
-                ->where('is_active', true)
-                ->get();
-
-            return response()->json($employees);
-        } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving employees.'], 500);
-        }
-    }
-    public function searchEmployeeByGender(string $gen_id)
+    public function searchEmployees(Request $request)
     {
         try {
-            $employees = Employees::with('employeeType', 'gender')
-                ->where('gender_id', $gen_id)
+            $employees = Employees::with(['employeeType', 'gender'])
                 ->where('is_active', true)
+
+                ->when($request->filled('name'), function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->name . '%');
+                })
+
+                ->when($request->filled('employee_type_id'), function ($query) use ($request) {
+                    $query->where('employee_type_id', $request->employee_type_id);
+                })
+
+                ->when($request->filled('gender_id'), function ($query) use ($request) {
+                    $query->where('gender_id', $request->gender_id);
+                })
+
                 ->get();
 
             return response()->json($employees);
+
         } catch (\Exception $e) {
-            // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving employees.'], 500);
+
+            return response()->json([
+                'message' => 'An error occurred while retrieving employees.'
+            ], 500);
         }
-
-    }
-
-    public function searchEmployeeByEmType(string $type_id)
-    {
-        try {
-            $employees = Employees::with('employeeType', 'gender')
-                ->where('employee_type_id', $type_id)
-                ->where('is_active', true)
-                ->get();
-
-            return response()->json($employees);
-        } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving employees.'], 500);
-        }
-
-    }
-    public function searchEmployeeByEmTypeAndGender(string $type_id,string $gen_id)
-    {
-        try {
-            $employees = Employees::with('employeeType', 'gender')
-                ->where('employee_type_id', $type_id)
-                ->where('gender_id', $gen_id)
-                ->where('is_active', true)
-                ->get();
-
-            return response()->json($employees);
-        } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving employees.'], 500);
-        }
-
     }
         /**
      * Update the specified resource in storage.

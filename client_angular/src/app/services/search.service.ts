@@ -31,26 +31,30 @@ export class SearchService {
     return this.http.get<RoomBook>(`${this.besUrl}/roomBookByDateAndRoom/${id}/${date}`, this.getAuthHeaders());
   }
 
-  //Employee
-  getEmployeeByName(data:any){return this.http.get(`${this.besUrl}/employeesByName/${data}`, this.getAuthHeaders());}
-  getEmployeeByGender(data:any){return this.http.get(`${this.besUrl}/employeesByGender/${data}`, this.getAuthHeaders());}
-  getEmployeeByType(data:any){return this.http.get(`${this.besUrl}/employeesByType/${data}`,this.getAuthHeaders());}
-  getEmployeeByTypeAndGender(type_id:any,gen_id:any){return this.http.get(`${this.besUrl}/employeesByTypeAndGender/${type_id}/${gen_id}`,this.getAuthHeaders());}
-  getEmployeeByNameAndGender(e_name:any,gen_id:any){return this.http.get(`${this.besUrl}/employeesByNameAndGender/${e_name}/${gen_id}`,this.getAuthHeaders());}
-  getEmployeeByNameAndType(e_name:any,type_id:any){return this.http.get(`${this.besUrl}/employeesByNameAndType/${e_name}/${type_id}`,this.getAuthHeaders());}
-  getEmployeeByNameAndTypeAndGender(e_name:any,type_id:any,gen_id:any){return this.http.get(`${this.besUrl}/employeesByNameAndType/${e_name}/${type_id}/${gen_id}`,this.getAuthHeaders());}
+  getEmployees(filters: {
+    name?: string;
+    employee_type_id?: number;
+    gender_id?: number;
+  }) {
+    const params: any = {};
 
-  // getEmployees(filters: { name?: any; gender?: any; type?: any }) {
-  //   let queryParams = [];
-  //
-  //   if (filters.name) queryParams.push(`name=${filters.name}`);
-  //   if (filters.gender) queryParams.push(`gender=${filters.gender}`);
-  //   if (filters.type) queryParams.push(`type=${filters.type}`);
-  //
-  //   const queryString = queryParams.length ? `?${queryParams.join('&')}` : '';
-  //
-  //   return this.http.get(`${this.besUrl}/employees${queryString}`, this.getAuthHeaders());
-  // }
+    if (filters.name) {
+      params.name = filters.name;
+    }
+
+    if (filters.employee_type_id) {
+      params.employee_type_id = filters.employee_type_id;
+    }
+
+    if (filters.gender_id) {
+      params.gender_id = filters.gender_id;
+    }
+
+    return this.http.get(`${this.besUrl}/employees/search`, {
+      ...this.getAuthHeaders(),
+      params
+    });
+  }
 
 
 
@@ -69,6 +73,59 @@ export class SearchService {
 
 
   //Customer Search/Count
+
+  getCustomer(filters: {
+    name?: string;
+    country_id?: number;
+    gender_id?: number;
+  }) {
+    const params: any = {};
+
+    if (filters.name) {
+      params.name = filters.name;
+    }
+
+    if (filters.country_id) {
+      params.country_id = filters.country_id;
+    }
+
+    if (filters.gender_id) {
+      params.gender_id = filters.gender_id;
+    }
+
+    return this.http.get(`${this.besUrl}/customer/search`, {
+      ...this.getAuthHeaders(),
+      params
+    });
+  }
+  getGuestData(filters: {
+    name?: string;
+    country_id?: number;
+    gender_id?: number;
+    search_Date?: string;
+  }) {
+    const params: any = {};
+
+    if (filters.name) {
+      params.name = filters.name;
+    }
+
+    if (filters.country_id) {
+      params.country_id = filters.country_id;
+    }
+
+    if (filters.gender_id) {
+      params.gender_id = filters.gender_id;
+    }
+    if (filters.search_Date) {
+      params.search_Date = filters.search_Date;
+    }
+
+    return this.http.get(`${this.besUrl}/guest/search`, {
+      ...this.getAuthHeaders(),
+      params
+    });
+  }
 
   getAthProfile(){
     return this.http.get(`${this.besUrl}/authProfile`,this.getAuthHeaders());

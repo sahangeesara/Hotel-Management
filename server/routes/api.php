@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\api\AirlinesController;
 use App\Http\Controllers\api\BookStatusController;
 use App\Http\Controllers\api\CountryCodesController;
 use App\Http\Controllers\api\CurrenciesController;
@@ -10,9 +9,6 @@ use App\Http\Controllers\api\EmployeeController;
 use App\Http\Controllers\api\EmployeeTypeController;
 use App\Http\Controllers\api\EventController;
 use App\Http\Controllers\api\EventTypesController;
-use App\Http\Controllers\api\FlightBooksController;
-use App\Http\Controllers\api\FlightClassesController;
-use App\Http\Controllers\api\FlightController;
 use App\Http\Controllers\api\FoodItemController;
 use App\Http\Controllers\api\FoodStatusController;
 use App\Http\Controllers\api\GenderController;
@@ -47,7 +43,6 @@ use App\Http\Controllers\api\WeddingEventsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\ResetPasswordController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -60,10 +55,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
-//
+
 
 // Public routes (No authentication required)
     Route::post('login', [AuthController::class, 'login']);
@@ -87,8 +79,8 @@ Route::middleware(['auth:api'])->group(function () {
 
     // Guest
     Route::get('countGuest', [GuestController::class, 'countGuest']);
-    Route::get('guestByDate/{date}', [GuestController::class, 'searchByDate']);
-    Route::get('guestByGender/{gen_id}', [GuestController::class, 'searchGuestByGender']);
+    Route::get('/guest/search', [GuestController::class, 'searchGuest']);
+
 
     // Room Booking
     Route::get('roomBookByDate/{date}', [RoomBookController::class, 'searchByDate']);
@@ -96,16 +88,12 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('roomBookByDateAndRoom/{r_id}/{date}', [RoomBookController::class, 'searchByDateAndRoom']);
 
     // Employees
-    Route::get('employeesByName/{e_name}', [EmployeeController::class, 'searchEmployeeByName']);
-    Route::get('employeesByGender/{gen_id}', [EmployeeController::class, 'searchEmployeeByGender']);
-    Route::get('employeesByType/{type_id}', [EmployeeController::class, 'searchEmployeeByEmType']);
-    Route::get('employeesByTypeAndGender/{type_id}/{gen_id}', [EmployeeController::class, 'searchEmployeeByEmTypeAndGender']);
-    Route::get('employeesByNameAndGender/{e_name}/{gen_id}', [EmployeeController::class, 'searchEmployeeByNameAndGender']);
-    Route::get('employeesByNameAndType/{e_name}/{type_id}', [EmployeeController::class, 'searchEmployeeByNameAndType']);
-
+    Route::get('/employees/search', [EmployeeController::class, 'searchEmployees']);
     //Customer
 
     Route::get('countCustomer', [CustomerController::class, 'countCustomer']);
+    Route::get('/customer/search', [CustomerController::class, 'searchCustomer']);
+
 
     //Order
     Route::get('countOrder', [OrderController::class, 'countOrder']);
