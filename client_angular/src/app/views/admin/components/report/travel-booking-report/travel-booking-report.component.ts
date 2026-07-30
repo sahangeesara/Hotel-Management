@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChartjsComponent } from '@coreui/angular-chartjs';
 import { CardComponent, CardBodyComponent, CardHeaderComponent, ColComponent, RowComponent } from '@coreui/angular';
+import {ReportService} from "../../../../../services/report.service";
 
 @Component({
   selector: 'app-travel-booking-report',
@@ -17,48 +18,33 @@ export class TravelBookingReportComponent implements OnInit {
   pieChartData: any;
   pieChartOptions: any;
 
+  constructor(private reportService: ReportService) {}
+
   ngOnInit(): void {
-    // Line chart for trend over time
-    this.lineChartData = {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      datasets: [
-        {
-          label: 'Cultural & Heritage Tour',
-          data: [35, 40, 45, 50, 55, 60, 65, 70, 68, 60, 50, 62],
-          borderColor: 'rgb(54, 162, 235)',
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          tension: 0.4
-        },
-        {
-          label: 'Wildlife & Safari Tour',
-          data: [30, 35, 40, 45, 50, 55, 60, 65, 63, 55, 45, 58],
-          borderColor: 'rgb(255, 99, 132)',
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          tension: 0.4
-        },
-        {
-          label: 'Beach & Coastal Tour',
-          data: [20, 25, 30, 35, 40, 45, 50, 55, 52, 45, 38, 48],
-          borderColor: 'rgb(75, 192, 192)',
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-          tension: 0.4
-        },
-        {
-          label: 'City Sightseeing',
-          data: [10, 15, 20, 25, 30, 35, 40, 45,42, 35,28, 38],
-          borderColor: 'rgb(11,177,50)',
-          backgroundColor: 'rgba(27,252,27,0.7)',
-          tension: 0.4
-        }
-      ]
-    };
+
+    this.loadTravelTrend();
+
+    this.loadVehicleChart();
+
+  }
+
+  loadTravelTrend() {
+
+    this.reportService.travelBookingTrendReport()
+      .subscribe((res: any) => {
+
+        this.lineChartData = {
+          labels: res.labels,
+          datasets: res.datasets
+        };
+
+      });
 
     this.lineChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
         legend: {
-          display: true,
           position: 'top'
         },
         title: {
@@ -83,40 +69,45 @@ export class TravelBookingReportComponent implements OnInit {
       }
     };
 
-    // Pie chart for breakdown by type
-    this.pieChartData = {
-      labels: ['Wildlife & Safari Tour', 'Cultural & Heritage Tour', 'Beach & Coastal Tour', 'City Sightseeing'],
-      datasets: [
-        {
-          data: [670, 625, 505,400],
-          backgroundColor: [
-            'rgba(54, 162, 235, 0.8)',
-            'rgba(255, 99, 132, 0.8)',
-            'rgba(75, 192, 192, 0.8)',
-            'rgba(173,227,80,0.8)'
-          ],
-          borderColor: [
-            'rgb(54, 162, 235)',
-            'rgb(255, 99, 132)',
-            'rgb(75, 192, 192)',
-            'rgb(0,249,95)'
-          ],
-          borderWidth: 1
-        }
-      ]
-    };
+  }
+
+
+  loadVehicleChart() {
+
+    this.reportService.transportVehicleReport()
+      .subscribe((res: any) => {
+
+        this.pieChartData = {
+          labels: res.labels,
+          datasets: [
+            {
+              data: res.data,
+              backgroundColor: [
+                '#36A2EB',
+                '#FF6384',
+                '#4BC0C0',
+                '#FFCE56',
+                '#9966FF',
+                '#FF9F40',
+                '#8BC34A',
+                '#795548'
+              ]
+            }
+          ]
+        };
+
+      });
 
     this.pieChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
         legend: {
-          display: true,
           position: 'right'
         },
         title: {
           display: true,
-          text: 'Travel Bookings by Type'
+          text: 'Transport Bookings by Vehicle Type'
         }
       }
     };

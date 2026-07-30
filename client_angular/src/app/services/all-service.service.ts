@@ -367,6 +367,26 @@ import {BookStatusEntity} from "../entities/bookStatusEntity";
   submitBookStatus(data:any){
     return this.http.post<BookStatusEntity[]>(`${this.besUrl}/bookStatus`,data,this.getAuthHeaders());
   }
+
+  downloadRoomBookPDF() {
+    return this.http.get(
+      `${this.besUrl}/room-book/pdf`,
+      {
+        headers: this.getAuthHeaders().headers,
+        responseType: 'blob'
+      }
+    );
+  }
+
+  downloadRoomBookExcel() {
+    return this.http.get(
+      `${this.besUrl}/room-book/excel`,
+      {
+        ...this.getAuthHeaders(),
+        responseType: 'blob'
+      }
+    );
+  }
 }
 
 

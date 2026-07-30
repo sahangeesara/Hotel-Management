@@ -38,9 +38,14 @@ class FoodItem extends Model
         return $this->belongsTo(Food_status::class,'food_status_id');
     }
 
-    protected function getImageUrlAttribute()
+    protected function getImageUrlAttribute(): \Illuminate\Foundation\Application|string|\Illuminate\Contracts\Routing\UrlGenerator|\Illuminate\Contracts\Foundation\Application
     {
         return $this->attributes['image_url'] = url(Storage::url($this->image));
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Item_Category::class, 'item_category_id');
     }
 
 }

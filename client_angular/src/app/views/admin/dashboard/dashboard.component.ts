@@ -3,21 +3,17 @@ import { Component, DestroyRef, effect, inject, OnInit, Renderer2, signal, Writa
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ChartOptions } from 'chart.js';
 import {
-  AvatarComponent,
+
   ButtonDirective,
   ButtonGroupComponent,
   CardBodyComponent,
   CardComponent,
   CardFooterComponent,
-  CardHeaderComponent,
-  ColComponent,
+    ColComponent,
   FormCheckLabelDirective,
   GutterDirective,
-  ProgressBarDirective,
   ProgressComponent,
-  RowComponent,
-  TableDirective,
-  TextColorDirective
+  RowComponent
 } from '@coreui/angular';
 import { ChartjsComponent } from '@coreui/angular-chartjs';
 import { IconDirective } from '@coreui/icons-angular';
@@ -42,7 +38,7 @@ interface IUser {
   templateUrl: 'dashboard.component.html',
   styleUrls: ['dashboard.component.scss'],
   standalone: true,
-  imports: [WidgetsDropdownComponent, TextColorDirective, CardComponent, CardBodyComponent, RowComponent, ColComponent, ButtonDirective, IconDirective, ReactiveFormsModule, ButtonGroupComponent, FormCheckLabelDirective, ChartjsComponent, NgStyle, CardFooterComponent, GutterDirective, ProgressBarDirective, ProgressComponent, CardHeaderComponent, TableDirective, AvatarComponent]
+  imports: [WidgetsDropdownComponent, CardComponent, CardBodyComponent, RowComponent, ColComponent, ButtonDirective, IconDirective, ReactiveFormsModule, ButtonGroupComponent, FormCheckLabelDirective, ChartjsComponent, NgStyle, CardFooterComponent, GutterDirective, ProgressComponent]
 })
 export class DashboardComponent implements OnInit {
 
@@ -53,7 +49,7 @@ export class DashboardComponent implements OnInit {
 
   public users: IUser[] = [
     {
-      name: 'Yiorgos Avraamu',
+      name: 'Yorgos Avram',
       state: 'New',
       registered: 'Jan 1, 2021',
       country: 'Us',
@@ -66,7 +62,7 @@ export class DashboardComponent implements OnInit {
       color: 'success'
     },
     {
-      name: 'Avram Tarasios',
+      name: 'Avram Anastasios',
       state: 'Recurring ',
       registered: 'Jan 1, 2021',
       country: 'Br',
@@ -92,7 +88,7 @@ export class DashboardComponent implements OnInit {
       color: 'warning'
     },
     {
-      name: 'Enéas Kwadwo',
+      name: 'Enéas Roadwork',
       state: 'Sleep',
       registered: 'Jan 1, 2021',
       country: 'Fr',
@@ -105,7 +101,7 @@ export class DashboardComponent implements OnInit {
       color: 'danger'
     },
     {
-      name: 'Agapetus Tadeáš',
+      name: 'Iapetus Tadeáš',
       state: 'New',
       registered: 'Jan 1, 2021',
       country: 'Es',
@@ -118,7 +114,7 @@ export class DashboardComponent implements OnInit {
       color: 'primary'
     },
     {
-      name: 'Friderik Dávid',
+      name: 'Frederik Dávid',
       state: 'New',
       registered: 'Jan 1, 2021',
       country: 'Pl',

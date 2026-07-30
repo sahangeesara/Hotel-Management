@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\RoomBookExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RoomBookController extends Controller
 {
@@ -136,6 +139,37 @@ class RoomBookController extends Controller
             Log::error('Room booking error: ' . $e->getMessage());
             return response()->json(['message' => 'An error occurred while booking the room.'], 500);
         }
+    }
+
+    public function downloadPDF()
+    {
+
+        $roomsBooks = RoomBook::with([
+            'guest',
+            'bookingRooms.roomCategory'
+        ])
+            ->where('is_active',1)
+            ->get();
+
+
+        $pdf = Pdf::loadView(
+            'reports.room_book_pdf',
+            compact('roomsBooks')
+        );
+
+
+        return $pdf->download('room-book-report.pdf');
+
+    }
+
+    public function downloadExcel()
+    {
+
+        return Excel::download(
+            new RoomBookExport,
+            'room-book-report.xlsx'
+        );
+
     }
     /**
      * Display the specified resource.

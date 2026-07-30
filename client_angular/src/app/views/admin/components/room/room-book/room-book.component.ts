@@ -400,6 +400,61 @@ export class RoomBookComponent implements OnInit{
     }
   }
 
+  downloadPDF(){
+
+    this.allServe.downloadRoomBookPDF()
+      .subscribe((response:any)=>{
+
+        let blob = new Blob(
+          [response],
+          {type:'application/pdf'}
+        );
+
+        let url = window.URL.createObjectURL(blob);
+
+        let a=document.createElement('a');
+
+        a.href=url;
+
+        a.download="room-book-report.pdf";
+
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+      });
+
+
+  }
+
+
+
+
+  downloadExcel(){
+    this.allServe.downloadRoomBookExcel()
+      .subscribe((response:any)=>{
+        let blob = new Blob(
+          [response],
+          {
+            type:
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          }
+        );
+
+        let url=window.URL.createObjectURL(blob);
+
+        let a=document.createElement('a');
+        a.href=url;
+        a.download="room-book-report.xlsx";
+        a.click();
+        window.URL.revokeObjectURL(url);
+
+
+      });
+
+  }
+
+
+
   ngOnInit() {
     this.getRmBook();
     this.getRm();

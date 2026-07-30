@@ -28,4 +28,23 @@ export class ReportService {
     return this.http.get<any>(`${this.besUrl}/reports/bookingTrendReport`,this.getAuthHeaders());
 
   }
+
+  ordersReport(){
+    return this.http.get<any>(`${this.besUrl}/reports/orderReport`,this.getAuthHeaders());
+
+  }
+
+  eventBookingReport() {
+    return this.http.get<any>(`${this.besUrl}/reports/eventBookReport`,this.getAuthHeaders());
+
+  }
+
+  travelBookingTrendReport() {
+    return this.http.get<any>(`${this.besUrl}/reports/travelBookingTrendReport`,this.getAuthHeaders());
+  }
+
+
+  transportVehicleReport() {
+    return this.http.get<any>(`${this.besUrl}/reports/transportVehicleReport`,this.getAuthHeaders());
+   }
 }

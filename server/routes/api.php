@@ -121,9 +121,21 @@ Route::middleware(['auth:api'])->group(function () {
     //Report
     Route::get('/reports/monthly-booking', [ReportController::class, 'monthlyBookingReport']);
     Route::get('/reports/bookingTrendReport', [ReportController::class, 'bookingTrendReport']);
+    Route::get('/reports/orderReport', [ReportController::class, 'ordersReport']);
+    Route::get('/reports/eventBookReport', [ReportController::class, 'eventBookingReport']);
+    Route::get('/reports/transportVehicleReport', [ReportController::class, 'transportVehicleReport']);
+    Route::get('/reports/travelBookingTrendReport', [ReportController::class, 'travelBookingTrendReport']);
+    //Export
+    Route::get(
+        '/room-book/pdf',
+        [RoomBookController::class,'downloadPDF']
+    );
 
 
-
+    Route::get(
+        '/room-book/excel',
+        [RoomBookController::class,'downloadExcel']
+    );
 
 
 

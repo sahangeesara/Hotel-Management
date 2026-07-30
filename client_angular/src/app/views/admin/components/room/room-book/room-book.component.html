@@ -169,7 +169,25 @@
 <hr />
 <div>
   <h3><strong><em>Room Book Table</em></strong></h3>
+  <button
+    cButton
+    color="danger"
+    (click)="downloadPDF()">
 
+    PDF Download
+
+  </button>
+
+  &nbsp;
+
+  <button
+    cButton
+    color="success"
+    (click)="downloadExcel()">
+
+    Excel Download
+
+  </button>
   <table cTable style="width:100%">
     <thead>
     <tr>

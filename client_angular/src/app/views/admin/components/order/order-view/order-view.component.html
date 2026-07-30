@@ -25,10 +25,10 @@
   <tr>
     <th scope="row">{{key + 1}}</th>
       <td>{{ order.order_no }}</td>
-      <td>{{ order.room.r_no }}</td>
-      <td>{{ order.guest.name }}</td>
+      <td>{{ order.room?.r_no ?? '-'}}</td>
+      <td>{{ order.guest?.name ?? '-'}}</td>
       <td>{{ order.order_amount }}</td>
-      <td>{{ order.order_status.name }}</td>
+      <td>{{ order.order_status?.name ?? '-'}}</td>
       <td>{{ order.order_date|date:"Y-MM-d" }}</td>
         <td>
   <button type="button" (click)="orderDelete(order.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
