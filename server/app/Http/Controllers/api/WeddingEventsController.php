@@ -87,6 +87,37 @@ class WeddingEventsController extends Controller
         }
     }
 
+    public function searchWeddingEvent(Request $request)
+    {
+        try {
+            $weddingEvent =  WeddingEvent::with('hotel','room','organizer','bookStatus')
+                ->where('is_active', true)
+
+                ->when($request->filled('hotel_id'), function ($query) use ($request) {
+                    $query->where('hotel_id',  $request->hotel_id);
+                })
+                ->when($request->filled('room_id'), function ($query) use ($request) {
+                    $query->where('room_id', $request->room_id);
+                })
+
+                ->when($request->filled('event_date'), function ($query) use ($request) {
+                    $query->where('event_date', $request->event_date);
+                })
+
+                ->get();
+
+            return response()->json($weddingEvent);
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'message' => 'An error occurred while retrieving wedding Event.'
+            ], 500);
+        }
+    }
+
+
     /**
      * Display the specified resource.
      */

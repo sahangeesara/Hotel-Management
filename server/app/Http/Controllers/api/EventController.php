@@ -22,7 +22,7 @@ class EventController extends Controller
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving Event.'], 500);
+            return response()->json(['message' => 'An error occurred while retrieving Events get.'], 500);
         }
     }
 

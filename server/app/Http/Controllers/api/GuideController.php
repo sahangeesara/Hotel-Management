@@ -95,6 +95,42 @@ class GuideController extends Controller
         }
     }
 
+    public function searchGuide(Request $request)
+    {
+        try {
+            $guides = Guides::with( 'gender')
+                ->where('is_active', true)
+
+                ->when($request->filled('name'), function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->name . '%');
+                })
+
+                ->when($request->filled('tel_no'), function ($query) use ($request) {
+                    $query->where('tel_no', $request->tel_no);
+                })
+
+                ->when($request->filled('gender_id'), function ($query) use ($request) {
+                    $query->where('gender_id', $request->gender_id);
+                })
+
+                ->when($request->filled('nic'), function ($query) use ($request) {
+                    $query->where('nic', $request->nic);
+                })
+
+                ->get();
+
+            return response()->json($guides);
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'message' => 'An error occurred while retrieving employees.'
+            ], 500);
+        }
+    }
+
+
     /**
      * Update the specified resource in storage.
      */

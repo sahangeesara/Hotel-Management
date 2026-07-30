@@ -88,6 +88,45 @@ class HotelEventsController extends Controller
         }
     }
 
+    public function searchHotelsEvent(Request $request)
+    {
+        try {
+            $hotelsEvent = HotelEvent::with('hotel','event','organizer','eventType','bookStatus','rooms')
+                ->where('is_active', true)
+
+                ->when($request->filled('hotel_id'), function ($query) use ($request) {
+                    $query->where('hotel_id',  $request->hotel_id);
+                })
+                ->when($request->filled('event_id'), function ($query) use ($request) {
+                    $query->where('event_id',  $request->event_id);
+                })
+
+                ->when($request->filled('event_type_id'), function ($query) use ($request) {
+                    $query->where('event_type_id',  $request->event_type_id);
+                })
+
+                ->when($request->filled('room_id'), function ($query) use ($request) {
+                    $query->where('room_id', $request->room_id);
+                })
+
+                ->when($request->filled('event_date'), function ($query) use ($request) {
+                    $query->where('event_date', $request->event_date);
+                })
+
+                ->get();
+
+            return response()->json($hotelsEvent);
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'message' => 'An error occurred while retrieving hotels Event.'
+            ], 500);
+        }
+    }
+
+
     /**
      * Display the specified resource.
      */

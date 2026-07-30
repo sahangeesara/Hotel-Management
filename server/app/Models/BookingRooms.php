@@ -30,4 +30,6 @@ class BookingRooms extends Model
     {
         return $this->belongsTo(RoomBook::class, 'booking_id');
     }
+
+
 }

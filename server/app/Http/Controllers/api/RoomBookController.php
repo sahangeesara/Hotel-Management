@@ -156,55 +156,43 @@ class RoomBookController extends Controller
             return response()->json(['message' => 'An error occurred while retrieving room book.'], 500);
         }
     }
-    public function searchByDate(String $rDate){
 
+    public function searchRoomBook(Request $request)
+    {
         try {
-            $roomBook = RoomBook::with(['room', 'guest'])
-                ->where('booking_Date', $rDate)
+            $roomBook = RoomBook::with([
+                'guest',
+                'package',
+                'BookingRooms.roomCategory'
+            ])
                 ->where('is_active', true)
+
+                ->when($request->filled('guest_id'), function ($query) use ($request) {
+                    $query->where('guest_id',  $request->guest_id);
+                })
+                ->when($request->filled('package_id'), function ($query) use ($request) {
+                    $query->where('package_id',  $request->package_id);
+                })
+
+                ->when($request->filled('booking_Date'), function ($query) use ($request) {
+                    $query->where('booking_Date',  $request->booking_Date);
+                })
+
                 ->get();
 
             return response()->json($roomBook);
 
         } catch (\Exception $e) {
-            // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving room book.'], 500);
+
+            return response()->json([
+                'message' => 'An error occurred while retrieving room Book.'
+            ], 500);
         }
     }
 
-    public function searchByDateAndRoom(String $r_id,String $rDate){
 
-        try {
-            $roomBook = RoomBook::with(['room', 'guest'])
-                ->where('booking_Date', $rDate)
-                ->where('r_id', $r_id)
-                ->where('is_active', true)
-                ->get();
 
-            return response()->json($roomBook);
-
-        } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving room book.'], 500);
-        }
-    }
-    public function searchByRoom(String $r_id){
-        try {
-            $roomBook = RoomBook::with(['room', 'guest'])
-                ->where('r_id', $r_id)
-                ->where('is_active', true)
-                ->get();
-
-            return response()->json($roomBook);
-
-        } catch (\Exception $e) {
-            // Log the error and return an appropriate response
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving room book.'], 500);
-        }
-    }
 
     /**
      * Update the specified resource in storage.

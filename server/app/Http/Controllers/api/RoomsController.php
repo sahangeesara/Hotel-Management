@@ -66,6 +66,39 @@ class RoomsController extends Controller
         }
     }
 
+    public function searchRoom(Request $request)
+    {
+        try {
+            $rooms = Rooms::with('roomCategory','hotel')
+                ->where('is_active', true)
+
+                ->when($request->filled('r_no'), function ($query) use ($request) {
+                    $query->where('r_no',  $request->r_no);
+                })
+                ->when($request->filled('hotel_id'), function ($query) use ($request) {
+                    $query->where('hotel_id',  $request->hotel_id);
+                })
+
+                ->when($request->filled('r_capacity'), function ($query) use ($request) {
+                    $query->where('r_capacity',  $request->r_capacity);
+                })
+
+                ->when($request->filled('r_category_id'), function ($query) use ($request) {
+                    $query->where('r_category_id', $request->r_category_id);
+                })
+
+                ->get();
+
+            return response()->json($rooms);
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'message' => 'An error occurred while retrieving room.'
+            ], 500);
+        }
+    }
 
 
     /**

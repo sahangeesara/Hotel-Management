@@ -90,6 +90,42 @@ class TransportBooksController extends Controller
         }
     }
 
+    public function searchTransportBook(Request $request)
+    {
+        try {
+            $hotels = TransportBook::with('serviceType', 'tourType', 'vehicleType','duration','guest','province')
+                ->where('is_active', true)
+
+                ->when($request->filled('guest_id'), function ($query) use ($request) {
+                    $query->where('guest_id',  $request->guest_id);
+                })
+                ->when($request->filled('province_id'), function ($query) use ($request) {
+                    $query->where('province_id',  $request->province_id);
+                })
+
+                ->when($request->filled('vehicle_type_id'), function ($query) use ($request) {
+                    $query->where('vehicle_type_id',  $request->vehicle_type_id);
+                })
+
+                ->when($request->filled('tour_type_id'), function ($query) use ($request) {
+                    $query->where('tour_type_id', $request->tour_type_id);
+                })
+
+                ->get();
+
+            return response()->json($hotels);
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'message' => 'An error occurred while retrieving Transport Book.'
+            ], 500);
+        }
+    }
+
+
+
     /**
      * Display the specified resource.
      */

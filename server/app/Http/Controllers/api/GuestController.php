@@ -239,7 +239,7 @@ class GuestController extends Controller
         }
 
         try {
-//            DB::beginTransaction();
+            DB::beginTransaction();
 
             $guest = Guest::findOrFail($id);
             $oldGuideID = empty($data['guide_id']) ? $guest->guide_id : $data['guide_id'];
@@ -263,11 +263,10 @@ class GuestController extends Controller
                 $guides->guide_status = $data['guide_status'];
                 $guides->save();
 
-//            DB::commit();
+            DB::commit();
 
             return response()->json(['massage' => 'Successfully Update.', $guest]);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['error' => 'An error occurred while processing the request.', 'exception' => $e->getMessage()]);
         }

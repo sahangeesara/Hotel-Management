@@ -30,6 +30,38 @@ class FoodItemController extends Controller
         }
     }
 
+    public function searchFood(Request $request)
+    {
+        try {
+            $foods = FoodItem::with('foodStatus','itemCategory')
+                ->where('is_active', true)
+
+                ->when($request->filled('name'), function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->name . '%');
+                })
+
+                ->when($request->filled('item_category_id'), function ($query) use ($request) {
+                    $query->where('item_category_id', $request->item_category_id);
+                })
+
+                ->when($request->filled('food_status_id'), function ($query) use ($request) {
+                    $query->where('food_status_id', $request->food_status_id);
+                })
+
+                ->get();
+
+            return response()->json($foods);
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'message' => 'An error occurred while retrieving employees.'
+            ], 500);
+        }
+    }
+
+
     /**
      * Store a newly created resource in storage.
      */

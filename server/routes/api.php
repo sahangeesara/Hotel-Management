@@ -26,6 +26,7 @@ use App\Http\Controllers\api\OrganizerDetailsController;
 use App\Http\Controllers\api\PackageController;
 use App\Http\Controllers\api\PackageTypeController;
 use App\Http\Controllers\api\ProvincesController;
+use App\Http\Controllers\api\ReportController;
 use App\Http\Controllers\api\RestaurantEventsController;
 use App\Http\Controllers\api\RoleController;
 use App\Http\Controllers\api\RoomBookController;
@@ -79,7 +80,22 @@ Route::middleware(['auth:api'])->group(function () {
 
     // Guest
     Route::get('countGuest', [GuestController::class, 'countGuest']);
+
+
+    //search
+    Route::get('/guide/search', [GuideController::class, 'searchGuide']);
+    Route::get('/hotel/search', [HotelController::class, 'searchHotels']);
     Route::get('/guest/search', [GuestController::class, 'searchGuest']);
+    Route::get('/employees/search', [EmployeeController::class, 'searchEmployees']);
+    Route::get('/foods/search', [FoodItemController::class, 'searchFood']);
+    Route::get('/customer/search', [CustomerController::class, 'searchCustomer']);
+    Route::get('/hotelEvent/search', [HotelEventsController::class, 'searchHotelsEvent']);
+    Route::get('/restaurantEvent/search', [RestaurantEventsController::class, 'searchRestaurantEvent']);
+    Route::get('/weddingEvent/search', [WeddingEventsController::class, 'searchWeddingEvent']);
+    Route::get('/transportBook/search', [TransportBooksController::class, 'searchTransportBook']);
+    Route::get('/room/search', [RoomsController::class, 'searchRoom']);
+    Route::get('/roomBook/search', [RoomBookController::class, 'searchRoomBook']);
+
 
 
     // Room Booking
@@ -87,12 +103,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('roomBookByRoom/{r_id}', [RoomBookController::class, 'searchByRoom']);
     Route::get('roomBookByDateAndRoom/{r_id}/{date}', [RoomBookController::class, 'searchByDateAndRoom']);
 
-    // Employees
-    Route::get('/employees/search', [EmployeeController::class, 'searchEmployees']);
-    //Customer
 
+    //Customer
     Route::get('countCustomer', [CustomerController::class, 'countCustomer']);
-    Route::get('/customer/search', [CustomerController::class, 'searchCustomer']);
 
 
     //Order
@@ -103,6 +116,16 @@ Route::middleware(['auth:api'])->group(function () {
 
     //user
     Route::get('authProfile', [UserProfileController::class, 'authProfile']);
+
+
+    //Report
+    Route::get('/reports/monthly-booking', [ReportController::class, 'monthlyBookingReport']);
+    Route::get('/reports/bookingTrendReport', [ReportController::class, 'bookingTrendReport']);
+
+
+
+
+
 
     // Resource routes (Require authentication)
     Route::apiResources([
@@ -130,7 +153,6 @@ Route::middleware(['auth:api'])->group(function () {
         'currencies'=> CurrenciesController:: class,
         'duration' => DurationController:: class,
         'eventTypes' => EventTypesController:: class,
-        'generalEvent' => GeneralEventsController::class,
         'hotels' => HotelController::class,
         'hotelEvent' => HotelEventsController::class,
         'languages' => LanguagesController::class,

@@ -26,6 +26,42 @@ class HotelController extends Controller
         }
     }
 
+    public function searchHotels(Request $request)
+    {
+        try {
+            $hotels = Hotel::with('roomSetup')
+                ->where('is_active', true)
+
+                ->when($request->filled('name'), function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->name . '%');
+                })
+
+                ->when($request->filled('phone'), function ($query) use ($request) {
+                    $query->where('phone', $request->phone);
+                })
+
+                ->when($request->filled('room_setups_id'), function ($query) use ($request) {
+                    $query->where('room_setups_id', $request->room_setups_id);
+                })
+
+                ->when($request->filled('capacity'), function ($query) use ($request) {
+                    $query->where('capacity', $request->capacity);
+                })
+
+                ->get();
+
+            return response()->json($hotels);
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'message' => 'An error occurred while retrieving hotels.'
+            ], 500);
+        }
+    }
+
+
     /**
      * Store a newly created resource in storage.
      */
