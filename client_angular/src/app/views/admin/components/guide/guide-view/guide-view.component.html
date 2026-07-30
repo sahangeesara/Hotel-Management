@@ -1,3 +1,48 @@
+
+<div>
+  <h3> <strong><em> Guide Search Form </em> </strong></h3>
+  <form cForm [formGroup]="guideSearchForm" >
+    <c-row>
+      <c-col [xs]="3">
+        <div class="mb-3">
+          <label cLabel for="inputName-1">Search Name: </label>
+          <input cFormControl id="inputName-1" type="text" sizing="sm" name="name" formControlName="name">
+          <div cFormText>
+            ex: Kasun Dilruwan
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="3">
+        <div class="mb-3">
+          <label cLabel for="inputNic-1">Search Nic: </label>
+          <input cFormControl id="inputNic-1" type="text" sizing="sm" name="nic" formControlName="nic">
+        </div>
+      </c-col>
+      <c-col [xs]="3">
+        <div class="mb-3">
+          <label cLabel for="inputTelNo-1">Search Tel No: </label>
+          <input cFormControl id="inputTelNo-1" type="text" sizing="sm" name="tel_no" formControlName="tel_no">
+        </div>
+      </c-col>
+      <c-col [xs]="3">
+        <div class="mb-3">
+          <label cLabel>Guide Gender:</label>
+
+          <select aria-label="Select Guide Gender" cSelect name="gender_id" formControlName="gender_id">
+            <option selected="selected" value="">Select Guide Gender</option>
+            <option *ngFor="let gender of guideGenders" [value]="gender.id">
+              {{ gender.name }}
+            </option>
+          </select>
+        </div>
+      </c-col>
+    </c-row>
+    <input cButton color="success" style="color: white" type="button" (click)="search()" value="Search">&ngsp;
+    <input cButton color="danger" style="color: white" type="button" (click)="clearSearchForm()" value="Clear"> &ngsp;
+  </form>
+</div>
+<hr>
+
 <h3>
   <strong>
     <em>
@@ -6,6 +51,7 @@
   </strong>
 
 </h3>
+<hr/>
 <table [striped]="true" cTable>
   <thead>
   <tr>

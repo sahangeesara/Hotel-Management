@@ -64,7 +64,6 @@ export class GuestViewComponent implements OnInit{
   ) {
 
     this.searchGuestForm  = this.fb.group({
-      search_Date: [''],
       gender_id: [''],
       country_id: [''],
       name: [''],
@@ -132,10 +131,9 @@ export class GuestViewComponent implements OnInit{
       name: this.searchGuestForm.get('name')?.value?.trim() || '',
       country_id: this.searchGuestForm.get('country_id')?.value || '',
       gender_id: this.searchGuestForm.get('gender_id')?.value || '',
-      search_Date: this.searchGuestForm.get('search_Date')?.value || ''
     };
 
-    if (!filters.name && !filters.country_id && !filters.gender_id && !filters.search_Date ) {
+    if (!filters.name && !filters.country_id && !filters.gender_id  ) {
       this.getGuest();
       return;
     }
@@ -145,7 +143,7 @@ export class GuestViewComponent implements OnInit{
         this.guests = data;
       },
       error: (error) => {
-        console.error('Error fetching employees:', error);
+        console.error('Error fetching guest:', error);
       }
     });
   }
@@ -155,7 +153,6 @@ export class GuestViewComponent implements OnInit{
       name: '',
       gender_id: '',
       country_id: '',
-      search_Date: '',
     });
     this.getGuest();
   }

@@ -152,10 +152,6 @@ class GuestController extends Controller
                     $query->where('name', 'like', '%' . $request->name . '%');
                 })
 
-                ->when($request->filled('created_at'), function ($query) use ($request) {
-                    $query->where('created_at', $request->gDate);
-                })
-
                 ->when($request->filled('country_id'), function ($query) use ($request) {
                     $query->where('country_id', $request->country_id);
                 })

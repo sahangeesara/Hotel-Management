@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
     ButtonDirective,
     ColComponent,
@@ -35,7 +35,7 @@ import {map} from "rxjs/operators";
   templateUrl: './guide-add.component.html',
   styleUrl: './guide-add.component.scss'
 })
-export class GuideAddComponent {
+export class GuideAddComponent implements OnInit {
   guid:any;
   public error=null;
   guideGenders: any[] = [];

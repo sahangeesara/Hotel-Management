@@ -31,7 +31,7 @@ import {update} from "lodash-es";
   selector: 'app-restaurant-event',
   standalone: true,
   imports: [FormControlDirective,
-    FormsModule, ColComponent, RowComponent, ReactiveFormsModule, FormSelectDirective, FormLabelDirective, NgForOf, ButtonDirective, CardBodyComponent, CardComponent, CardHeaderComponent, DatePipe, TableDirective, IconDirective],
+    FormsModule, ColComponent, RowComponent, ReactiveFormsModule, FormSelectDirective, FormLabelDirective, NgForOf, ButtonDirective, CardBodyComponent, CardComponent, CardHeaderComponent, DatePipe, TableDirective, IconDirective, FormDirective],
   templateUrl: './restaurant-event.component.html',
   styleUrl: './restaurant-event.component.scss'
 })
@@ -39,6 +39,7 @@ export class RestaurantEventComponent implements OnInit {
 
   organizers:any[] = [];
   restaurantEvent:FormGroup;
+  restaurentSearchBookForm:FormGroup;
   formData = new FormData();
   @Input() organizer_id!: number;
   rooms: any[] = [];
@@ -79,6 +80,53 @@ export class RestaurantEventComponent implements OnInit {
       requests: [''],
       additional_services: [''],
     });
+
+    this.restaurentSearchBookForm = this.fb.group({
+      hotel_id: [''],
+      event_id: [''],
+      event_type_id: [''],
+      room_id: [''],
+      event_date: [''],
+    });
+  }
+
+  search() {
+    const filters = {
+      hotel_id: this.restaurentSearchBookForm.get('hotel_id')?.value?.trim() || '',
+      event_id: this.restaurentSearchBookForm.get('event_id')?.value?.trim() || '',
+      event_type_id: this.restaurentSearchBookForm.get('event_type_id')?.value?.trim() || '',
+      room_id: this.restaurentSearchBookForm.get('room_id')?.value?.trim() || '',
+      event_date: this.restaurentSearchBookForm.get('event_date')?.value?.trim() || '',
+
+    };
+
+    if (!filters.hotel_id && !filters.event_id && !filters.event_type_id && !filters.room_id && !filters.event_date) {
+      this.getRestaurantEventBook();
+      return;
+    }
+
+    this.searchServe.getRestaurantBookData(filters).subscribe({
+      next: (data: any) => {
+        this.restaurantEventBooks = data;
+      },
+      error: (error) => {
+        console.error('Error fetching restaurant event:', error);
+      }
+    });
+  }
+
+  clearSearchForm() {
+    this.restaurentSearchBookForm.reset();
+    this.getRestaurantEventBook();
+    this.restaurentSearchBookForm.patchValue(
+      {
+        hotel_id: '',
+        event_id: '',
+        event_type_id: '',
+        room_id: '',
+        event_date: '',
+      }
+    )
   }
 
   getOrganizer() {

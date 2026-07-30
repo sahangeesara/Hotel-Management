@@ -9,7 +9,7 @@ import {ToastrService} from "ngx-toastr";
 import {
   ButtonDirective, CardBodyComponent, CardComponent, CardHeaderComponent,
   ColComponent,
-  FormControlDirective,
+  FormControlDirective, FormDirective,
   FormLabelDirective,
   FormSelectDirective,
   RowComponent, TableDirective
@@ -35,7 +35,8 @@ import {IconDirective} from "@coreui/icons-angular";
     CardHeaderComponent,
     DatePipe,
     TableDirective,
-    IconDirective
+    IconDirective,
+    FormDirective
   ],
   templateUrl: './hotel-event.component.html',
   styleUrl: './hotel-event.component.scss'
@@ -43,6 +44,7 @@ import {IconDirective} from "@coreui/icons-angular";
 export class HotelEventComponent implements OnInit{
   organizers:any[] = [];
   hotelEvent:FormGroup;
+  hotelSearchBookForm:FormGroup;
   formData = new FormData();
   @Input() organizer_id!: number;
   rooms: any[] = [];
@@ -78,6 +80,14 @@ export class HotelEventComponent implements OnInit{
       book_status_id: [''],
       requests: [''],
       additional_services: [''],
+    });
+
+    this.hotelSearchBookForm = this.fb.group({
+      hotel_id: [''],
+      event_id: [''],
+      event_type_id: [''],
+      room_id: [''],
+      event_date: [''],
     });
   }
 
@@ -120,6 +130,45 @@ export class HotelEventComponent implements OnInit{
         console.error('Error fetching Event:', error);
       }
     );
+  }
+
+  search() {
+    const filters = {
+      hotel_id: this.hotelSearchBookForm.get('hotel_id')?.value?.trim() || '',
+      event_id: this.hotelSearchBookForm.get('event_id')?.value?.trim() || '',
+      event_type_id: this.hotelSearchBookForm.get('event_type_id')?.value?.trim() || '',
+      room_id: this.hotelSearchBookForm.get('room_id')?.value?.trim() || '',
+      event_date: this.hotelSearchBookForm.get('event_date')?.value?.trim() || '',
+
+    };
+
+    if (!filters.hotel_id && !filters.event_id && !filters.event_type_id && !filters.room_id && !filters.event_date) {
+      this.getHotelEventBook();
+      return;
+    }
+
+    this.searchServe.getHotelBookData(filters).subscribe({
+      next: (data: any) => {
+        this.hotelsBooks = data;
+      },
+      error: (error) => {
+        console.error('Error fetching hotel event:', error);
+      }
+    });
+  }
+
+  clearSearchForm() {
+    this.hotelSearchBookForm.reset();
+    this.getHotelEventBook();
+    this.hotelSearchBookForm.patchValue(
+      {
+        hotel_id: '',
+        event_id: '',
+        event_type_id: '',
+        room_id: '',
+        event_date: '',
+      }
+    )
   }
   getHotelEventBook() {
     this.eventService.getHotelEvent().subscribe(

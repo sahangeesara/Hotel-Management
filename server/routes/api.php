@@ -12,7 +12,6 @@ use App\Http\Controllers\api\EventTypesController;
 use App\Http\Controllers\api\FoodItemController;
 use App\Http\Controllers\api\FoodStatusController;
 use App\Http\Controllers\api\GenderController;
-use App\Http\Controllers\api\GeneralEventsController;
 use App\Http\Controllers\api\GuestController;
 use App\Http\Controllers\api\GuideController;
 use App\Http\Controllers\api\HotelController;
@@ -97,13 +96,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/roomBook/search', [RoomBookController::class, 'searchRoomBook']);
 
 
-
-    // Room Booking
-    Route::get('roomBookByDate/{date}', [RoomBookController::class, 'searchByDate']);
-    Route::get('roomBookByRoom/{r_id}', [RoomBookController::class, 'searchByRoom']);
-    Route::get('roomBookByDateAndRoom/{r_id}/{date}', [RoomBookController::class, 'searchByDateAndRoom']);
-
-
     //Customer
     Route::get('countCustomer', [CustomerController::class, 'countCustomer']);
 
@@ -125,6 +117,10 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/reports/eventBookReport', [ReportController::class, 'eventBookingReport']);
     Route::get('/reports/transportVehicleReport', [ReportController::class, 'transportVehicleReport']);
     Route::get('/reports/travelBookingTrendReport', [ReportController::class, 'travelBookingTrendReport']);
+    Route::get('/reports/incomeRevenueReport', [ReportController::class, 'incomeRevenueReport']);
+    Route::get('/reports/paymentCollectionReport', [ReportController::class, 'paymentCollectionReport']);
+
+
     //Export
     Route::get(
         '/room-book/pdf',

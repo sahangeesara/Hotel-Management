@@ -294,5 +294,102 @@ class ReportController extends Controller
             'datasets' => $datasets
         ]);
     }
+
+    public function incomeRevenueReport()
+    {
+        $months = [
+            'Jan','Feb','Mar','Apr','May','Jun',
+            'Jul','Aug','Sep','Oct','Nov','Dec'
+        ];
+
+        $revenue = [];
+
+        for ($i = 1; $i <= 12; $i++) {
+
+            // Room Revenue
+            $room = RoomBook::join('packages','packages.id','=','room_books.package_id')
+                ->whereYear('booking_Date', date('Y'))
+                ->whereMonth('booking_Date',$i)
+                ->where('room_books.r_book','Booking')
+                ->sum(DB::raw('packages.package_amount * room_books.number_of_room'));
+
+            // Food Revenue
+            $food = Order::whereYear('order_date',date('Y'))
+                ->whereMonth('order_date',$i)
+                ->sum('order_amount');
+
+            // Travel Revenue
+            $travel = TransportBook::join('vehicle_types','vehicle_types.id','=','transport_books.vehicle_type_id')
+                ->join('service_types','service_types.id','=','transport_books.service_type_id')
+                ->whereYear('pickup_date',date('Y'))
+                ->whereMonth('pickup_date',$i)
+                ->sum(DB::raw('vehicle_types.price + service_types.price'));
+
+            $revenue[] = $room + $food + $travel;
+        }
+
+        $growth = [];
+
+        foreach ($revenue as $key => $value){
+
+            if($key == 0){
+                $growth[] = 0;
+            }else{
+
+                $previous = $revenue[$key-1];
+
+                if($previous == 0){
+                    $growth[] = 0;
+                }else{
+                    $growth[] = round((($value-$previous)/$previous)*100,2);
+                }
+
+            }
+
+        }
+
+        return response()->json([
+            'labels'=>$months,
+            'revenue'=>$revenue,
+            'growth'=>$growth
+        ]);
+    }
+
+    public function paymentCollectionReport()
+    {
+        $months=[
+            'Jan','Feb','Mar','Apr','May','Jun',
+            'Jul','Aug','Sep','Oct','Nov','Dec'
+        ];
+
+        $completed=[];
+        $pending=[];
+
+        for($i=1;$i<=12;$i++){
+
+            $completed[] = Order::whereYear('order_date',date('Y'))
+                ->whereMonth('order_date',$i)
+                ->whereHas('orderStatus',function($q){
+                    $q->where('name','Completed');
+                })
+                ->sum('order_amount');
+
+            $pending[] = Order::whereYear('order_date',date('Y'))
+                ->whereMonth('order_date',$i)
+                ->whereHas('orderStatus',function($q){
+                    $q->where('name','Pending');
+                })
+                ->sum('order_amount');
+
+        }
+
+        return response()->json([
+            'labels'=>$months,
+            'completed'=>$completed,
+            'pending'=>$pending,
+            'completedTotal'=>array_sum($completed),
+            'pendingTotal'=>array_sum($pending)
+        ]);
+    }
 }
 

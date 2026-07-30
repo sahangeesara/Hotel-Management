@@ -138,7 +138,80 @@
     </div>
   </c-row>
 </form>
+<hr>
+<form cForm [formGroup]="hotelSearchBookForm">
+<c-row>
+  <c-col [xs]="3">
+    <div class="mb-3">
+      <label cLabel for="inputEventType-1">Event Type:</label>
 
+      <select
+        cSelect
+        id="inputEventType-1"
+        formControlName="event_type_id">
+        <option value="">Select Event Type</option>
+        <option *ngFor="let type of eventTypes" [value]="type.id">
+          {{ type.name }}
+        </option>
+      </select>
+    </div>
+  </c-col>
+
+  <c-col [md]="3" class="mb-3">
+    <label cLabel>Event Date</label>
+    <input cFormControl type="date" formControlName="event_date">
+  </c-col>
+  <c-col [xs]="3">
+    <div class="mb-3">
+      <label cLabel for="inputEvent-1">Event:</label>
+
+      <select
+        cSelect
+        id="inputEvent-1"
+        formControlName="event_id">
+        <option value="">Select Event</option>
+        <option *ngFor="let event of events" [value]="event.id">
+          {{ event.name }}
+        </option>
+      </select>
+    </div>
+  </c-col>
+  <c-col [xs]="3">
+    <div class="mb-3">
+      <label cLabel for="inputHotel-1">Hotel:</label>
+
+      <select
+        cSelect
+        id="inputHotel-1"
+        formControlName="hotel_id">
+        <option value="">Select Section</option>
+        <option *ngFor="let hotel of hotels" [value]="hotel.id">
+          {{ hotel.name }}
+        </option>
+      </select>
+    </div>
+  </c-col>
+  <c-col [xs]="3">
+    <div class="mb-3">
+      <label cLabel for="inputRoom-1">Room:</label>
+
+      <select
+        cSelect
+        id="inputRoom-1"
+        formControlName="room_id">
+        <option value="">Select Organizer</option>
+        <option *ngFor="let room of rooms" [value]="room.id">
+          {{ room.r_no }}
+        </option>
+      </select>
+    </div>
+  </c-col>
+</c-row>
+  <input cButton color="success" style="color: white" type="button" (click)="search()" value="Search">&ngsp;
+  <input cButton color="danger" style="color: white" type="button" (click)="clearSearchForm()" value="Clear"> &ngsp;
+</form>
+
+<hr>
 <c-card>
   <c-card-header class="d-flex justify-content-between align-items-center border-bottom-0 bg-info text-white">
     <h4>Hotel Event List</h4>

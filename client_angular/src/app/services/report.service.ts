@@ -47,4 +47,10 @@ export class ReportService {
   transportVehicleReport() {
     return this.http.get<any>(`${this.besUrl}/reports/transportVehicleReport`,this.getAuthHeaders());
    }
+   incomeRevenueReport() {
+    return this.http.get<any>(`${this.besUrl}/reports/incomeRevenueReport`,this.getAuthHeaders());
+   }
+  paymentCollectionReport() {
+    return this.http.get<any>(`${this.besUrl}/reports/paymentCollectionReport`,this.getAuthHeaders());
+   }
 }

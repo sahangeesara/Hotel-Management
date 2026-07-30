@@ -5,7 +5,7 @@ import {
   CardBodyComponent,
   CardComponent,
   CardHeaderComponent,
-  ColComponent, FormControlDirective, FormLabelDirective,
+  ColComponent, FormControlDirective, FormDirective, FormLabelDirective, FormSelectDirective,
   RowComponent,
   TableDirective
 } from "@coreui/angular";
@@ -33,13 +33,16 @@ import {ToastrService} from "ngx-toastr";
     DatePipe,
     ButtonDirective,
     FormControlDirective,
-    FormLabelDirective
+    FormLabelDirective,
+    FormDirective,
+    FormSelectDirective
   ],
   templateUrl: './wedding-event.component.html',
   styleUrl: './wedding-event.component.scss'
 })
 export class WeddingEventComponent implements OnInit {
   weddingForm!: FormGroup;
+  weddingSearchBookForm!: FormGroup;
   hotels: any[] = [];
   rooms: any[] = [];
   organizers: any[] = [];
@@ -74,6 +77,12 @@ export class WeddingEventComponent implements OnInit {
       book_status_id: ['', Validators.required]
 
     });
+
+    this.weddingSearchBookForm = this.fb.group({
+      hotel_id: [''],
+      room_id: [''],
+      event_date: [''],
+    })
   }
   getOrganizer() {
     this.eventService.getOrganizer().subscribe(
@@ -117,6 +126,44 @@ export class WeddingEventComponent implements OnInit {
       }
     );
   }
+
+  search() {
+    const filters = {
+      hotel_id: this.weddingSearchBookForm.get('hotel_id')?.value?.trim() || '',
+      room_id: this.weddingSearchBookForm.get('room_id')?.value?.trim() || '',
+      event_date: this.weddingSearchBookForm.get('event_date')?.value?.trim() || '',
+
+    }
+
+    if (!filters.hotel_id  && !filters.room_id && !filters.event_date) {
+      this.getWeddingEventBook();
+      return;
+    }
+
+    this.searchServe.getWeddingBookData(filters).subscribe({
+      next: (data: any) => {
+        this.weddingEvents = data;
+      },
+      error: (error) => {
+        console.error('Error fetching wedding event:', error);
+      }
+    });
+  }
+
+  clearSearchForm() {
+    this.weddingSearchBookForm.reset();
+    this.getWeddingEventBook();
+    this.weddingSearchBookForm.patchValue(
+      {
+        hotel_id: '',
+        event_id: '',
+        event_type_id: '',
+        room_id: '',
+        event_date: '',
+      }
+    )
+  }
+
 
   getWeddingEventBook() {
     this.eventService.getWeddingEvent().subscribe(
