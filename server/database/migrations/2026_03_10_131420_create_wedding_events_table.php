@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('additional_services')->nullable();
             $table->unsignedBigInteger('book_status_id')->nullable();
             $table->text('requests')->nullable();
+            $table->decimal('total_amount',10,2)->default(0);
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });

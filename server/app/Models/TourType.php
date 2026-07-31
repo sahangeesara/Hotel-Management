@@ -11,6 +11,7 @@ class TourType extends Model
     protected $fillable = [
         'id',
         'name',
+        'price',
         'is_active',
     ];
 }

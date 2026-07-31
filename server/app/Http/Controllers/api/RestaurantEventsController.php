@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\BookStatus;
 use App\Models\RestaurantEvent;
+use App\Models\Rooms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -64,6 +65,9 @@ class RestaurantEventsController extends Controller
             $nextId = RestaurantEvent::max('id') + 1;
             $heNo = 'REN' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
+            $room = Rooms::findOrFail($validatedData['room_id']);
+            $totalAmount = $room->r_cost ?? 0;
+
             $restaurantEvent= RestaurantEvent::create(
                 [
                     'event_id' => $validatedData['event_id'],
@@ -80,6 +84,7 @@ class RestaurantEventsController extends Controller
                     'book_status_id' => $validatedData['book_status_id'],
                     'requests' => $validatedData['requests'],
                     'additional_services' => $validatedData['additional_services'],
+                    'total_amount' => $totalAmount,
                     'event_no'=> $heNo,
                 ]
             );

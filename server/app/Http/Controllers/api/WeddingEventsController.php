@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BookStatus;
+use App\Models\Rooms;
 use App\Models\WeddingEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -63,6 +64,10 @@ class WeddingEventsController extends Controller
             $nextId = WeddingEvent::max('id') + 1;
             $heNo = 'WEN' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
+            // Calculate total_amount
+            $room = Rooms::findOrFail($validatedData['room_id']);
+            $totalAmount = $room->r_cost ?? 0;
+
             $weddingEvent= WeddingEvent::create(
                 [
                     'bride_name' => $validatedData['bride_name'],
@@ -77,6 +82,7 @@ class WeddingEventsController extends Controller
                     'requests' => $validatedData['requests'],
                     'additional_services' => $validatedData['additional_services'],
                     'event_no'=> $heNo,
+                    'total_amount' => $totalAmount,
                 ]
             );
 
@@ -179,6 +185,10 @@ class WeddingEventsController extends Controller
 
             $weddingEvent = WeddingEvent::findOrFail($id);
 
+            // Calculate total_amount
+            $room = Rooms::findOrFail($validatedData['room_id']);
+            $totalAmount = $room->r_cost ?? 0;
+
             $weddingEvent->update(
                 [
                     'bride_name' => $validatedData['bride_name'],
@@ -193,6 +203,7 @@ class WeddingEventsController extends Controller
                     'requests' => $validatedData['requests'],
                     'additional_services' => $validatedData['additional_services'],
                     'event_no'=> $validatedData['event_no'],
+                    'total_amount' => $totalAmount,
                     'is_active' =>$bookStatus->name === "Cancelled" ? false : $weddingEvent->is_active,
 
                 ]

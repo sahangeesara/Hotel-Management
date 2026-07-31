@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('tour_types', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->decimal('price', 10, 2);
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });

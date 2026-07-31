@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\BookStatus;
 use App\Models\HotelEvent;
+use App\Models\Rooms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use ParagonIE\Sodium\Core\Curve25519\H;
@@ -63,6 +64,10 @@ class HotelEventsController extends Controller
             $nextId = HotelEvent::max('id') + 1;
             $heNo = 'HEN' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
+            // Calculate total_amount
+            $room = Rooms::findOrFail($validatedData['room_id']);
+            $totalAmount = $room->r_cost ?? 0;
+
             $hotelEvent= HotelEvent::create(
                 [
                     'event_type_id' => $validatedData['event_type_id'],
@@ -78,6 +83,7 @@ class HotelEventsController extends Controller
                     'book_status_id' => $validatedData['book_status_id'],
                     'passengers' => $validatedData['passengers'],
                     'event_no'=> $heNo,
+                    'total_amount' => $totalAmount,
                 ]
             );
 
@@ -197,6 +203,11 @@ class HotelEventsController extends Controller
 
         try {
             $hotelEvent = HotelEvent::findOrFail($id);
+
+            // Calculate total_amount
+            $room = Rooms::findOrFail($validatedData['room_id']);
+            $totalAmount = $room->r_cost ?? 0;
+
             $hotelEvent->update(
                 [
                     'event_type_id' => $validatedData['event_type_id'],
@@ -212,6 +223,7 @@ class HotelEventsController extends Controller
                     'book_status_id' => $validatedData['book_status_id'],
                     'passengers' => $validatedData['passengers'],
                     'event_no'=> $validatedData['event_no'],
+                    'total_amount' => $totalAmount,
                     'is_active' =>$bookStatus->name === "Cancelled" ? false : $hotelEvent->is_active,
 
                 ]

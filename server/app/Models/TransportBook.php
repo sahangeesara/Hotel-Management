@@ -25,6 +25,7 @@ class TransportBook extends Model
         'duration_id',
         'custom_duration',
         'requests',
+        'total_amount',
         'is_active',
     ];
 

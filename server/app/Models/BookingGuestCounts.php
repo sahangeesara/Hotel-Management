@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Flight_passenger_counts extends Model
+class BookingGuestCounts extends Model
 {
     use HasFactory;
     protected $fillable = [
         'id',
-        'flight_book_id',
+        'guest_id',
         'adults',
         'children',
         'infants',
@@ -19,8 +19,8 @@ class Flight_passenger_counts extends Model
         'is_active',
     ];
 
-    public function flightBook(): BelongsTo
+    public function guestCount(): BelongsTo
     {
-        return $this->belongsTo(FlightBook::class, 'flight_book_id');
+        return $this->belongsTo(Guest::class, 'guest_id');
     }
 }

@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('flight_passenger_counts', function (Blueprint $table) {
+        Schema::create('booking_guest_counts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('flight_book_id');
-            $table->foreign('flight_book_id')->references('id')->on('flight_books');
+            $table->unsignedBigInteger('guest_id');
+            $table->foreign('guest_id')->references('id')->on('guests')->onDelete('cascade');
             $table->integer('adults');
             $table->integer('children');
             $table->integer('infants');
-            $table->decimal('total_amount');
+            $table->integer('total_amount');
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('flight_passenger_counts');
+        Schema::dropIfExists('booking_guest_counts');
     }
 };

@@ -26,6 +26,7 @@ class RestaurantEvent extends Model
         'book_status_id',
         'requests',
         'additional_services',
+        'total_amount',
         'is_active',
     ];
     protected $casts = [

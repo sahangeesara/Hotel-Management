@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ServiceType;
 use App\Models\TransportBook;
+use App\Models\VehicleType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -64,6 +66,11 @@ class TransportBooksController extends Controller
             $nextId = TransportBook::max('id') + 1; // Get the next available ID
             $cNo = 'TBN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'custom_no'
 
+            // Calculate total_amount
+            $vehicleType = VehicleType::findOrFail($validatedData['vehicle_type_id']);
+            $serviceType = ServiceType::findOrFail($validatedData['service_type_id']);
+            $totalAmount = ($vehicleType->price ?? 0) + ($serviceType->price ?? 0);
+
             $transportBook = new TransportBook();
             $transportBook->booking_no = $cNo;
             $transportBook->guest_id = $validatedData['guest_id'];
@@ -79,6 +86,7 @@ class TransportBooksController extends Controller
             $transportBook->duration_id = $validatedData['duration_id'];
             $transportBook->custom_duration = $validatedData['custom_duration'];
             $transportBook->requests = $validatedData['requests'];
+            $transportBook->total_amount = $totalAmount;
 
             $transportBook->save();
 
@@ -179,6 +187,12 @@ class TransportBooksController extends Controller
         try{
 
             $transportBook =  TransportBook::findOrFail($id);
+
+            // Calculate total_amount
+            $vehicleType = VehicleType::findOrFail($validatedData['vehicle_type_id']);
+            $serviceType = ServiceType::findOrFail($validatedData['service_type_id']);
+            $totalAmount = ($vehicleType->price ?? 0) + ($serviceType->price ?? 0);
+
             $transportBook->booking_no = $validatedData['booking_no'];
             $transportBook->guest_id = $validatedData['guest_id'];
             $transportBook->province_id = $validatedData['province_id'];
@@ -193,6 +207,7 @@ class TransportBooksController extends Controller
             $transportBook->duration_id = $validatedData['duration_id'];
             $transportBook->custom_duration = $validatedData['custom_duration'];
             $transportBook->requests = $validatedData['requests'];
+            $transportBook->total_amount = $totalAmount;
 
             $transportBook->save();
 

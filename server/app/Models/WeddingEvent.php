@@ -27,6 +27,7 @@ class WeddingEvent extends Model
         'additional_services',
         'book_status_id',
         'requests',
+        'total_amount',
         'is_active',
     ];
 
