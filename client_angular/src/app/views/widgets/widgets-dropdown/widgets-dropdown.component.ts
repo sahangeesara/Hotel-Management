@@ -7,12 +7,14 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import { getStyle } from '@coreui/utils';
+import {getStyle, hexToRgba} from '@coreui/utils';
 import { ChartjsComponent } from '@coreui/angular-chartjs';
 import { RouterLink } from '@angular/router';
 import { IconDirective } from '@coreui/icons-angular';
-import { RowComponent, ColComponent, WidgetStatAComponent, TemplateIdDirective, ThemeDirective, DropdownComponent, ButtonDirective, DropdownToggleDirective, DropdownMenuDirective, DropdownItemDirective, DropdownDividerDirective } from '@coreui/angular';
-import {SearchService} from "../../../services/search.service";
+import { RowComponent, ColComponent, WidgetStatAComponent, TemplateIdDirective, DropdownComponent, ButtonDirective, DropdownToggleDirective, DropdownMenuDirective, DropdownItemDirective, DropdownDividerDirective } from '@coreui/angular';
+import {DashboardService} from "../../../services/dashboard.service";
+import {DashboardChartsData} from "../../admin/dashboard/dashboard-charts-data";
+import {DashboardComponent} from "../../admin/dashboard/dashboard.component";
 
 @Component({
     selector: 'app-widgets-dropdown',
@@ -20,7 +22,7 @@ import {SearchService} from "../../../services/search.service";
     styleUrls: ['./widgets-dropdown.component.scss'],
     changeDetection: ChangeDetectionStrategy.Default,
     standalone: true,
-    imports: [RowComponent, ColComponent, WidgetStatAComponent, TemplateIdDirective, IconDirective, ThemeDirective, DropdownComponent, ButtonDirective, DropdownToggleDirective, DropdownMenuDirective, DropdownItemDirective, RouterLink, DropdownDividerDirective, ChartjsComponent]
+    imports: [RowComponent, ColComponent, WidgetStatAComponent, TemplateIdDirective, IconDirective, DropdownComponent, ButtonDirective, DropdownToggleDirective, DropdownMenuDirective, DropdownItemDirective, RouterLink, DropdownDividerDirective, ChartjsComponent]
 })
 export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
   countGust: number | undefined;
@@ -30,8 +32,9 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
-    private searchServe: SearchService,
-  ) {
+    private dashboardService: DashboardService,
+    public chartsData: DashboardComponent,
+  ){
   }
 
 
@@ -141,7 +144,7 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
 
   //count Functions
   getCountGuest() {
-    this.searchServe.getCountGuest().subscribe(
+    this.dashboardService.getCountGuest().subscribe(
       (value: any) => {
         this.countGust = value.guestsCount;
       },
@@ -151,7 +154,7 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
     );
   }
   getCountOrder() {
-    this.searchServe.getCountOrder().subscribe(
+    this.dashboardService.getCountOrder().subscribe(
       (value: any) => {
         this.countOrder = value.orderCount;
       },
@@ -161,7 +164,7 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
     );
   }
   getCountCustomer() {
-    this.searchServe.getCountCustomer().subscribe(
+    this.dashboardService.getCountCustomer().subscribe(
       (value: any) => {
         this.countCustomer = value.customerCount;
       },
@@ -171,7 +174,7 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
     );
   }
   getCountRoomBook() {
-    this.searchServe.getCountRoomBooking().subscribe(
+    this.dashboardService.getCountRoomBooking().subscribe(
       (value: any) => {
         this.countRBooking = value.roomBookingCount;
       },
@@ -180,7 +183,8 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
       }
     );
   }
-//end count Functions
+
+  //end count Functions
 
   ngAfterContentInit(): void {
     this.changeDetectorRef.detectChanges();

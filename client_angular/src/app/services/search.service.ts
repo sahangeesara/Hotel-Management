@@ -56,11 +56,6 @@ export class SearchService {
     });
   }
 
-//Count
-  getCountOrder(){return this.http.get(`${this.besUrl}/countOrder`,this.getAuthHeaders());}
-  getCountGuest(){return this.http.get(`${this.besUrl}/countGuest`,this.getAuthHeaders());}
-
-
   //Customer Search
   getCustomer(filters: {
     name?: string;
@@ -148,8 +143,8 @@ export class SearchService {
   getHotelBookData(filters: {
     hotel_id?: number;
     event_id?: number;
-    event_type_id?: string;
-    room_id?: string;
+    event_type_id?: number;
+    room_id?: number;
     event_date?: string;
   }) {
     const params: any = {};
@@ -178,10 +173,42 @@ export class SearchService {
       params
     });
   }
+
+  //Transport Booking Search
+  getTransportBookData(filters: {
+    tour_type_id?: number;
+    vehicle_type_id?: number;
+    province_id?: number;
+    guest_id?: number;
+  }) {
+    const params: any = {};
+
+    if (filters.tour_type_id) {
+      params.tour_type_id = filters.tour_type_id;
+    }
+
+    if (filters.vehicle_type_id) {
+      params.vehicle_type_id = filters.vehicle_type_id;
+    }
+
+    if (filters.province_id) {
+      params.province_id = filters.province_id;
+    }
+
+    if (filters.guest_id) {
+      params.guest_id = filters.guest_id;
+    }
+
+
+    return this.http.get(`${this.besUrl}/transportBook/search`, {
+      ...this.getAuthHeaders(),
+      params
+    });
+  }
  //Wedding Booking Search
   getWeddingBookData(filters: {
     hotel_id?: number;
-    room_id?: string;
+    room_id?: number;
     event_date?: string;
   }) {
     const params: any = {};
@@ -207,8 +234,8 @@ export class SearchService {
   getRestaurantBookData(filters: {
     hotel_id?: number;
     event_id?: number;
-    event_type_id?: string;
-    room_id?: string;
+    event_type_id?: number;
+    room_id?: number;
     event_date?: string;
   }) {
     const params: any = {};
@@ -238,19 +265,9 @@ export class SearchService {
     });
   }
 
-
-
-
   getAthProfile(){
     return this.http.get(`${this.besUrl}/authProfile`,this.getAuthHeaders());
   }
 
-  getCountCustomer() {
-    return this.http.get(`${this.besUrl}/countCustomer`,this.getAuthHeaders());
 
-  }
-  getCountRoomBooking() {
-    return this.http.get(`${this.besUrl}/roomBookingCount`,this.getAuthHeaders());
-
-  }
 }

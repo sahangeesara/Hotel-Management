@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {
   ButtonDirective,
   ColComponent,
-  FormControlDirective,
+  FormControlDirective, FormDirective,
   FormLabelDirective,
   FormSelectDirective, RowComponent, TableDirective
 } from "@coreui/angular";
@@ -32,13 +32,15 @@ import {TravelBookingService} from "../../../../../services/travel-booking.servi
     RowComponent,
     TableDirective,
     DatePipe,
-    NgIf
+    NgIf,
+    FormDirective
   ],
   templateUrl: './transport-book.component.html',
   styleUrl: './transport-book.component.scss'
 })
 export class TransportBookComponent implements OnInit {
   transportForm: FormGroup;
+  tourSearchBookForm: FormGroup;
   formData = new FormData();
   guests: any[] = [];
   provinces: any[] = [];
@@ -77,6 +79,13 @@ export class TransportBookComponent implements OnInit {
       requests: ['']
 
     });
+
+    this.tourSearchBookForm = this.fb.group({
+      guest_id: [''],
+      province_id: [''],
+      vehicle_type_id: [''],
+      tour_type_id: [''],
+    })
   }
 
   getGuest() {
@@ -109,6 +118,45 @@ export class TransportBookComponent implements OnInit {
         console.error('Error fetching guest:', error);
       }
     );
+  }
+
+
+  search() {
+    const filters = {
+      guest_id: this.tourSearchBookForm.get('guest_id')?.value?.trim() || '',
+      province_id: this.tourSearchBookForm.get('province_id')?.value?.trim() || '',
+      vehicle_type_id: this.tourSearchBookForm.get('vehicle_type_id')?.value?.trim() || '',
+      tour_type_id: this.tourSearchBookForm.get('tour_type_id')?.value?.trim() || '',
+
+    };
+
+    if (!filters.tour_type_id && !filters.vehicle_type_id && !filters.province_id && !filters.guest_id) {
+      this.getTransportBookings();
+      return;
+    }
+
+    this.searchServe.getTransportBookData(filters).subscribe({
+      next: (data: any) => {
+        this.transportBooks = data;
+      },
+      error: (error) => {
+        console.error('Error fetching hotel event:', error);
+      }
+    });
+  }
+
+  clearSearchForm() {
+    this.tourSearchBookForm.reset();
+    this.getTransportBookings();
+    this.tourSearchBookForm.patchValue(
+      {
+        hotel_id: '',
+        event_id: '',
+        event_type_id: '',
+        room_id: '',
+        event_date: '',
+      }
+    )
   }
   getVehicleTypes() {
     this.travelServes.getVehicleTypes().subscribe(

@@ -4,6 +4,7 @@ use App\Http\Controllers\api\BookStatusController;
 use App\Http\Controllers\api\CountryCodesController;
 use App\Http\Controllers\api\CurrenciesController;
 use App\Http\Controllers\api\CustomerController;
+use App\Http\Controllers\api\DashboardController;
 use App\Http\Controllers\api\DurationController;
 use App\Http\Controllers\api\EmployeeController;
 use App\Http\Controllers\api\EmployeeTypeController;
@@ -78,7 +79,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('getGuide', [GuestController::class, 'getGuide']);
 
     // Guest
-    Route::get('countGuest', [GuestController::class, 'countGuest']);
 
 
     //search
@@ -97,14 +97,13 @@ Route::middleware(['auth:api'])->group(function () {
 
 
     //Customer
-    Route::get('countCustomer', [CustomerController::class, 'countCustomer']);
+    Route::get('countCustomer', [DashboardController::class, 'countCustomer']);
+    Route::get('countGuest', [DashboardController::class, 'countGuest']);
+    Route::get('countOrder', [DashboardController::class, 'countOrder']);
+    Route::get('roomBookingCount', [DashboardController::class, 'countRoomBooking']);
+    Route::get('/dashboard/booking-chart', [DashboardController::class, 'bookingChart']);
+    Route::get('/dashboard/booking-income', [DashboardController::class, 'bookingIncome']);
 
-
-    //Order
-    Route::get('countOrder', [OrderController::class, 'countOrder']);
-
-    //Room Booking
-    Route::get('roomBookingCount', [RoomBookController::class, 'countRoomBooking']);
 
     //user
     Route::get('authProfile', [UserProfileController::class, 'authProfile']);

@@ -4,12 +4,10 @@
     <c-row>
       <c-col sm="5">
         <h4 class="card-title mb-0" id="traffic"> Room Booking </h4>
-        <div class="small text-body-secondary">January - December 2023</div>
-      </c-col>
+        <div class="small text-body-secondary">
+          {{ today | date:'dd/MM/yyyy' }}
+        </div>      </c-col>
       <c-col class="d-none d-md-block" sm="7">
-        <button cButton class="float-end" color="primary" aria-label="Download">
-          <svg cIcon name="cilCloudDownload"></svg>
-        </button>
         <form [formGroup]="trafficRadioGroup">
           <c-button-group class="float-end me-3" role="group">
             <input
@@ -79,33 +77,51 @@
     </c-chart>
   </c-card-body>
   <c-card-footer>
-    <c-row class="text-center mb-2" [xl]="5" [lg]="4" [sm]="2" [xs]="1" [gutter]="4">
+    <c-row class="text-center mb-2" [xl]="5" [lg]="5" [sm]="2" [xs]="1" [gutter]="4">
+
       <c-col>
-        <div class="text-body-secondary">Monthly Orders</div>
-        <strong>29.703 Users (40%)</strong>
-        <c-progress class="mt-2" thin color="success" value="40" aria-label="Orders" />
+        <div class="text-body-secondary">Room Booking</div>
+        <strong>Rs. {{ income.room | number:'1.2-2' }}</strong>
+        <c-progress class="mt-2" thin color="primary" [value]="income.roomPercent"></c-progress>
       </c-col>
+
       <c-col>
-        <div class="text-body-secondary">Event Booking</div>
-        <div class="fw-semibold text-truncate">24.093 Users (20%)</div>
-        <c-progress class="mt-2" thin color="info" value="20" aria-label="Unique users" />
+        <div class="text-body-secondary">Transport Booking</div>
+        <strong>Rs. {{ income.transport | number:'1.2-2' }}</strong>
+        <c-progress class="mt-2" thin color="success" [value]="income.transportPercent"></c-progress>
       </c-col>
+
       <c-col>
-        <div class="text-body-secondary">Filght Booking</div>
-        <div class="fw-semibold text-truncate">78.706 Views (60%)</div>
-        <c-progress class="mt-2" thin color="warning" value="60" aria-label="Page views" />
+        <div class="text-body-secondary">Hotel Event</div>
+        <strong>Rs. {{ income.hotel | number:'1.2-2' }}</strong>
+        <c-progress class="mt-2" thin color="warning" [value]="income.hotelPercent"></c-progress>
       </c-col>
+
       <c-col>
-        <div class="text-body-secondary">Travel Booking</div>
-        <div class="fw-semibold text-truncate">22.123 Users (80%)</div>
-        <c-progress class="mt-2" thin color="danger" value="80" aria-label="New users" />
+        <div class="text-body-secondary">Wedding Event</div>
+        <strong>Rs. {{ income.wedding | number:'1.2-2' }}</strong>
+        <c-progress class="mt-2" thin color="danger" [value]="income.weddingPercent"></c-progress>
       </c-col>
-      <c-col class="d-none d-xl-block">
-        <div class="text-body-secondary">Bounce Rate</div>
-        <div class="fw-semibold text-truncate">Average Rate (40.15%)</div>
-        <c-progress class="mt-2" thin value="40" aria-label="Bounce rate" />
+
+      <c-col>
+        <div class="text-body-secondary">Restaurant</div>
+        <strong>Rs. {{ income.restaurant | number:'1.2-2' }}</strong>
+        <c-progress class="mt-2" thin color="info" [value]="income.restaurantPercent"></c-progress>
       </c-col>
+
     </c-row>
+
+    <hr>
+
+    <div class="text-center">
+      <h5 class="mb-0">
+        Total Income :
+        <span class="text-success">
+        Rs. {{ income.totalIncome | number:'1.2-2' }}
+      </span>
+      </h5>
+    </div>
+
   </c-card-footer>
 </c-card>
 

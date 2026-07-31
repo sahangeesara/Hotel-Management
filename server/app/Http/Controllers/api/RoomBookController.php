@@ -226,8 +226,6 @@ class RoomBookController extends Controller
     }
 
 
-
-
     /**
      * Update the specified resource in storage.
      * @throws \Throwable
@@ -340,12 +338,7 @@ class RoomBookController extends Controller
             ], 500);
         }
     }
-    public function countRoomBooking(){
-        $roomBookingCount = RoomBook::where('is_active', 1)
-                                ->count();
 
-        return response()->json(['roomBookingCount' =>$roomBookingCount]);
-    }
 
     /**
      * Remove the specified resource from storage.

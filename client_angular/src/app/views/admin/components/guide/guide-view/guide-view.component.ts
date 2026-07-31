@@ -23,7 +23,6 @@ import {FormBuilder, FormGroup, ReactiveFormsModule} from "@angular/forms";
     IconDirective,
     TableDirective,
     ButtonDirective,
-    EmployeeUpdateComponent,
     ModalBodyComponent,
     ModalComponent,
     ModalFooterComponent,

@@ -135,14 +135,7 @@ class CustomerController extends Controller
     }
 
 
-    public function countCustomer()
-    {
-        $customerCount = Customer::with(['gender'])
-            ->where('is_active', 1)
-            ->count();
 
-        return response()->json(['customerCount' => $customerCount]);
-    }
 
 
     /**

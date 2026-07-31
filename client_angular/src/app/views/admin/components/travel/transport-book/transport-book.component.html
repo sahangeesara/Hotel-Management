@@ -22,18 +22,14 @@
           <c-col [xs]="6">
             <div class="mb-3">
               <label cLabel>Guest</label>
-
               <select cSelect formControlName="guest_id">
-
                 <option value="">Select Guest</option>
-
                 <option
                   *ngFor="let guest of guests"
                   [value]="guest.id">
                   {{guest.name}}
                 </option>
               </select>
-
             </div>
           </c-col>
 
@@ -42,180 +38,122 @@
           <c-col [xs]="6">
             <div class="mb-3">
               <label cLabel>Province</label>
-
               <select cSelect formControlName="province_id">
-
                 <option value="">Select Province</option>
-
                 <option
                   *ngFor="let province of provinces"
                   [value]="province.id">
-
                   {{province.name}}
-
                 </option>
-
               </select>
-
             </div>
           </c-col>
 
           <!-- Passengers -->
 
           <c-col [xs]="6">
-
             <div class="mb-3">
-
               <label cLabel>Passengers</label>
-
               <input
                 cFormControl
                 type="number"
                 formControlName="passengers">
-
             </div>
-
           </c-col>
 
           <!-- Service -->
 
           <c-col [xs]="6">
-
             <div class="mb-3">
-
               <label cLabel>Service Type</label>
-
               <select
                 cSelect
                 formControlName="service_type_id">
-
                 <option value="">Select Service</option>
-
                 <option
                   *ngFor="let service of serviceTypes"
                   [value]="service.id">
-
                   {{service.name}}
-
                 </option>
-
               </select>
-
             </div>
-
           </c-col>
 
           <!-- Vehicle -->
 
           <c-col [xs]="6">
-
             <div class="mb-3">
-
               <label cLabel>Vehicle Type</label>
-
               <select
                 cSelect
                 formControlName="vehicle_type_id">
-
                 <option value="">Select Vehicle</option>
-
                 <option
                   *ngFor="let vehicle of vehicleTypes"
                   [value]="vehicle.id">
-
                   {{vehicle.name}}
-
                 </option>
-
               </select>
-
             </div>
-
           </c-col>
 
           <!-- Tour -->
 
           <c-col [xs]="6">
-
             <div class="mb-3">
-
               <label cLabel>Tour Type</label>
-
               <select
                 cSelect
                 formControlName="tour_type_id">
-
                 <option value="">Select Tour</option>
-
                 <option
                   *ngFor="let tour of tourTypes"
                   [value]="tour.id">
-
                   {{tour.name}}
-
                 </option>
-
               </select>
-
             </div>
-
           </c-col>
 
           <!-- Pickup -->
 
           <c-col [xs]="6">
-
             <div class="mb-3">
-
               <label cLabel>Pickup Location</label>
-
               <input
                 cFormControl
                 type="text"
                 formControlName="pickup_location">
-
             </div>
-
           </c-col>
 
           <!-- Drop -->
 
           <c-col [xs]="6">
-
             <div class="mb-3">
-
               <label cLabel>Drop Location</label>
-
               <input
                 cFormControl
                 type="text"
                 formControlName="drop_location">
-
             </div>
-
           </c-col>
 
           <!-- Pickup Date -->
 
           <c-col [xs]="6">
-
             <div class="mb-3">
-
               <label cLabel>Pickup Date</label>
-
               <input
                 cFormControl
                 type="date"
                 formControlName="pickup_date">
-
             </div>
-
           </c-col>
 
           <!-- Pickup Time -->
 
           <c-col [xs]="6">
-
             <div class="mb-3">
               <label cLabel>Pickup Time</label>
               <input
@@ -228,9 +166,7 @@
           <!-- Duration -->
 
           <c-col [xs]="6">
-
             <div class="mb-3">
-
               <label cLabel>Duration</label>
               <select
                 cSelect
@@ -242,7 +178,6 @@
                   {{duration.duration}}
                 </option>
               </select>
-
             </div>
 
           </c-col>
@@ -261,11 +196,8 @@
           <!-- Request -->
 
           <c-col [xs]="12">
-
             <div class="mb-3">
-
               <label cLabel>Special Request</label>
-
               <textarea
                 cFormControl
                 rows="4"
@@ -297,7 +229,71 @@
 </div>
 
 <hr>
+<form cForm [formGroup]="tourSearchBookForm">
+  <c-row>
+    <c-col [xs]="3">
+      <div class="mb-3">
+        <label cLabel>Tour Type</label>
+        <select
+          cSelect
+          formControlName="tour_type_id">
+          <option value="">Select Tour</option>
+          <option
+            *ngFor="let tour of tourTypes"
+            [value]="tour.id">
+            {{tour.name}}
+          </option>
+        </select>
+      </div>
+    </c-col>
 
+    <c-col [xs]="3">
+      <div class="mb-3">
+        <label cLabel>Vehicle Type</label>
+        <select
+          cSelect
+          formControlName="vehicle_type_id">
+          <option value="">Select Vehicle</option>
+          <option
+            *ngFor="let vehicle of vehicleTypes"
+            [value]="vehicle.id">
+            {{vehicle.name}}
+          </option>
+        </select>
+      </div>
+    </c-col>
+    <c-col [xs]="3">
+      <div class="mb-3">
+        <label cLabel>Province</label>
+        <select cSelect formControlName="province_id">
+          <option value="">Select Province</option>
+          <option
+            *ngFor="let province of provinces"
+            [value]="province.id">
+            {{province.name}}
+          </option>
+        </select>
+      </div>
+    </c-col>
+    <c-col [xs]="3">
+      <div class="mb-3">
+        <label cLabel>Guest</label>
+        <select cSelect formControlName="guest_id">
+          <option value="">Select Guest</option>
+          <option
+            *ngFor="let guest of guests"
+            [value]="guest.id">
+            {{guest.name}}
+          </option>
+        </select>
+      </div>
+    </c-col>
+  </c-row>
+  <input cButton color="success" style="color: white" type="button" (click)="search()" value="Search">&ngsp;
+  <input cButton color="danger" style="color: white" type="button" (click)="clearSearchForm()" value="Clear"> &ngsp;
+</form>
+
+<hr>
 <h3>
 
   <strong><em>Transport Booking Table</em></strong>

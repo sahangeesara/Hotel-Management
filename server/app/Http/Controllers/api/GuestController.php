@@ -134,13 +134,6 @@ class GuestController extends Controller
             return response()->json(['message' => 'An error occurred while retrieving guest.'], 500);
         }
     }
-    public function countGuest(){
-        $guestsCount = Guest::with(['guide', 'gender'])
-            ->where('is_active', 1)
-            ->count();
-
-        return response()->json(['guestsCount' =>$guestsCount]);
-    }
 
     public function searchGuest(Request $request)
     {
