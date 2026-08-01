@@ -24,6 +24,7 @@ class WeddingEvent extends Model
         'hotel_id',
         'room_id',
         'organizer_id',
+        'package_id',
         'additional_services',
         'book_status_id',
         'requests',
@@ -41,6 +42,10 @@ class WeddingEvent extends Model
         return $this->belongsTo(Hotel::class, 'hotel_id');
     }
 
+    public function package():BelongsTo
+    {
+        return $this->belongsTo(Package::class, 'package_id');
+    }
     public function room():BelongsTo
     {
         return $this->belongsTo(Rooms::class, 'room_id');

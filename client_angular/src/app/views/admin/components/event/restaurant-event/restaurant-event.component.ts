@@ -47,6 +47,7 @@ export class RestaurantEventComponent implements OnInit {
   sections: any[] = [];
   bookStatus: any[] = [];
   events: any[] = [];
+  packages: any[] = [];
   eventTypes: any[] = [];
   restaurantData:any;
   restaurantEventBooks:any [] = [];
@@ -73,6 +74,7 @@ export class RestaurantEventComponent implements OnInit {
       passengers: ['',[Validators.required]],
       hotel_id: ['',[Validators.required]],
       room_id: ['',[Validators.required]],
+      package_id: ['',[Validators.required]],
       section_id: ['',[Validators.required]],
       seating_preferences: [''],
       organizer_id: ['',[Validators.required]],
@@ -159,6 +161,16 @@ export class RestaurantEventComponent implements OnInit {
       }
     );
   }
+  getPackage(){
+    this.hotelServe.getPackage().subscribe(
+      (response: any) => {
+        this.packages = response;
+      },
+      (error) => {
+        console.error('Error fetching rooms Book:', error);
+      }
+    );
+  }
   getEvent() {
     this.eventService.getEvent().subscribe(
       (response: any) => {
@@ -187,6 +199,7 @@ export class RestaurantEventComponent implements OnInit {
     this.getEventTypes();
     this.getEvent();
     this.getRestaurantEventBook();
+    this.getPackage();
   }
 
   getRm() {

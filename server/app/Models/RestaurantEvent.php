@@ -23,6 +23,7 @@ class RestaurantEvent extends Model
         'section_id',
         'seating_preferences',
         'organizer_id',
+        'package_id',
         'book_status_id',
         'requests',
         'additional_services',
@@ -43,7 +44,10 @@ class RestaurantEvent extends Model
     {
         return $this->belongsTo(Rooms::class, 'room_id');
     }
-
+    public function package(): BelongsTo
+    {
+        return $this->belongsTo(Package::class, 'package_id');
+    }
     public function organizer(): BelongsTo
     {
         return $this->belongsTo(OrganizerDetails::class, 'organizer_id');

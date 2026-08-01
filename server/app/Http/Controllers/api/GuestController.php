@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BookingGuestCounts;
 use App\Models\Guest;
+use App\Models\GuestDependentDetail;
 use App\Models\Guides;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -33,16 +35,19 @@ class GuestController extends Controller
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving guest.'], 500);
+            return response()->json(['message' => 'An error occurred while retrieving guest get.'], 500);
         }
     }
 
     /**
      * Store a newly created resource in storage.
+     * @throws \Throwable
      */
     public function store(Request $request)
     {
-        $data = $request->all();
+        $data = json_decode($request->form, true);
+        $details = json_decode($request->guestDetails, true);
+
 
         // Validate request data
         $validatedData = Validator::make($data, [
@@ -50,13 +55,17 @@ class GuestController extends Controller
             'address' => '',
             'email' => 'required|email',
             'city' => 'required',
-            'nic' => 'required',
+            'nic' => '',
+            'foreign_nic' => '',
             'guide_id' => '', // Allow empty guide_id
             'tel_no' => 'required',
             'gender_id' => 'required',
             'country_id' => 'required',
             'cuntry_code_id' => 'required',
             'guest_type' => 'required',
+            'adults' => 'required',
+            'children' => 'required',
+            'infants' => 'required',
         ]);
 
         if ($validatedData->fails()) {
@@ -83,8 +92,10 @@ class GuestController extends Controller
         $nextId = Guest::max('id') + 1; // Get the next available ID
         $rNo = 'GSN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
 
+        DB::beginTransaction();
+
         try {
-            DB::beginTransaction();
+
 
             $guest = new Guest();
             $guest->name = $data['name'];
@@ -92,6 +103,7 @@ class GuestController extends Controller
             $guest->email = $data['email'];
             $guest->city = $data['city'];
             $guest->nic = $data['nic'];
+            $guest->foreign_nic = $data['foreign_nic'];
             $guest->tel_no = $data['tel_no'];
             // Set guide_id to null if empty
             $guest->guide_id = empty($data['guide_id']) ? null : $data['guide_id'];
@@ -102,6 +114,27 @@ class GuestController extends Controller
             $guest->guest_no = $rNo;
 
             $guest->save();
+
+            $guestcount =new BookingGuestCounts();
+            $guestcount->guest_id = $guest->id;
+            $guestcount->adults = $data['adults'];
+            $guestcount->children = $data['children'];
+            $guestcount->infants = $data['infants'];
+            $guestcount->total_amount = $data['infants'] + $data['children'] + $data['adults'];
+
+            $guestcount->save();
+
+            if (!empty($details)) {
+                foreach ($details as $item) {
+                    $guestDetails = new GuestDependentDetail();
+                    $guestDetails->guest_id = $guest->id;
+                    $guestDetails->dependent_name = $item['dependent_name'];
+                    $guestDetails->dependent_relationship = $item['dependent_relationship'];
+                    $guestDetails->age = $item['age'];
+                    $guestDetails->dependent_id = $item['dependent_id'];
+                    $guestDetails->save();
+                }
+            }
 
             if (!empty($guest->guide_id)) {
                 $guides = Guides::findOrFail($guest->guide_id);
@@ -188,7 +221,9 @@ class GuestController extends Controller
     public function update(Request $request, string $id)
     {
 
-        $data = $request->all();
+        $data = json_decode($request->form, true);
+        $details = json_decode($request->guestDetails, true);
+
         $validatedData = Validator::make($data, [
 
             'name' => 'required|max:255',
@@ -196,7 +231,8 @@ class GuestController extends Controller
             'guest_no' => '',
             'email' => 'required|email',
             'city' => 'required',
-            'nic' => 'required',
+            'nic' => '',
+            'foreign_nic' => '',
             'tel_no' => 'required',
             'gender_id' => 'required',
             'country_id' => 'required',
@@ -204,7 +240,9 @@ class GuestController extends Controller
             'guide_id' => '',
             'guest_type' => 'required',
             'guide_status' => '',
-
+            'adults' => 'required',
+            'children' => 'required',
+            'infants' => 'required',
         ]);
         if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
 
@@ -237,6 +275,7 @@ class GuestController extends Controller
             $guest->email = $data['email'];
             $guest->city = $data['city'];
             $guest->nic = $data['nic'];
+            $guest->foreign_nic = $data['foreign_nic'];
             $guest->tel_no = $data['tel_no'];
             // Set guide_id to null if empty
             $guest->guide_id = empty($data['guide_id']) ? null : $data['guide_id']; // Ensure null is set
@@ -251,6 +290,27 @@ class GuestController extends Controller
                 $guides = Guides::findOrFail($oldGuideID);
                 $guides->guide_status = $data['guide_status'];
                 $guides->save();
+
+            $guestcount =BookingGuestCounts::findOrFail($id);
+            $guestcount->guest_id = $guest->id;
+            $guestcount->adults = $data['adults'];
+            $guestcount->children = $data['children'];
+            $guestcount->infants = $data['infants'];
+            $guestcount->total_amount = $data['infants'] + $data['children'] + $data['adults'];
+
+            $guestcount->save();
+
+            if (!empty($details)) {
+                foreach ($details as $item) {
+                    $guestDetails = GuestDependentDetail::findOrFail($id);
+                    $guestDetails->guest_id = $guest->id;
+                    $guestDetails->dependent_name = $item['dependent_name'];
+                    $guestDetails->age = $item['age'];
+                    $guestDetails->dependent_relationship = $item['dependent_relationship'];
+                    $guestDetails->dependent_id = $item['dependent_id'];
+                    $guestDetails->save();
+                }
+            }
 
             DB::commit();
 

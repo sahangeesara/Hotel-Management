@@ -52,6 +52,7 @@ export class HotelEventComponent implements OnInit{
   hotelsBooks: any[] = [];
   bookStatus: any[] = [];
   events: any[] = [];
+  packages: any[] = [];
   eventTypes: any[] = [];
   hotelData:any
   private error: null | undefined;
@@ -76,6 +77,7 @@ export class HotelEventComponent implements OnInit{
       passengers: [''],
       hotel_id: [''],
       room_id: [''],
+      package_id: [''],
       organizer_id: [''],
       book_status_id: [''],
       requests: [''],
@@ -132,6 +134,16 @@ export class HotelEventComponent implements OnInit{
     );
   }
 
+  getPackage(){
+    this.hotelServe.getPackage().subscribe(
+      (response: any) => {
+        this.packages = response;
+      },
+      (error) => {
+        console.error('Error fetching rooms Book:', error);
+      }
+    );
+  }
   search() {
     const filters = {
       hotel_id: this.hotelSearchBookForm.get('hotel_id')?.value?.trim() || '',
@@ -220,6 +232,7 @@ export class HotelEventComponent implements OnInit{
     this.getEventTypes();
     this.getEvent();
     this.getHotelEventBook();
+    this.getPackage();
   }
   getRm() {
     this.allServe.getRoom().subscribe(

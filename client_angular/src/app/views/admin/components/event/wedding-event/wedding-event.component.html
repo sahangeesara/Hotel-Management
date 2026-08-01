@@ -81,6 +81,17 @@
           </select>
 
         </c-col>
+        <c-col [xs]="6">
+          <div class="mb-3">
+            <label cLabel for="inputPackages-1">Packages :</label>
+            <select id="inputPackages-1" aria-label="Select a Package" cSelect name="package_id" formControlName="package_id">
+              <option selected="selected" value="">Select Book</option>
+              <option *ngFor="let type of packages" [value]="type.id">
+                {{ type.name }}
+              </option>
+            </select>
+          </div>
+        </c-col>
         <c-col md="4">
           <label>Room</label>
           <select

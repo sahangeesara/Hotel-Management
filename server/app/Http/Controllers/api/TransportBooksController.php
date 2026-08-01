@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\ServiceType;
+use App\Models\TourType;
 use App\Models\TransportBook;
 use App\Models\VehicleType;
 use Illuminate\Http\Request;
@@ -47,7 +48,7 @@ class TransportBooksController extends Controller
             'drop_location' => 'required|string|max:255',
             'pickup_date' => 'required|date',
             'pickup_time' => 'required|date_format:H:i',
-            'requests' => 'required|string',
+            'requests' => 'nullable|string',
             'custom_duration' => 'nullable|string|max:255',
         ]);
         $existingBooking = TransportBook::where('vehicle_type_id', $validatedData['vehicle_type_id'])
@@ -69,7 +70,13 @@ class TransportBooksController extends Controller
             // Calculate total_amount
             $vehicleType = VehicleType::findOrFail($validatedData['vehicle_type_id']);
             $serviceType = ServiceType::findOrFail($validatedData['service_type_id']);
-            $totalAmount = ($vehicleType->price ?? 0) + ($serviceType->price ?? 0);
+            $tourType = TourType::findOrFail($validatedData['tour_type_id']);
+            $request_price = 0;
+            if ($validatedData['requests']) {
+                $request_price += 6000;
+            }
+
+            $totalAmount = ($vehicleType->price ?? 0) + ($serviceType->price ?? 0) + ($tourType->price ?? 0) + $request_price;
 
             $transportBook = new TransportBook();
             $transportBook->booking_no = $cNo;
@@ -166,7 +173,7 @@ class TransportBooksController extends Controller
             'drop_location' => 'required|string|max:255',
             'pickup_date' => 'required|date',
             'pickup_time' => 'required|date_format:H:i:s',
-            'requests' => 'required|string',
+            'requests' => 'nullable|string',
             'custom_duration' => 'nullable|string|max:255',
             'booking_no' => 'required|string|max:255'
         ]);
@@ -189,9 +196,21 @@ class TransportBooksController extends Controller
             $transportBook =  TransportBook::findOrFail($id);
 
             // Calculate total_amount
-            $vehicleType = VehicleType::findOrFail($validatedData['vehicle_type_id']);
-            $serviceType = ServiceType::findOrFail($validatedData['service_type_id']);
-            $totalAmount = ($vehicleType->price ?? 0) + ($serviceType->price ?? 0);
+            $totalAmount = $transportBook->total_amount;
+            $request_price= 0;
+            if($validatedData['tour_type_id'] != $transportBook->tour_type_id || $validatedData['vehicle_type_id'] != $transportBook->vehicle_type_id) {
+                $vehicleType = VehicleType::findOrFail($validatedData['vehicle_type_id']);
+                $serviceType = ServiceType::findOrFail($validatedData['service_type_id']);
+                if ($validatedData['requests']) {
+                    $request_price += 6000;
+                }
+
+                $totalAmount = ($vehicleType->price ?? 0) + ($serviceType->price ?? 0) + $request_price;
+            }
+
+            if($validatedData['requests'] == null && $transportBook->requests != null) {
+                $totalAmount = $totalAmount - 60000;
+            }
 
             $transportBook->booking_no = $validatedData['booking_no'];
             $transportBook->guest_id = $validatedData['guest_id'];

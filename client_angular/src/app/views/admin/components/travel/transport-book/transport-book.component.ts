@@ -9,9 +9,7 @@ import {
 import {IconDirective} from "@coreui/icons-angular";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
-import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
-import {HotelService} from "../../../../../services/hotel.service";
 import {SearchService} from "../../../../../services/search.service";
 import {ToastrService} from "ngx-toastr";
 import {TravelBookingService} from "../../../../../services/travel-booking.service";

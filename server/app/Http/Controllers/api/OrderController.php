@@ -101,22 +101,21 @@ class OrderController extends Controller
             $order->is_active = 1;
             $order->save();
 
-            foreach ($foods as $item) {
+            if (!empty($foods)) {
+                foreach ($foods as $item) {
+                    $food = FoodItem::find($item['id']);
+                    $orderItem = new OrderItems();
+                    $orderItem->order_id = $order->id;
+                    $orderItem->food_id = $food->id;
+                    $orderItem->quantity = $item['quantity'];
+                    $orderItem->order_amount = $item['quantity'] * $item['food_amount'];
+                    $orderItem->is_active = 1;
+                    $orderItem->save();
 
-                $food = FoodItem::find($item['id']);
-
-                $orderItem = new OrderItems();
-                $orderItem->order_id = $order->id;
-                $orderItem->food_id = $food->id;
-                $orderItem->quantity = $item['quantity'];
-                $orderItem->order_amount = $item['quantity'] * $item['food_amount'];
-                $orderItem->is_active = 1;
-                $orderItem->save();
-
-                $food->quantity -= $item['quantity'];
-                $food->save();
+                    $food->quantity -= $item['quantity'];
+                    $food->save();
+                }
             }
-
             DB::commit();
 
             return response()->json([

@@ -46,6 +46,7 @@ export class WeddingEventComponent implements OnInit {
   hotels: any[] = [];
   rooms: any[] = [];
   organizers: any[] = [];
+  packages: any[] = [];
   statuses: any[] = [];
   @Input() organizer_id!: number;
   weddingEvents: any[] = [];
@@ -71,6 +72,7 @@ export class WeddingEventComponent implements OnInit {
       passengers: ['', Validators.required],
       hotel_id: ['', Validators.required],
       room_id: ['', Validators.required],
+      package_id: ['', Validators.required],
       organizer_id: ['', Validators.required],
       additional_services: [''],
       requests: [''],
@@ -115,7 +117,16 @@ export class WeddingEventComponent implements OnInit {
       }
     );
   }
-
+  getPackage(){
+    this.hotelServe.getPackage().subscribe(
+      (response: any) => {
+        this.packages = response;
+      },
+      (error) => {
+        console.error('Error fetching rooms Book:', error);
+      }
+    );
+  }
   getHotels() {
     this.hotelServe.getHotel().subscribe(
       (response: any) => {
@@ -207,5 +218,6 @@ export class WeddingEventComponent implements OnInit {
     this.getBookStatus();
     this.getHotels();
     this.getRm();
+    this.getPackage();
   }
 }

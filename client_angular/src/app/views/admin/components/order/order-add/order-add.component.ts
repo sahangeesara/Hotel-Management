@@ -27,7 +27,6 @@ import {Food} from "../../../../../entities/food";
 import {FoodStatus} from "../../../../../entities/foodStatus";
 import {ItemCategory} from "../../../../../entities/ItemCategory";
 import {Room} from "../../../../../entities/room";
-import {SearchService} from "../../../../../services/search.service";
 import {catchError, from, throwError} from "rxjs";
 import {map} from "rxjs/operators";
 import {Order} from "../../../../../entities/order";

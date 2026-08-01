@@ -27,6 +27,12 @@
     </c-col>
     <c-col [xs]="6">
       <div class="mb-3">
+        <label cLabel for="additional_services-1">Additional Services: </label>
+        <input cFormControl id="additional_services-1" type="text" sizing="sm" name="additional_services" formControlName="additional_services">
+      </div>
+    </c-col>
+    <c-col [xs]="6">
+      <div class="mb-3">
         <label cLabel for="inputGuest-1">Guest:</label>
         <input
           id="inputGuest-1"
@@ -45,8 +51,8 @@
     </c-col>
     <c-col [xs]="6">
       <div class="mb-3">
-        <label cLabel for="inputRBook-1">Packages :</label>
-        <select id="inputRBook-1" aria-label="Select a Package" cSelect name="package_id" formControlName="package_id">
+        <label cLabel for="inputPackages-1">Packages :</label>
+        <select id="inputPackages-1" aria-label="Select a Package" cSelect name="package_id" formControlName="package_id">
           <option selected="selected" value="">Select Book</option>
           <option *ngFor="let type of packages" [value]="type.id">
             {{ type.name }}

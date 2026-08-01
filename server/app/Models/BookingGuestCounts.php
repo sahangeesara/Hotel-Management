@@ -19,7 +19,7 @@ class BookingGuestCounts extends Model
         'is_active',
     ];
 
-    public function guestCount(): BelongsTo
+    public function guest(): BelongsTo
     {
         return $this->belongsTo(Guest::class, 'guest_id');
     }

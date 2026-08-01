@@ -20,6 +20,7 @@ return new class extends Migration
             $table->dateTime('cancel_Date')->nullable();
             $table->integer('max_guests')->nullable();
             $table->integer('number_of_room')->nullable();
+            $table->string('additional_services')->nullable();
             $table->unsignedBigInteger('package_id');
             $table->decimal('total_amount',10,2)->default(0);
             $table->boolean('is_active')->default(1);

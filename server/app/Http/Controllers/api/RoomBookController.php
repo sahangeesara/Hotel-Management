@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BookingRooms;
+use App\Models\Package;
 use App\Models\RoomBook;
 use App\Models\Rooms;
 use Illuminate\Console\Scheduling\Schedule;
@@ -63,6 +64,7 @@ class RoomBookController extends Controller
             'package_id' => 'required',
             'max_guests' => 'required',
             'number_of_room' => 'required',
+            'additional_services' => '',
             'r_book' => 'required',
             'booking_Date' => 'required|date',
             'cancel_Date' => 'required|date|after_or_equal:booking_Date',
@@ -89,6 +91,8 @@ class RoomBookController extends Controller
             $nextId = RoomBook::max('id') + 1;
             $rNo = 'RBN' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
+
+
             $roomBook = RoomBook::create([
                 'guest_id' => $data['guest_id'],
                 'r_book' => $data['r_book'],
@@ -98,6 +102,7 @@ class RoomBookController extends Controller
                 'booking_Date' => $data['booking_Date'],
                 'cancel_Date' => $data['cancel_Date'],
                 'booking_no' => $rNo,
+                'additional_services' => $data['additional_services'],
             ]);
 
             foreach ($data2 as $item) {
@@ -115,13 +120,32 @@ class RoomBookController extends Controller
                 }
 
                 $bookingRooms = [];
+                $totalAmount=0;
+                $request_price = 0;
 
                 foreach ($rooms as $room) {
+
+                    $roomDetails = Rooms::findOrFail($room->id);
+                    $package = Package::findOrFail($data['package_id']);
+
+                    $package_amount = $package->package_amount ?? 0;
+
+                    $totalAmount += ($roomDetails->r_cost ?? 0) + $package_amount;
 
                     $bookingRooms[] = $room->r_no;
                     $room->status = 'Booked';
                     $room->save();
                 }
+
+
+                if(!empty($data['additional_services'])){
+                    $request_price = 6000;
+                }
+                $totalAmount = $totalAmount + $request_price;
+                $roomBook = RoomBook::where('booking_no', $rNo)->first();
+                $roomBook->update([
+                    'total_amount' => $totalAmount,
+                ]);
 
 
                 $bookingRoom= BookingRooms::create([
@@ -243,6 +267,7 @@ class RoomBookController extends Controller
             'r_book'          => 'required',
             'booking_Date'    => 'required|date',
             'cancel_Date'     => 'required|date|after_or_equal:booking_Date',
+            'additional_services' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -301,8 +326,20 @@ class RoomBookController extends Controller
                 }
 
                 $assignedRooms = [];
+                $totalAmount=0;
+                $request_price = 0;
+
 
                 foreach ($availableRooms as $room) {
+                    $roomDetails = Rooms::findOrFail($room->id);
+                    $package = Package::findOrFail($data['package_id']);
+
+//                    if($roomBook->package_id == $data['package_id'] ){
+//
+//                    }
+                    $package_amount = $package->package_amount ?? 0;
+
+                    $totalAmount += ($roomDetails->r_cost ?? 0) + $package_amount;
 
                     $assignedRooms[] = $room->r_no;
 
@@ -310,6 +347,11 @@ class RoomBookController extends Controller
                     $room->save();
                 }
 
+                $totalAmount = $totalAmount + $request_price;
+                $roomBook = RoomBook::where('booking_no', $rNo)->first();
+                $roomBook->update([
+                    'total_amount' => $totalAmount,
+                ]);
                 BookingRooms::create([
                     'room_category_id' => $item['room_category_id'],
                     'booking_id'       => $roomBook->id,

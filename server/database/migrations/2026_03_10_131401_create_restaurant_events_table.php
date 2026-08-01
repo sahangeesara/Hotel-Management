@@ -29,6 +29,8 @@ return new class extends Migration
             $table->text('requests')->nullable();
             $table->string('seating_preferences')->nullable();
             $table->unsignedBigInteger('organizer_id')->unique();
+            $table->unsignedBigInteger('package_id')->unique();
+            $table->foreign('package_id')->references('id')->on('packages')->onDelete("cascade");
             $table->unsignedBigInteger('book_status_id')->nullable();
             $table->string('additional_services')->nullable();
             $table->decimal('total_amount',10,2)->default(0);

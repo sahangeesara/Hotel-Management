@@ -180,10 +180,8 @@ class DashboardController extends Controller
             ->sum(DB::raw('packages.package_amount * room_books.number_of_room'));
 
         // Transport Revenue
-        $transport = TransportBook::join('vehicle_types', 'vehicle_types.id', '=', 'transport_books.vehicle_type_id')
-            ->join('service_types', 'service_types.id', '=', 'transport_books.service_type_id')
-            ->whereYear('pickup_date', Carbon::now()->year)
-            ->sum(DB::raw('vehicle_types.price + service_types.price'));
+        $transport = TransportBook::whereYear('pickup_date', Carbon::now()->year)
+            ->sum('total_amount');
 
         // Hotel Event Revenue
         $hotel = HotelEvent::whereYear('event_date', Carbon::now()->year)
@@ -194,8 +192,8 @@ class DashboardController extends Controller
             ->sum('total_amount');
 
         // Restaurant Revenue
-        $restaurant = Order::whereYear('order_date', Carbon::now()->year)
-            ->sum('order_amount');
+        $restaurant = RestaurantEvent::whereYear('event_date', Carbon::now()->year)
+            ->sum('total_amount');
 
         $total = $room + $transport + $hotel + $wedding + $restaurant;
 

@@ -3,7 +3,7 @@
   <c-card-body>
     <c-row>
       <c-col sm="5">
-        <h4 class="card-title mb-0" id="traffic"> Room Booking </h4>
+        <h4 class="card-title mb-0" id="traffic"> Total Booking </h4>
         <div class="small text-body-secondary">
           {{ today | date:'dd/MM/yyyy' }}
         </div>      </c-col>
@@ -81,31 +81,45 @@
 
       <c-col>
         <div class="text-body-secondary">Room Booking</div>
-        <strong>Rs. {{ income.room | number:'1.2-2' }}</strong>
+        <strong>Rs. {{ income.room | number:'1.2-2' }}
+          ({{ (income.room / income.totalIncome) * 100 | number:'1.2-2' }}%)
+
+        </strong>
         <c-progress class="mt-2" thin color="primary" [value]="income.roomPercent"></c-progress>
       </c-col>
 
       <c-col>
         <div class="text-body-secondary">Transport Booking</div>
-        <strong>Rs. {{ income.transport | number:'1.2-2' }}</strong>
+        <strong>Rs. {{ income.transport | number:'1.2-2' }}
+          ({{ (income.transport / income.totalIncome) * 100 | number:'1.2-2' }}%)
+
+        </strong>
         <c-progress class="mt-2" thin color="success" [value]="income.transportPercent"></c-progress>
       </c-col>
 
       <c-col>
         <div class="text-body-secondary">Hotel Event</div>
-        <strong>Rs. {{ income.hotel | number:'1.2-2' }}</strong>
+        <strong>
+          Rs. {{ income.hotel | number:'1.2-2' }}
+          ({{ (income.hotel / income.totalIncome) * 100 | number:'1.2-2' }}%)
+        </strong>
         <c-progress class="mt-2" thin color="warning" [value]="income.hotelPercent"></c-progress>
       </c-col>
 
       <c-col>
         <div class="text-body-secondary">Wedding Event</div>
-        <strong>Rs. {{ income.wedding | number:'1.2-2' }}</strong>
+        <strong>Rs. {{ income.wedding | number:'1.2-2' }}
+          ({{ (income.wedding / income.totalIncome) * 100 | number:'1.2-2' }}%)
+
+        </strong>
         <c-progress class="mt-2" thin color="danger" [value]="income.weddingPercent"></c-progress>
       </c-col>
 
       <c-col>
-        <div class="text-body-secondary">Restaurant</div>
-        <strong>Rs. {{ income.restaurant | number:'1.2-2' }}</strong>
+        <div class="text-body-secondary">Restaurant Event</div>
+        <strong>Rs. {{ income.restaurant | number:'1.2-2' }}
+          ({{ (income.restaurant/ income.totalIncome) * 100 | number:'1.2-2' }}%)
+        </strong>
         <c-progress class="mt-2" thin color="info" [value]="income.restaurantPercent"></c-progress>
       </c-col>
 

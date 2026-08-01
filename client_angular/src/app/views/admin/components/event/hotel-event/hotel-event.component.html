@@ -73,7 +73,17 @@
         </select>
       </div>
     </c-col>
-
+    <c-col [xs]="6">
+      <div class="mb-3">
+        <label cLabel for="inputPackages-1">Packages :</label>
+        <select id="inputPackages-1" aria-label="Select a Package" cSelect name="package_id" formControlName="package_id">
+          <option selected="selected" value="">Select Book</option>
+          <option *ngFor="let type of packages" [value]="type.id">
+            {{ type.name }}
+          </option>
+        </select>
+      </div>
+    </c-col>
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="inputRoom-1">Room:</label>
@@ -233,6 +243,7 @@
         <th>Time</th>
         <th>Organizer</th>
         <th>Passengers count</th>
+        <th>Total Cost</th>
         <th>Status</th>
         <th>Action</th>
       </tr>
@@ -251,6 +262,7 @@
         <td>{{item.event_time}}</td>
         <td>{{item.organizer?.name}}</td>
         <td>{{item.passengers}}</td>
+        <td>LKR: {{item.total_amount}}</td>
         <td>{{item.book_status?.name}}</td>
         <td>
           <button (click)="getHotelBookById(item.id)" cButton><svg cIcon name="cil-task" size="lg" title="Numbered List Icon"></svg></button>&ngsp;&ngsp;

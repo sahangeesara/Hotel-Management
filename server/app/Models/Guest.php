@@ -18,6 +18,7 @@ class Guest extends Model
         'email',
         'city',
         'nic',
+        'foreign_nic',
         'guest_type',
         'country_id',
         'cuntry_code_id',
@@ -44,4 +45,28 @@ class Guest extends Model
     {
         return $this->belongsTo(CountryCode::class,'country_code_id');
     }
+
+    public function roomBook(): HasMany
+    {
+        return $this->hasMany(RoomBook::class);
+    }
+    public function transportBook(): HasMany
+    {
+        return $this->hasMany(TransportBook::class);
+    }
+    public function order(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function bookingGuestCounts(): HasMany
+    {
+        return $this->hasMany(BookingGuestCounts::class);
+    }
+
+    public function  guestDependentDetail() : HasMany
+    {
+        return $this->hasMany(GuestDependentDetail::class);
+    }
+
 }

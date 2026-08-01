@@ -20,6 +20,8 @@ class RoomBook extends Model
         'max_guests',
         'number_of_room',
         'package_id',
+        'total_amount',
+        'additional_services',
         'booking_Date',
         'cancel_Date',
         'is_active',

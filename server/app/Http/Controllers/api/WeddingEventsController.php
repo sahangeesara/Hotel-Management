@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BookStatus;
+use App\Models\Package;
 use App\Models\Rooms;
 use App\Models\WeddingEvent;
 use Illuminate\Http\Request;
@@ -42,9 +43,10 @@ class WeddingEventsController extends Controller
             'hotel_id' => 'required|integer',
             'organizer_id' => 'required|integer',
             'room_id' => 'required|integer',
+            'package_id' => 'required|integer',
             'book_status_id'=> 'required|integer',
-            'requests' => 'required',
-            'additional_services' => 'required',
+            'requests' => '',
+            'additional_services' => '',
         ]);
 
         $existingBooking = WeddingEvent::where('organizer_id', $validatedData['organizer_id'])
@@ -63,10 +65,22 @@ class WeddingEventsController extends Controller
         try {
             $nextId = WeddingEvent::max('id') + 1;
             $heNo = 'WEN' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
-
+            $totalAmount=0;
             // Calculate total_amount
             $room = Rooms::findOrFail($validatedData['room_id']);
-            $totalAmount = $room->r_cost ?? 0;
+            $package = Package::findOrFail($validatedData['package_id']);
+
+            $package_amount = $package->package_amount ?? 0;
+            $request_price = 0;
+            if ($validatedData['requests']) {
+                $request_price += 3000;
+            }
+
+            if ($validatedData['additional_services']) {
+                $request_price += 3000;
+            }
+            $totalAmount += $room->r_cost ?? 0 + $package_amount + $request_price;
+
 
             $weddingEvent= WeddingEvent::create(
                 [
@@ -77,6 +91,7 @@ class WeddingEventsController extends Controller
                     'passengers' => $validatedData['passengers'],
                     'hotel_id' => $validatedData['hotel_id'],
                     'room_id' => $validatedData['room_id'],
+                    'package_id' => $validatedData['package_id'],
                     'organizer_id' => $validatedData['organizer_id'],
                     'book_status_id' => $validatedData['book_status_id'],
                     'requests' => $validatedData['requests'],
@@ -153,6 +168,7 @@ class WeddingEventsController extends Controller
             'hotel_id' => 'required|integer',
             'organizer_id' => 'required|integer',
             'room_id' => 'required|integer',
+            'package_id' => 'required|integer',
             'book_status_id'=> 'required|integer',
             'requests' => 'required',
             'additional_services' => 'required',
@@ -186,8 +202,32 @@ class WeddingEventsController extends Controller
             $weddingEvent = WeddingEvent::findOrFail($id);
 
             // Calculate total_amount
-            $room = Rooms::findOrFail($validatedData['room_id']);
-            $totalAmount = $room->r_cost ?? 0;
+
+            $totalAmount = $weddingEvent->total_amount;
+
+            if($validatedData['room_id' ] != $weddingEvent->room_id || $validatedData['package_id'] != $weddingEvent->package_id || $validatedData['requests'] != $weddingEvent->requests || $validatedData['additional_services'] != $weddingEvent->additional_services) {
+                $room = Rooms::findOrFail($validatedData['room_id']);
+                $package = Package::where('id', $validatedData['package_id'])->first();
+                $package_amount = $package->package_amount ?? 0;
+                $request_price = 0;
+                if ($validatedData['requests']) {
+                    $request_price += 3000;
+                }
+
+                if ($validatedData['additional_services']) {
+                    $request_price += 3000;
+                }
+                $totalAmount += $room->r_cost ?? 0 + $package_amount + $request_price;
+
+            }
+
+            if($validatedData['requests'] == null && $weddingEvent->requests != null ){
+                $totalAmount = $totalAmount - 3000;
+            }
+
+            if($validatedData['additional_services'] == null && $weddingEvent->additional_services != null){
+                $totalAmount =$totalAmount - 3000;
+            }
 
             $weddingEvent->update(
                 [
@@ -201,6 +241,7 @@ class WeddingEventsController extends Controller
                     'organizer_id' => $validatedData['organizer_id'],
                     'book_status_id' => $validatedData['book_status_id'],
                     'requests' => $validatedData['requests'],
+                    'package_id' => $validatedData['package_id'],
                     'additional_services' => $validatedData['additional_services'],
                     'event_no'=> $validatedData['event_no'],
                     'total_amount' => $totalAmount,

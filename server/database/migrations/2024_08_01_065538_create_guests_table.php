@@ -22,6 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('guide_id')->nullable();
             $table->unsignedBigInteger('country_id')->nullable();
             $table->char('nic',20)->nullable()->unique();
+            $table->char('foreign_nic',20)->nullable()->unique();
             $table->unsignedBigInteger('cuntry_code_id')->nullable();
             $table->char('tel_no',10)->unique();
             $table->boolean('is_active')->default(1);

@@ -3,7 +3,6 @@ import {
   ButtonDirective,
   ColComponent,
   FormControlDirective,
-  FormDirective,
   FormLabelDirective, FormSelectDirective, FormTextDirective,
   RowComponent, TableDirective, TemplateIdDirective,
 } from "@coreui/angular";

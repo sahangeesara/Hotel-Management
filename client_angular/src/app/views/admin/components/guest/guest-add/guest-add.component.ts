@@ -1,38 +1,36 @@
 import {Component, OnInit} from '@angular/core';
 import {
-    ButtonDirective,
-    ColComponent,
-    FormControlDirective,
-    FormDirective,
-    FormLabelDirective,
-    FormSelectDirective, FormTextDirective, RowComponent
+  ButtonDirective,
+  ColComponent,
+  FormControlDirective,
+  FormDirective,
+  FormLabelDirective,
+  FormSelectDirective, FormTextDirective, RowComponent, TableDirective
 } from "@coreui/angular";
-import {NgForOf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
-import {Guide} from "../../../../../entities/guide";
-import {Guest} from "../../../../../entities/guest";
-import {catchError, from, throwError} from "rxjs";
-import {map} from "rxjs/operators";
 import {CuntryService} from "../../../../../services/cuntry.service";
 
 @Component({
   selector: 'app-guest-add',
   standalone: true,
-    imports: [
-        ButtonDirective,
-        ColComponent,
-        FormControlDirective,
-        FormDirective,
-        FormLabelDirective,
-        FormSelectDirective,
-        FormTextDirective,
-        NgForOf,
-        ReactiveFormsModule,
-        RowComponent
-    ],
+  imports: [
+    ButtonDirective,
+    ColComponent,
+    FormControlDirective,
+    FormDirective,
+    FormLabelDirective,
+    FormSelectDirective,
+    FormTextDirective,
+    NgForOf,
+    ReactiveFormsModule,
+    RowComponent,
+    TableDirective,
+    NgIf
+  ],
   templateUrl: './guest-add.component.html',
   styleUrl: './guest-add.component.scss'
 })
@@ -40,12 +38,18 @@ export class GuestAddComponent implements OnInit {
   public error=null;
 
   guest:any;
+  guestData:any;
   guestGenders: any[] = [];
+  guestDetails: any[] = [];
   guides: any[] = [];
   countryCodes: any[] = [];
   countries: any[] = [];
   formData = new FormData();
   guestForm: FormGroup;
+  foreignGuestId:any;
+  foreignGuestDependId:any;
+  isForeign=false;
+  isLocal=false;
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private countryService: CuntryService,
@@ -59,41 +63,131 @@ export class GuestAddComponent implements OnInit {
       name: ['', [Validators.required]],
       address: [''],
       email: ['', [Validators.required, Validators.email]],
-      nic: ['', [Validators.required,Validators.maxLength(12) ]],
+      nic: ['', [Validators.maxLength(12) ]],
       city: ['', [Validators.required]],
       tel_no: ['', [Validators.required, Validators.maxLength(10)]],
       gender_id: ['', Validators.required],
+      foreign_nic: [''],
       country_id: ['', Validators.required],
       cuntry_code_id: ['', Validators.required],
       guide_id: [''],
       guest_type: ['', Validators.required],
+      adults: ['', Validators.required],
+      children: ['', Validators.required],
+      infants: ['', Validators.required],
+      dependent_name: [''],
+      dependent_relationship: [''],
+      dependent_id: [''],
+      age: [''],
       });
 
   }
 
-  get guestGenField(): FormControl {
-    return this.guestForm.controls['gender_id'] as FormControl;
-  }
-  get guideField(): FormControl {
-    return this.guestForm.controls['guide_id'] as FormControl;
-  }
 
   clearForm() {
 
     this.guestForm.reset();
-    this.guestGenField.setValue("Select Guest Gender");
-    this.guideField.setValue("Select Guide");
+    this.guestForm.patchValue({
+      gender_id: '',
+      country_id: '',
+      guide_id: '',
+      country_code_id: '',
+    });
+  }
+
+  generateGuestId() {
+    const name = this.guestForm.get('name')?.value || '';
+    const telNo = this.guestForm.get('tel_no')?.value || '';
+
+    const namePrefix = name.replace(/\s+/g, '').substring(0, 3).toUpperCase();
+
+    const telSuffix = String(telNo).slice(-3);
+
+    this.foreignGuestId = namePrefix +"-" + telSuffix;
+    this.guestForm.patchValue({
+      foreign_nic: this.foreignGuestId
+    });
+  }
+
+  generateGuestDependId(){
+    const foreignNic = this.foreignGuestId;
+    const relationship = this.guestForm.get('dependent_relationship')?.value;
+    const age = this.guestForm.get('age')?.value;
+    this.foreignGuestDependId = relationship +"-" + foreignNic +"-" + age ;
+  }
+  selectGuestType() {
+    const nameControl = this.guestForm.get('name');
+    const telControl = this.guestForm.get('tel_no');
+
+    if (!nameControl?.value || !telControl?.value) {
+      alert("Name and Telephone number are required!");
+    }
+
+    const type = this.guestForm.get('guest_type')?.value;
+
+    if (type === "Foreign") {
+      this.isForeign = true;
+      this.isLocal =false;
+      this.guestForm.get('nic')?.disable();
+      this.guestForm.get('foreign_nic')?.enable();
+
+      this.generateGuestId();
+      this.guestForm.patchValue({
+        foreign_nic: this.foreignGuestId
+      })
+    }else if (type === "Local") {
+      const nic = this.guestForm.get('nic')?.value || '';
+
+      this.isForeign = false;
+      this.isLocal = true;
+      this.guestForm.get('foreign_nic')?.disable();
+      this.guestForm.get('nic')?.enable();
+
+      if (nic) {
+        this.checkNicAndSetGender(nic);
+      }
+      
+    }else {
+      this.isForeign = false;
+      this.isLocal = false;
+      this.guestForm.get('foreign_nic')?.disable();
+      this.guestForm.get('nic')?.disable();
+    }
+  }
 
 
+  addSelectedGuest() {
+    const dependentName = this.guestForm.get('dependent_name')?.value;
+    const relationship = this.guestForm.get('dependent_relationship')?.value;
+    const age = this.guestForm.get('age')?.value;
+
+    this.generateGuestDependId();
+
+      this.guestDetails.push({
+        dependent_id: this.foreignGuestDependId,
+        dependent_name: dependentName,
+        dependent_relationship: relationship,
+        age: age,
+      });
+
+    this.guestForm.patchValue({ dependent_name: '', dependent_relationship: '', age : '' });
+
+  }
+  removeGuest(index: number) {
+    this.guestDetails.splice(index, 1);
   }
 
    onSubmit() {
 
     if (this.guestForm.valid) {
 
-     this.guest = this.guestForm.getRawValue();
+     this.guestData = this.guestForm.getRawValue();
+      let data = this.guestDetails;
 
-      this.allServe.submitGuest(this.guest).subscribe(
+
+      this.formData.append('form', JSON.stringify(this.guestData));
+      this.formData.append('guestDetails', JSON.stringify(data));
+      this.allServe.submitGuest(this.formData).subscribe(
         (response) => {
           // Handle successful submission
           this.clearForm();
@@ -162,6 +256,28 @@ export class GuestAddComponent implements OnInit {
       }
     );
   }
+  checkNicAndSetGender(nic: string) {
+    const cleanNic = nic.replace(/\s+/g, '');
+
+    // Handle 10-character NIC (Old format: YYDOVXXXXX)
+    if (cleanNic.length === 10) {
+      const nicPrefix = parseInt(cleanNic.substring(2, 5), 10);
+      if (!isNaN(nicPrefix)) {
+        this.guestForm.patchValue({
+          gender_id: nicPrefix > 500 ? '2' : '1'
+        }, { emitEvent: false }); // { emitEvent: false } prevents infinite loops
+      }
+    }
+    // Handle 12-character NIC (New format: YYYYDOVXXXXX)
+    else if (cleanNic.length === 12) {
+      const nicPrefix = parseInt(cleanNic.substring(4, 7), 10);
+      if (!isNaN(nicPrefix)) {
+        this.guestForm.patchValue({
+          gender_id: nicPrefix > 500 ? '2' : '1'
+        }, { emitEvent: false });
+      }
+    }
+  }
 
 
   ngOnInit() {
@@ -169,5 +285,10 @@ export class GuestAddComponent implements OnInit {
     this.getGuide();
     this.getCountryCode();
     this.getCountries();
+    this.guestForm.get('nic')?.valueChanges.subscribe(nicValue => {
+      if (this.isLocal && nicValue) {
+        this.checkNicAndSetGender(nicValue);
+      }
+    });
   }
 }

@@ -28,6 +28,7 @@ return new class extends Migration
             $table->unsignedBigInteger('duration_id');
             $table->string('custom_duration')->nullable();
             $table->text('requests')->nullable();
+            $table->decimal('total_amount',10,2)->default(0);
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });

@@ -79,6 +79,7 @@ export class RoomBookComponent implements OnInit{
       number_of_room: ['', [Validators.required]],
       booking_Date: ['', [Validators.required]],
       cancel_Date: ['',[Validators.required]],
+      additional_services: [''],
       room_category_id: [''],
       no_of_rooms: [''],
 
@@ -463,11 +464,5 @@ export class RoomBookComponent implements OnInit{
     this.getRmCat();
 
   }
-
-  objectValues(obj: any): any[] {
-    return Object.values(obj);
-  }
-
-
 
 }
