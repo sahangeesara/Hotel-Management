@@ -1,6 +1,6 @@
 <div  id="AddForm" >
   <c-row>
-    <h2><strong><em>Hotels Add Form</em></strong></h2>
+    <h2><strong><em>Hotels Registration Form</em></strong></h2>
     <c-col [xs]="12">
       <form [formGroup]="hotelForm" (ngSubmit)="onSubmit()">
         <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
@@ -99,6 +99,46 @@
     </c-col>
 
   </c-row>
+</div>
+
+<div>
+  <h3> <strong><em> Hotel Search Form </em> </strong></h3>
+  <form cForm [formGroup]="hotelSearchForm" >
+    <c-row>
+      <c-col [xs]="3">
+        <div class="mb-3">
+          <label cLabel for="inputName-1">Search Name: </label>
+          <input cFormControl id="inputName-1" type="text" sizing="sm" name="name" formControlName="name">
+        </div>
+      </c-col>
+      <c-col [xs]="3">
+        <div class="mb-3">
+          <label cLabel>Hotel Room Setups:</label>
+
+          <select aria-label="Select User room_setups" cSelect name="room_setups_id" formControlName="room_setups_id">
+            <option selected="selected" value="">Select User room_setups</option>
+            <option *ngFor="let room_setup of roomSetups" [value]="room_setup.id">
+              {{ room_setup.name }}
+            </option>
+          </select>
+        </div>
+      </c-col>
+      <c-col [xs]="4">
+        <div class="mb-3">
+          <label cLabel for="inputPhone-1">Search Phone: </label>
+          <input cFormControl id="inputPhone-1" type="text" sizing="sm" name="phone" formControlName="phone">
+        </div>
+      </c-col>
+      <c-col [xs]="4">
+        <div class="mb-3">
+          <label cLabel for="inputCapacity-1">Search Capacity: </label>
+          <input cFormControl id="inputCapacity-1" type="text" sizing="sm" name="capacity" formControlName="capacity">
+        </div>
+      </c-col>
+    </c-row>
+    <input cButton color="success" style="color: white" type="button" (click)="search()" value="Search">&ngsp;
+    <input cButton color="danger" style="color: white" type="button" (click)="clearSearchForm()" value="Clear"> &ngsp;
+  </form>
 </div>
 
 

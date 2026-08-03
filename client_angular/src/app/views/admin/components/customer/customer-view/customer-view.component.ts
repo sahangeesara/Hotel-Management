@@ -41,9 +41,12 @@ export class CustomerViewComponent implements OnInit{
   custSearchForm:FormGroup;
   public error=null;
   customData:any;
+  foreignCustomerId:any;
   countryCodes: any[] = [];
   countries: any[] = [];
   formData = new FormData();
+  isForeign=false;
+  isLocal=false;
 
   constructor(
     private allServe: AllServiceService,
@@ -57,6 +60,7 @@ export class CustomerViewComponent implements OnInit{
       name: ['', [Validators.required]],
       email: ['', [Validators.required]],
       address: ['', [Validators.required]],
+      foreign_nic: ['', [Validators.required]],
       tel_no: ['', [Validators.required]],
       gender_id: ['', [Validators.required]],
       nic: ['', [Validators.required]],
@@ -95,6 +99,61 @@ export class CustomerViewComponent implements OnInit{
       });
     }
   }
+  generateCustomerId() {
+    const name = this.customerForm.get('name')?.value || '';
+    const telNo = this.customerForm.get('tel_no')?.value || '';
+
+    const namePrefix = name.replace(/\s+/g, '').substring(0, 3).toUpperCase();
+
+    const telSuffix = String(telNo).slice(-3);
+
+    this.foreignCustomerId = namePrefix +"-" + telSuffix;
+    this.customerForm.patchValue({
+      foreign_nic: this.foreignCustomerId
+    });
+  }
+
+  selectCustomerType() {
+    const nameControl = this.customerForm.get('name');
+    const telControl = this.customerForm.get('tel_no');
+
+    if (!nameControl?.value || !telControl?.value) {
+      alert("Name and Telephone number are required!");
+    }
+
+    const type = this.customerForm.get('custom_type')?.value;
+
+    if (type === "Foreign") {
+      this.isForeign = true;
+      this.isLocal =false;
+      this.customerForm.get('nic')?.disable();
+      this.customerForm.get('foreign_nic')?.enable();
+
+      this.generateCustomerId();
+      this.customerForm.patchValue({
+        foreign_nic: this.foreignCustomerId
+      })
+    }else if (type === "Local") {
+      const nic = this.customerForm.get('nic')?.value || '';
+
+      this.isForeign = false;
+      this.isLocal = true;
+      this.customerForm.get('foreign_nic')?.disable();
+      this.customerForm.get('nic')?.enable();
+
+      if (nic) {
+        this.checkNicAndSetGender(nic);
+      }
+
+    }else {
+      this.isForeign = false;
+      this.isLocal = false;
+      this.customerForm.get('foreign_nic')?.disable();
+      this.customerForm.get('nic')?.disable();
+    }
+  }
+
+
   getShow(id:any) {
     this.allServe.getCustomerById(id).subscribe(
       (data: any) => {
@@ -109,6 +168,17 @@ export class CustomerViewComponent implements OnInit{
   }
   clearForm() {
     this.customerForm.reset();
+    if(this.customerForm.disabled){
+      this.customerForm.enable();
+    }
+    this.customerForm.patchValue(
+      {
+        custom_type: '',
+        gender_id: '',
+        country_id: '',
+        cuntry_code_id: '',
+      }
+    )
   }
 
   customerDelete(id:any){
@@ -178,6 +248,51 @@ export class CustomerViewComponent implements OnInit{
       );
     }
   }
+
+  checkNicAndSetGender(nic: string) {
+    const cleanNic = nic.replace(/\s+/g, '');
+
+    // Handle 10-character NIC (Old format: YYDOVXXXXX)
+    if (cleanNic.length === 10) {
+      const nicPrefix = parseInt(cleanNic.substring(2, 5), 10);
+      if (!isNaN(nicPrefix)) {
+        this.customerForm.patchValue({
+          gender_id: nicPrefix > 500 ? '2' : '1'
+        }, { emitEvent: false }); // { emitEvent: false } prevents infinite loops
+      }
+      const val= parseInt(cleanNic.substring(0, 2), 10);
+      const currentYear = new Date().getFullYear();
+      const birthYear =Number("19"+val);
+
+      const age = currentYear - birthYear;
+
+      if (age < 18) {
+        this.customerForm.disable();
+      }
+
+
+    }
+    // Handle 12-character NIC (New format: YYYYDOVXXXXX)
+    else if (cleanNic.length === 12) {
+      const nicPrefix = parseInt(cleanNic.substring(4, 7), 10);
+      if (!isNaN(nicPrefix)) {
+        this.customerForm.patchValue({
+          gender_id: nicPrefix > 500 ? '2' : '1'
+        }, { emitEvent: false });
+      }
+
+      const val= parseInt(cleanNic.substring(0, 5), 10);
+      const currentYear = new Date().getFullYear();
+      const birthYear =Number(val);
+
+      const age = currentYear - birthYear;
+
+      if (age < 18) {
+        this.customerForm.disable();
+      }
+    }
+  }
+
   handleError(error: { error: null; }) {
     return this.error = error.error;
   }
@@ -232,5 +347,10 @@ export class CustomerViewComponent implements OnInit{
     this.getCustomGen();
     this.getCountryCode();
     this.getCountries();
+    this.customerForm.get('nic')?.valueChanges.subscribe(nicValue => {
+      if (this.isLocal && nicValue) {
+        this.checkNicAndSetGender(nicValue);
+      }
+    });
   }
 }

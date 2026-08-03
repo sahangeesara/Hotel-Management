@@ -1,6 +1,6 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {ActivatedRoute, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {SearchService} from "../../../../../services/search.service";
 import {HotelService} from "../../../../../services/hotel.service";

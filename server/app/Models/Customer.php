@@ -20,6 +20,7 @@ class Customer extends Model
         'country_id',
         'cuntry_code_id',
         'nic',
+        'foreign_nic',
         'gender_id',
         'custom_type',
         'tel_no',

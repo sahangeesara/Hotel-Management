@@ -112,6 +112,118 @@ export class SearchService {
     });
   }
 
+  getHotelData(filters: {
+    name?: string;
+    phone?: number;
+    room_setups_id?: string;
+    capacity?: number;
+  }) {
+    const params: any = {};
+
+    if (filters.name) {
+      params.name = filters.name;
+    }
+
+    if (filters.phone) {
+      params.phone = filters.phone;
+    }
+
+    if (filters.room_setups_id) {
+      params.room_setups_id = filters.room_setups_id;
+    }
+
+    if (filters.capacity) {
+      params.capacity = filters.capacity;
+    }
+
+    return this.http.get(`${this.besUrl}/hotel/search`, {
+      ...this.getAuthHeaders(),
+      params
+    });
+  }
+
+ getRoomData(filters: {
+    r_no?: string;
+    hotel_id?: number;
+    r_capacity?: string;
+    r_category_id?: number;
+  }) {
+    const params: any = {};
+
+    if (filters.r_no) {
+      params.r_no = filters.r_no;
+    }
+
+    if (filters.hotel_id) {
+      params.hotel_id = filters.hotel_id;
+    }
+
+    if (filters.r_capacity) {
+      params.r_capacity = filters.r_capacity;
+    }
+
+    if (filters.r_category_id) {
+      params.r_category_id = filters.r_category_id;
+    }
+
+    return this.http.get(`${this.besUrl}/room/search`, {
+      ...this.getAuthHeaders(),
+      params
+    });
+  }
+
+ getRoomBookData(filters: {
+   guest_id?: string;
+   package_id?: number;
+   booking_Date?: string;
+  }) {
+    const params: any = {};
+
+    if (filters.guest_id) {
+      params.guest_id = filters.guest_id;
+    }
+
+    if (filters.package_id) {
+      params.package_id = filters.package_id;
+    }
+
+    if (filters.booking_Date) {
+      params.booking_Date = filters.booking_Date;
+    }
+
+    return this.http.get(`${this.besUrl}/roomBook/search`, {
+      ...this.getAuthHeaders(),
+      params
+    });
+  }
+
+  getFoodData(filters: {
+    name?: string;
+    item_category_id?: number;
+    food_status_id?: string;
+  }) {
+    const params: any = {};
+
+    if (filters.name) {
+      params.name = filters.name;
+    }
+
+    if (filters.item_category_id) {
+      params.item_category_id = filters.item_category_id;
+    }
+
+    if (filters.food_status_id) {
+      params.food_status_id = filters.food_status_id;
+    }
+
+    return this.http.get(`${this.besUrl}/food/search`, {
+      ...this.getAuthHeaders(),
+      params
+    });
+  }
+
+
+
   //Hotel Booking Search
   getGuestData(filters: {
     name?: string;

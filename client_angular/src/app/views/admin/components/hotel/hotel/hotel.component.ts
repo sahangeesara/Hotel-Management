@@ -5,13 +5,14 @@ import {HotelService} from "../../../../../services/hotel.service";
 import {
   ButtonDirective,
   ColComponent,
-  FormControlDirective,
+  FormControlDirective, FormDirective,
   FormLabelDirective,
-  FormSelectDirective,
+  FormSelectDirective, FormTextDirective,
   RowComponent, TableDirective
 } from "@coreui/angular";
 import {IconDirective} from "@coreui/icons-angular";
 import {NgForOf, NgIf} from "@angular/common";
+import {SearchService} from "../../../../../services/search.service";
 
 @Component({
   selector: 'app-hotel',
@@ -27,7 +28,7 @@ import {NgForOf, NgIf} from "@angular/common";
     NgIf,
     ReactiveFormsModule,
     RowComponent,
-    TableDirective,ColComponent,
+    TableDirective, ColComponent, FormDirective, FormTextDirective,
   ],
   templateUrl: './hotel.component.html',
   styleUrl: './hotel.component.scss'
@@ -38,9 +39,11 @@ export class HotelComponent implements OnInit {
   roomSetups: any[] = [];
   formData = new FormData();
   hotelForm: FormGroup;
+  hotelSearchForm: FormGroup;
   HotelData:any;
   public isEditMode = false;
   constructor(   private hotelServe: HotelService,
+                 private searchServe: SearchService,
                  private toastr: ToastrService,
                  private fb: FormBuilder,
   ) {
@@ -56,6 +59,12 @@ export class HotelComponent implements OnInit {
       capacity: ['', [Validators.required]]
     });
 
+    this.hotelSearchForm = this.fb.group({
+      name: [''],
+      phone: [''],
+      room_setups_id: [''],
+      capacity: [''],
+    })
   }
 
 
@@ -96,6 +105,44 @@ export class HotelComponent implements OnInit {
         }
       );
     }
+  }
+
+  search() {
+    const filters = {
+      name: this.hotelSearchForm.get('name')?.value?.trim() || '',
+      phone: this.hotelSearchForm.get('phone')?.value?.trim() || '',
+      room_setups_id: this.hotelSearchForm.get('room_setups_id')?.value?.trim() || '',
+      capacity: this.hotelSearchForm.get('capacity')?.value?.trim() || '',
+
+    };
+
+    if (!filters.name && !filters.phone && !filters.room_setups_id && !filters.capacity ) {
+      this.getHotel();
+      return;
+    }
+
+    this.searchServe.getHotelData(filters).subscribe({
+      next: (data: any) => {
+        this.hotels = data;
+      },
+      error: (error) => {
+        console.error('Error fetching hotel:', error);
+      }
+    });
+  }
+
+  clearSearchForm() {
+    this.hotelSearchForm.reset();
+    this.getHotel();
+    this.hotelSearchForm.patchValue(
+      {
+        hotel_id: '',
+        event_id: '',
+        event_type_id: '',
+        room_id: '',
+        event_date: '',
+      }
+    )
   }
 
   getHotel() {

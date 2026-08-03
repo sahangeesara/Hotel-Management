@@ -47,7 +47,8 @@ class CustomerController extends Controller
             'name' => 'required',
             'address' => 'required',
             'city' => 'required',
-            'nic' => 'required|unique:customers,nic',
+            'nic' => 'nullable|unique:customers',
+            'foreign_nic' => 'nullable|unique:customers',
             'email' => 'required|email',
             'tel_no' => 'required',
             'gender_id' => 'required',
@@ -70,6 +71,7 @@ class CustomerController extends Controller
             $customer->email = $data['email'];
             $customer->city = $data['city'];
             $customer->nic = $data['nic'];
+            $customer->foreign_nic = $data['foreign_nic'];
             $customer->tel_no = $data['tel_no'];
             $customer->gender_id = $data['gender_id'];
             $customer->country_id = $data['country_id'];
@@ -157,7 +159,7 @@ class CustomerController extends Controller
             'address' => 'required',
             'city' => 'required',
             'nic' => [
-                'required',
+                'nullable',
                 Rule::unique('customers', 'nic')->ignore($customer->id),
             ],
             'email' => [
@@ -166,6 +168,7 @@ class CustomerController extends Controller
                 Rule::unique('customers', 'email')->ignore($customer->id),
             ],
             'tel_no' => 'required',
+            'foreign_nic' => 'nullable|unique:customers',
             'gender_id' => 'required',
             'country_id' => 'required',
             'cuntry_code_id' => 'required',

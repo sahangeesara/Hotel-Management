@@ -21,6 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('cuntry_code_id')->nullable();
             $table->unsignedBigInteger('country_id')->nullable();
             $table->char('nic', 12)->nullable()->unique();
+            $table->char('foreign_nic', 12)->nullable()->unique();
             $table->string('custom_type');
             $table->string('tel_no', 10)->unique();
             $table->unsignedBigInteger('gender_id');
