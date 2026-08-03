@@ -25,7 +25,8 @@ class GuestController extends Controller
     public function index()
     {
         try {
-           $guests = Guest::with('guide','gender','country','countryCode')
+           $guests = Guest::with(['guide','gender','country','countryCode',
+                                            'BookingGuestCounts.guest','GuestDependentDetail.guest'])
                             ->where('is_active', 1)
                            ->orderBy('created_at',"DESC")
                            ->paginate(20);
@@ -64,8 +65,8 @@ class GuestController extends Controller
             'cuntry_code_id' => 'required',
             'guest_type' => 'required',
             'adults' => 'required',
-            'children' => 'required',
-            'infants' => 'required',
+            'children' => '',
+            'infants' => '',
         ]);
 
         if ($validatedData->fails()) {
@@ -115,12 +116,16 @@ class GuestController extends Controller
 
             $guest->save();
 
-            $guestcount =new BookingGuestCounts();
+            $adults = (int) ($data['adults'] ?? 0);
+            $children = (int) ($data['children'] ?? 0);
+            $infants = (int) ($data['infants'] ?? 0);
+
+            $guestcount = new BookingGuestCounts();
             $guestcount->guest_id = $guest->id;
-            $guestcount->adults = $data['adults'];
-            $guestcount->children = $data['children'];
-            $guestcount->infants = $data['infants'];
-            $guestcount->total_amount = $data['infants'] + $data['children'] + $data['adults'];
+            $guestcount->adults = $adults;
+            $guestcount->children = $children;
+            $guestcount->infants = $infants;
+            $guestcount->total_amount = $adults + $children + $infants;
 
             $guestcount->save();
 
@@ -157,7 +162,8 @@ class GuestController extends Controller
     public function show(string $id)
     {
         try {
-            $guests = Guest::with('guide','gender','country','countryCode')
+            $guests = Guest::with(['guide','gender','country','countryCode',
+                'BookingGuestCounts.guest','GuestDependentDetail.guest'])
                             ->findOrFail($id);
             return response()->json($guests);
 
@@ -171,7 +177,8 @@ class GuestController extends Controller
     public function searchGuest(Request $request)
     {
         try {
-            $guests = Guest::with('guide','gender','country','countryCode')
+            $guests = Guest::with(['guide','gender','country','countryCode',
+                'BookingGuestCounts.guest','GuestDependentDetail.guest'])
                 ->where('is_active', true)
 
                 ->when($request->filled('name'), function ($query) use ($request) {
@@ -199,6 +206,21 @@ class GuestController extends Controller
         }
     }
 
+    public function getDependentDetail(String $id)
+    {
+        try {
+            $dependents = GuestDependentDetail::where('guest_id', $id)->get();
+
+            if ($dependents->isEmpty()) {
+                return response()->json(["message" => "No dependents found."], 404);
+            }
+
+            return response()->json($dependents);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(["message" => "An error occurred while retrieving dependent details."], 500);
+        }
+    }
 
     public function getGuide(){
         try {

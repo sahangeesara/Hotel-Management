@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('guest_id');
             $table->foreign('guest_id')->references('id')->on('guests')->onDelete('cascade');
             $table->integer('adults');
-            $table->integer('children');
-            $table->integer('infants');
+            $table->integer('children')->nullable();
+            $table->integer('infants')->nullable();
             $table->integer('total_amount');
             $table->boolean('is_active')->default(1);
             $table->timestamps();

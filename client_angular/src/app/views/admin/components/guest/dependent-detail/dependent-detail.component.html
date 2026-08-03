@@ -1,0 +1,41 @@
+<div class="dependent-detail-container" *ngIf="dependentDetails && dependentDetails.length > 0; else loading">
+  <!-- Loop through each dependent in the array -->
+  <div class="card p-3 shadow-sm mb-3" *ngFor="let dep of dependentDetails">
+    <h6 class="text-primary mb-3">Dependent Information</h6>
+
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <strong>Name:</strong>
+        <span>{{ dep.dependent_name }}</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <strong>Relationship:</strong>
+        <span>{{ dep.dependent_relationship }}</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <strong>Age:</strong>
+        <span>{{ dep.age }}</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <strong>Dependent ID:</strong>
+        <span>{{ dep.dependent_id }}</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <strong>Registered Date:</strong>
+        <span>{{ dep.created_at | date:'medium' }}</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <strong>Status:</strong>
+        <span class="badge" [ngClass]="dep.is_active ? 'bg-success' : 'bg-secondary'">
+          {{ dep.is_active ? 'Active' : 'Inactive' }}
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="text-center p-4">
+    <p class="text-muted">Loading dependent details...</p>
+  </div>
+</ng-template>

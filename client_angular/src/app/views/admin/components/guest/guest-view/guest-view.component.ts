@@ -15,6 +15,7 @@ import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule} f
 import {NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
 import {SearchService} from "../../../../../services/search.service";
 import {CuntryService} from "../../../../../services/cuntry.service";
+import {DependentDetailComponent} from "../dependent-detail/dependent-detail.component";
 
 @Component({
   selector: 'app-guest-view',
@@ -40,21 +41,25 @@ import {CuntryService} from "../../../../../services/cuntry.service";
     FormSelectDirective,
     NgForOf,
     FormControlDirective,
-    FormTextDirective
+    FormTextDirective,
+    DependentDetailComponent
   ],
   templateUrl: './guest-view.component.html',
   styleUrl: './guest-view.component.scss'
 })
 export class GuestViewComponent implements OnInit{
   @ViewChild(GuestUpdateComponent) guestUpdateComponent : GuestUpdateComponent | undefined;
+  @ViewChild(DependentDetailComponent) guestDependComponent : DependentDetailComponent | undefined;
 
-  public visible = false;
+  public visibleDependModal = false;
+  public visibleUpdateModal = false;
 
 
   guests: any[] = [];
   searchGuestForm:FormGroup
   guestGenders: any[] = [];
   countries: any[] = [];
+  dependentData: any = null;
 
   constructor(  private allServe: AllServiceService,
                 private fb: FormBuilder,
@@ -95,12 +100,21 @@ export class GuestViewComponent implements OnInit{
 
   }
 
-  toggleLiveDemo() {
-    this.visible = !this.visible;
+  toggleLiveDependModal() {
+    this.visibleDependModal = !this.visibleDependModal;
   }
 
-  handleLiveDemoChange(event: any) {
-    this.visible = event;
+  handleLiveDependChange(event: boolean) {
+    this.visibleDependModal = event;
+  }
+
+// --- Guest Update Modal Functions ---
+  toggleUpdateModal() {
+    this.visibleUpdateModal = !this.visibleUpdateModal;
+  }
+
+  handleUpdateModalChange(event: boolean) {
+    this.visibleUpdateModal = event;
   }
   getCountries() {
     this.countryService.getNationality().subscribe(
@@ -112,12 +126,31 @@ export class GuestViewComponent implements OnInit{
       }
     );
   }
+  // Define a variable to hold the dependent data and modal state
+
+  getDependentDetail(id: any) {
+    this.allServe.getGuestDependentDetailById(id).subscribe({
+      next: (response: any) => {
+        this.toggleLiveDependModal();
+
+        setTimeout(() => {
+          if (this.guestDependComponent) {
+            this.guestDependComponent.getData(response);
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error fetching dependent detail:', error);
+      }
+    });
+  }
+
   getShow(id:any) {
     this.allServe.getGuestById(id).subscribe(
       (data: any) => {
 
         this.guestUpdateComponent?.getData(data);
-        this.toggleLiveDemo();
+        this.toggleUpdateModal();
 
       },
       (error) => {
@@ -147,6 +180,7 @@ export class GuestViewComponent implements OnInit{
       }
     });
   }
+
   clearSearchForm() {
     this.searchGuestForm.reset();
     this.searchGuestForm.patchValue(  {
@@ -176,5 +210,5 @@ export class GuestViewComponent implements OnInit{
   }
 
 
-
+  protected readonly Number = Number;
 }

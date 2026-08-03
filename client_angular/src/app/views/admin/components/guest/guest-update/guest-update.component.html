@@ -1,6 +1,8 @@
 <div>
+  <h3> <strong><em> Guest Add Form </em> </strong></h3>
   <form cForm [formGroup]="guestUpdateForm" (ngSubmit)="guestUpdate()">
     <c-row>
+      <input type="hidden" formControlName="id" >
       <c-col [xs]="6">
         <div class="mb-3">
           <label cLabel for="inputName-1">Guest Name: </label>
@@ -9,6 +11,11 @@
             ex: Kasun Dilruwan
           </div>
         </div>
+        @if (guestUpdateForm.get('name')?.invalid && guestUpdateForm.get('name')?.touched) {
+          @if (guestUpdateForm.get('name')?.errors?.['required']) {
+            <span style="color:red">Guest name is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
@@ -31,15 +38,6 @@
           <input cFormControl id="inputCity-1" type="text" name="city" formControlName="city" sizing="sm">
           <div cFormText>
             ex: Colombo
-          </div>
-        </div>
-      </c-col>
-      <c-col [xs]="6">
-        <div class="mb-3">
-          <label cLabel for="inputNic-1">Guest Nic:</label>
-          <input cFormControl id="inputNic-1" type="text" name="nic" formControlName="nic" sizing="sm">
-          <div cFormText>
-            ex: 992404545V
           </div>
         </div>
       </c-col>
@@ -76,17 +74,37 @@
             </div>
           </c-col>
           <input cFormControl id="inputTel_no-1" type="text" name="tel_no" formControlName="tel_no" sizing="sm">
-          <div cFormText>
-            ex: 078654545
-          </div>
         </div>
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
-          <label cLabel for="inputGuestType-1">Guest Type:</label>
-          <input cFormControl id="inputGuestType-1" type="text" name="guest_type" formControlName="guest_type" sizing="sm">
+          <label cLabel>Guest Type:</label>
+          <select aria-label="Select Guest Type" cSelect name="guest_type" formControlName="guest_type" (change)="selectGuestType()">
+            <option selected="selected" value="">Select Guest Type</option>
+            <option value="Local">Local</option>
+            <option value="Foreign">Foreign</option>
+          </select>
         </div>
       </c-col>
+      @if (isLocal) {
+        <c-col [xs]="6">
+          <div class="mb-3">
+            <label cLabel for="inputNic-1">Guest Nic:</label>
+            <input cFormControl id="inputNic-1" type="text" name="nic" formControlName="nic" sizing="sm">
+            <div cFormText>
+              ex: 992404545V
+            </div>
+          </div>
+        </c-col>
+      }
+      @if (isForeign) {
+        <c-col [xs]="6">
+          <div class="mb-3">
+            <label cLabel for="inputForeignNic-1">Guest Foreign Nic:</label>
+            <input cFormControl id="inputForeignNic-1" type="text" name="foreign_nic" formControlName="foreign_nic" sizing="sm">
+          </div>
+        </c-col>
+      }
       <c-col [xs]="6">
         <div class="mb-3">
           <label cLabel>Guest Gender:</label>
@@ -101,6 +119,24 @@
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
+          <label cLabel for="inputAdults-1">Adults Count:</label>
+          <input cFormControl id="inputAdults-1" type="number" name="adults" formControlName="adults" sizing="sm">
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputChildren-1">Children Count:</label>
+          <input cFormControl id="inputChildren-1" type="number" name="children" formControlName="children" sizing="sm">
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputInfants-1">Infants Count:</label>
+          <input cFormControl id="inputInfants-1" type="number" name="infants" formControlName="infants" sizing="sm">
+        </div>
+      </c-col>
+      <c-col [xs]="6">
+        <div class="mb-3">
           <label cLabel>Guide:</label>
 
           <select aria-label="Select Guide" cSelect name="guide_id" formControlName="guide_id">
@@ -111,6 +147,60 @@
           </select>
         </div>
       </c-col>
+
+      <hr class="mt-2">
+      <div>
+        <c-row>
+          <c-col [xs]="6">
+            <div class="mb-3">
+              <label cLabel for="inputDependentName-1">Guest Dependent Name:</label>
+              <input cFormControl id="inputDependentName-1" type="text" name="dependent_name" formControlName="dependent_name" sizing="sm">
+            </div>
+          </c-col>
+          <c-col [xs]="6">
+            <div class="mb-3">
+              <label cLabel for="inputDependentAge-1">Guest Dependent Age:</label>
+              <input cFormControl id="inputDependentAge-1" type="text" name="age" formControlName="age" sizing="sm">
+            </div>
+          </c-col>
+          <c-col [xs]="6">
+            <div class="mb-3">
+              <label cLabel for="inputDependentRelationship-1">Guest Dependent Relationship:</label>
+              <input cFormControl id="inputDependentRelationship-1" type="text" name="dependent_relationship" formControlName="dependent_relationship" sizing="sm">
+            </div>
+          </c-col>
+        </c-row>
+        <button type="button" cButton color="primary" (click)="addSelectedGuest()">Add Food</button>
+      </div>
+
+      <hr class="mt-4 mb-4">
+
+      <table [striped]="true" cTable>
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Guest Dependent ID</th>
+          <th scope="col">Guest Dependent Name</th>
+          <th scope="col">Guest Dependent Relationship</th>
+          <th scope="col">Guest Dependent Age</th>
+          <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr *ngFor="let depend of  guestDetails; let i = index">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>{{ depend.dependent_id }}</td>
+          <td>{{ depend.dependent_name }}</td>
+          <td>
+            {{depend.dependent_relationship  }}
+          </td>
+          <td>{{ depend.age }}</td>
+          <td>  <input cButton color="danger" style="color: white" type="button" value="Remove Food Item" (click)="removeGuest(i)"></td>
+        </tr>
+        </tbody>
+      </table>
+
       <div  class="mb-3">
         <button cButton color="primary" type="submit">
           Update
@@ -121,4 +211,6 @@
   </form>
 
 </div>
+
+
 

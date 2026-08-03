@@ -77,6 +77,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     // Guide
     Route::get('getGuide', [GuestController::class, 'getGuide']);
+    Route::get('dependentDetail/{id}', [GuestController::class, 'getDependentDetail']);
 
     // Guest
 

@@ -166,6 +166,9 @@ import {BookStatusEntity} from "../entities/bookStatusEntity";
   getGuestById(data:any){
     return this.http.get(`${this.besUrl}/guests/`+data,this.getAuthHeaders());
   }
+  getGuestDependentDetailById(data:any){
+    return this.http.get(`${this.besUrl}/dependentDetail/`+data,this.getAuthHeaders());
+  }
   guestDelete(data:any){
     return this.http.delete(`${this.besUrl}/guests/`+data,this.getAuthHeaders());
   }

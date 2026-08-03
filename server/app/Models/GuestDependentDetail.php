@@ -14,6 +14,7 @@ class GuestDependentDetail extends Model
         'id',
         'guest_id',
         'dependent_name',
+        'age',
         'dependent_relationship',
         'dependent_id',
         'is_active',

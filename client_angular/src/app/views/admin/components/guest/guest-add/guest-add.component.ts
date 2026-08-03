@@ -73,8 +73,8 @@ export class GuestAddComponent implements OnInit {
       guide_id: [''],
       guest_type: ['', Validators.required],
       adults: ['', Validators.required],
-      children: ['', Validators.required],
-      infants: ['', Validators.required],
+      children: [''],
+      infants: [''],
       dependent_name: [''],
       dependent_relationship: [''],
       dependent_id: [''],
@@ -146,7 +146,7 @@ export class GuestAddComponent implements OnInit {
       if (nic) {
         this.checkNicAndSetGender(nic);
       }
-      
+
     }else {
       this.isForeign = false;
       this.isLocal = false;

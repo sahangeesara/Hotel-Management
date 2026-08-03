@@ -68,6 +68,7 @@
     <th scope="col">Guest City</th>
     <th scope="col">Guest Nic</th>
     <th scope="col">Guest Tel No</th>
+    <th scope="col">Guest Count</th>
     <th scope="col">Guide Name</th>
     <th scope="col">Guest Country</th>
     <th scope="col">Action</th>
@@ -83,27 +84,56 @@
       <td>{{ guest.address }}</td>
       <td>{{ guest.email }}</td>
       <td>{{ guest.city }}</td>
+    @if (guest.nic) {
       <td>{{ guest.nic }}</td>
+    }
+    @if (guest.foreign_nic) {
+      <td>{{ guest.foreign_nic }}</td>
+    }
       <td>{{ guest.tel_no }}</td>
+    <td>
+      {{
+        Number(guest.booking_guest_counts[0]?.adults || 0) +
+        Number(guest.booking_guest_counts[0]?.children || 0) +
+        Number(guest.booking_guest_counts[0]?.infants || 0)
+      }}
+    </td>
       <td>{{ guest.guide ? guest.guide.name : 'Not Assign' }}</td>
       <td>{{ guest.country.name }}</td>
       <td>
         <button type="button" (click)="getShow(guest.id)" cButton>  <svg cIcon name="cil-task" size="lg" title="Numbered List Icon" ></svg></button>
-       <button type="button" (click)="guestDelete(guest.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
+        <button type="button" (click)="getDependentDetail(guest.id)" cButton color="warning"><svg cIcon name="cilZoomIn" size="lg"></svg></button>
+       <button type="button" (click)="guestDelete(guest.id)" cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
       </td>
 </tr>
   }
   </tbody>
 </table>
 
-<c-modal id="liveDemoModal" [visible]="visible" (visibleChange)="handleLiveDemoChange($event)">
+<c-modal  class="guest-modal" id="liveDemoModal" [visible]="visibleUpdateModal" (visibleChange)="handleUpdateModalChange($event)">
   <c-modal-header>
     <h5 cModalTitle> Guest Update Form</h5>
 
   </c-modal-header>
   <c-modal-body><app-guest-update></app-guest-update></c-modal-body>
   <c-modal-footer>
-    <button (click)="toggleLiveDemo()" cButton color="secondary">
+    <button (click)="toggleUpdateModal()" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal>
+
+
+<c-modal class="guest-modal" id="liveDemoModal-depend" [visible]="visibleDependModal" (visibleChange)="handleLiveDependChange($event)">
+  <c-modal-header>
+    <h5 cModalTitle>Guest Dependent Form</h5>
+  </c-modal-header>
+  <c-modal-body>
+    <!-- Pass the fetched data into the child component -->
+    <app-dependent-detail></app-dependent-detail>
+  </c-modal-body>
+  <c-modal-footer>
+    <button (click)="toggleLiveDependModal()" cButton color="secondary">
       Close
     </button>
   </c-modal-footer>
