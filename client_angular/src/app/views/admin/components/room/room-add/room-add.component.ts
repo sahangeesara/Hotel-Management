@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {
-    ButtonDirective,
-    FormControlDirective,
-    FormDirective,
-    FormLabelDirective,
-    FormSelectDirective, FormTextDirective, TableDirective
+  ButtonDirective, ColComponent,
+  FormControlDirective,
+  FormDirective,
+  FormLabelDirective,
+  FormSelectDirective, FormTextDirective, RowComponent, TableDirective
 } from "@coreui/angular";
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgForOf, NgIf} from "@angular/common";
@@ -12,6 +12,7 @@ import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
 import { IconDirective } from '@coreui/icons-angular';
 import {HotelService} from "../../../../../services/hotel.service";
+import {SearchService} from "../../../../../services/search.service";
 
 @Component({
   selector: 'app-room-add',
@@ -29,6 +30,8 @@ import {HotelService} from "../../../../../services/hotel.service";
     ReactiveFormsModule,
     TableDirective,
     NgIf,
+    ColComponent,
+    RowComponent,
   ],
   templateUrl: './room-add.component.html',
   styleUrl: './room-add.component.scss'
@@ -41,10 +44,13 @@ export class RoomAddComponent implements OnInit {
   roomsCategories: any[] = [];
   formData = new FormData();
   roomForm: FormGroup;
+  roomSearchForm: FormGroup;
   roomData:any;
+  isVisible:boolean = false;
   constructor(
                  private allServe: AllServiceService,
                  private hotelServe: HotelService,
+                 private searchServe: SearchService,
                  private toastr: ToastrService,
                  private fb: FormBuilder,
   ) {
@@ -59,6 +65,12 @@ export class RoomAddComponent implements OnInit {
       r_category_id: ['', Validators.required],
     });
 
+    this.roomSearchForm = this.fb.group({
+      hotel_id: [''],
+      r_category_id: [''],
+      r_no: [''],
+      r_capacity: [''],
+    });
   }
   get rmCategoryField(): FormControl {
     return this.roomForm.controls['r_category_id'] as FormControl;
@@ -69,14 +81,51 @@ export class RoomAddComponent implements OnInit {
     this.rmCategoryField.setValue("Select Rooms Category");
   }
 
-  getRoomById(id:any){
-    this.allServe.getRoomById(id).subscribe(
-      (room:any) => {
+  search() {
+    const filters = {
+      hotel_id: this.roomSearchForm.get('hotel_id')?.value?.trim() || '',
+      r_no: this.roomSearchForm.get('r_no')?.value?.trim() || '',
+      r_capacity: this.roomSearchForm.get('r_capacity')?.value?.trim() || '',
+      r_category_id: this.roomSearchForm.get('r_category_id')?.value?.trim() || '',
+    };
 
-        this.roomForm.patchValue(room);
+    if (!filters.hotel_id && !filters.r_no && !filters.r_capacity && !filters.r_category_id) {
+      this.getRm();
+      return;
+    }
+
+    this.searchServe.getRoomData(filters).subscribe({
+      next: (data: any) => {
+        this.rooms = data;
       },
+      error: (error) => {
+        console.error('Error fetching Room:', error);
+      }
+    });
+  }
+
+  clearSearchForm() {
+    this.roomSearchForm.reset();
+    this.getRm();
+    this.roomSearchForm.patchValue(
+      {
+        hotel_id: '',
+        r_no: '',
+        r_capacity: '',
+        r_category_id: '',
+      }
+    )
+  }
+
+  getRoomById(id: any) {
+    this.allServe.getRoomById(id).subscribe(
+      (room: any) => {
+        this.isVisible = true;
+        this.roomForm.get('r_no')?.disable();
+        this.roomForm.patchValue(room);
+        },
       (error) => {
-        console.error('Error fetching employee types:', error);
+        console.error('Error fetching room:', error);
       }
     );
   }

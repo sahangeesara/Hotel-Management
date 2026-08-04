@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
   ButtonDirective, ColComponent,
   FormControlDirective, FormDirective,
@@ -29,7 +29,7 @@ import {NgForOf} from "@angular/common";
   templateUrl: './employee-add.component.html',
   styleUrl: './employee-add.component.scss'
 })
-export class EmployeeAddComponent {
+export class EmployeeAddComponent implements OnInit {
 
   public error=null;
   employeeTypes: any[] = [];
@@ -58,19 +58,60 @@ export class EmployeeAddComponent {
 
   }
 
-  get empTypeField(): FormControl {
-    return this.empForm.controls['employee_type_id'] as FormControl;
-  }
-  get empGenField(): FormControl {
-    return this.empForm.controls['gender_id'] as FormControl;
-  }
-
   clearForm() {
     this.empForm.reset();
-    this.empTypeField.patchValue("Select Employee Type");
-    this.empGenField.patchValue("Select Employee Gender");
-
+    this.empForm.patchValue({
+      employee_type_id:'',
+      gender_id:'',
+    });
+    if(this.empForm.disabled){
+      this.empForm.enable();
+    }
   }
+
+  checkNicAndSetGender(nic: string) {
+    const cleanNic = nic.replace(/\s+/g, '');
+
+    // Handle 10-character NIC (Old format: YYDOVXXXXX)
+    if (cleanNic.length === 10) {
+      const nicPrefix = parseInt(cleanNic.substring(2, 5), 10);
+      if (!isNaN(nicPrefix)) {
+        this.empForm.patchValue({
+          gender_id: nicPrefix > 500 ? '2' : '1'
+        }, { emitEvent: false }); // { emitEvent: false } prevents infinite loops
+      }
+      const val= parseInt(cleanNic.substring(0, 2), 10);
+      const currentYear = new Date().getFullYear();
+      const birthYear =Number("19"+val);
+
+      const age = currentYear - birthYear;
+
+      if (age < 18) {
+        this.empForm.disable();
+      }
+
+    }
+    // Handle 12-character NIC (New format: YYYYDOVXXXXX)
+    else if (cleanNic.length === 12) {
+      const nicPrefix = parseInt(cleanNic.substring(4, 7), 10);
+      if (!isNaN(nicPrefix)) {
+        this.empForm.patchValue({
+          gender_id: nicPrefix > 500 ? '2' : '1'
+        }, { emitEvent: false });
+      }
+
+      const val= parseInt(cleanNic.substring(0, 5), 10);
+      const currentYear = new Date().getFullYear();
+      const birthYear =Number(val);
+
+      const age = currentYear - birthYear;
+
+      if (age < 18) {
+        this.empForm.disable();
+      }
+    }
+  }
+
 
   onSubmit() {
     if (this.empForm.valid) {
@@ -118,5 +159,9 @@ export class EmployeeAddComponent {
   ngOnInit() {
     this.getEmpType();
     this.getEmGen();
+
+    this.empForm.get('nic')?.valueChanges.subscribe(nicValue => {
+      this.checkNicAndSetGender(nicValue);
+    });
   }
 }

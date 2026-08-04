@@ -87,6 +87,9 @@ export class GuestAddComponent implements OnInit {
   clearForm() {
 
     this.guestForm.reset();
+    if(this.guestForm.disabled){
+      this.guestForm.enable();
+    }
     this.guestForm.patchValue({
       gender_id: '',
       country_id: '',
@@ -267,6 +270,16 @@ export class GuestAddComponent implements OnInit {
           gender_id: nicPrefix > 500 ? '2' : '1'
         }, { emitEvent: false }); // { emitEvent: false } prevents infinite loops
       }
+      const val= parseInt(cleanNic.substring(0, 2), 10);
+      const currentYear = new Date().getFullYear();
+      const birthYear =Number("19"+val);
+
+      const age = currentYear - birthYear;
+
+      if (age < 18) {
+        this.guestForm.disable();
+      }
+
     }
     // Handle 12-character NIC (New format: YYYYDOVXXXXX)
     else if (cleanNic.length === 12) {
@@ -275,6 +288,16 @@ export class GuestAddComponent implements OnInit {
         this.guestForm.patchValue({
           gender_id: nicPrefix > 500 ? '2' : '1'
         }, { emitEvent: false });
+      }
+
+      const val= parseInt(cleanNic.substring(0, 5), 10);
+      const currentYear = new Date().getFullYear();
+      const birthYear =Number(val);
+
+      const age = currentYear - birthYear;
+
+      if (age < 18) {
+        this.guestForm.disable();
       }
     }
   }

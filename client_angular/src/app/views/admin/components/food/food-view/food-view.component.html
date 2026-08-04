@@ -1,3 +1,45 @@
+<div>
+  <h3> <strong><em> Room Search Form </em> </strong></h3>
+  <form cForm [formGroup]="foodSearchForm" >
+    <c-row>
+      <c-col [xs]="3">
+        <div class="mb-3">
+          <label cLabel for="inputName-1">Food Name: </label>
+          <input cFormControl id="inputName-1" type="text" sizing="sm" formControlName="name" name="name">
+        </div>
+      </c-col>
+      <c-col [xs]="3">
+        <div class="mb-3">
+          <label cLabel>Item Category:</label>
+
+          <select aria-label="Select Item Category" cSelect name="item_category_id" formControlName="item_category_id">
+            <option selected="selected" value="">Select Item Category: </option>
+            <option *ngFor="let category of itemCategories" [value]="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+      </c-col>
+
+      <c-col [xs]="3">
+        <div class="mb-3">
+          <label cLabel>Food Status:</label>
+
+          <select aria-label="Select Food Status" cSelect name="food_status_id" formControlName="food_status_id">
+            <option selected="selected" value="">Select Food Status: </option>
+            <option *ngFor="let status of foodStatus" [value]="status.id">
+              {{ status.name }}
+            </option>
+          </select>
+        </div>
+      </c-col>
+    </c-row>
+    <input cButton color="success" style="color: white" type="button" (click)="search()" value="Search">&ngsp;
+    <input cButton color="danger" style="color: white" type="button" (click)="clearSearchForm()" value="Clear"> &ngsp;
+  </form>
+</div>
+
+
 <h3>
   <strong>
     <em>

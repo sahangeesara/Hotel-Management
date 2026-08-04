@@ -58,6 +58,7 @@ export class RoomBookComponent implements OnInit{
   rmBookForm: FormGroup;
   rmSearchBookForm: FormGroup;
   roomData:any;
+  isVisible:boolean=false;
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private  hotelServes:HotelService,
@@ -87,17 +88,10 @@ export class RoomBookComponent implements OnInit{
 
     this.rmSearchBookForm  = this.fb.group({
       search_booking_Date: [''],
-      search_r_id: [''],
+      guest_id: [''],
+      package_id: [''],
 
     });
-  }
-
-  //search form
-  get rmBookSearchDateField(): FormControl {
-    return this.rmSearchBookForm.controls['search_booking_Date'] as FormControl;
-  }
-  get rmBookSearchRIdField(): FormControl {
-    return this.rmSearchBookForm.controls['search_r_id'] as FormControl;
   }
 
   static dateValidator(group: FormGroup) {
@@ -121,6 +115,42 @@ export class RoomBookComponent implements OnInit{
     this.removeRoom()
 
   }
+
+  search() {
+    const filters = {
+      search_booking_Date: this.rmSearchBookForm.get('search_booking_Date')?.value?.trim() || '',
+      guest_id: this.rmSearchBookForm.get('guest_id')?.value?.trim() || '',
+      package_id: this.rmSearchBookForm.get('package_id')?.value?.trim() || '',
+
+    };
+
+    if (!filters.search_booking_Date && !filters.guest_id && !filters.package_id) {
+      this.getRmBook();
+      return;
+    }
+
+    this.searchServe.getRoomBookData(filters).subscribe({
+      next: (data: any) => {
+        this.roomsBooks = data;
+      },
+      error: (error) => {
+        console.error('Error fetching Room book:', error);
+      }
+    });
+  }
+
+  clearSearchForm() {
+    this.rmSearchBookForm.reset();
+    this.getRmBook();
+    this.rmSearchBookForm.patchValue(
+      {
+       search_booking_Date: '',
+        guest_id: '',
+        package_id: '',
+      }
+    )
+  }
+
 
   onSubmit() {
     if (this.rmBookForm.valid) {
@@ -296,54 +326,7 @@ export class RoomBookComponent implements OnInit{
     );
   }
 
-  search() {
-    let val = this.rmBookSearchDateField.value;
-    let s_r_id = this.rmBookSearchRIdField.value;
 
-    if (val && s_r_id) {
-      let date =this.formatDate(val);
-      // Both date and room ID are provided, use the combined search
-      this.searchServe.getRoomBookByDateAndRoom(s_r_id, date).subscribe(
-        (data: any) => {
-          this.roomsBooks = data;
-        },
-        (error) => {
-          console.error('Error fetching rooms Book:', error);
-        }
-      );
-    } else if (val) {
-      let date =this.formatDate(val);
-      // Only date is provided, use the date-based search
-      this.searchServe.getRoomBookByDate(date).subscribe(
-        (data: any) => {
-          this.roomsBooks = data;
-        },
-        (error) => {
-          console.error('Error fetching rooms Book:', error);
-        }
-      );
-    } else if (s_r_id) {
-      // Only room ID is provided, use the room-based search
-      this.searchServe.getRoomBookByRoom(s_r_id).subscribe(
-        (data: any) => {
-          this.roomsBooks = data;
-        },
-        (error) => {
-          console.error('Error fetching rooms Book:', error);
-        }
-      );
-    } else {
-      // Neither date nor room ID is provided, clear the results
-      console.error('Select search Option');
-      this.roomsBooks = [];
-    }
-  }
-
-  clearSearchForm() {
-    this.rmBookSearchDateField.setValue("");
-    this.rmBookSearchRIdField.setValue("Select Room No");
-    this.getRmBook();
-  }
 
   getRmBookById(id: any) {
     this.allServe.getRoomBookById(id).subscribe(
@@ -367,6 +350,8 @@ export class RoomBookComponent implements OnInit{
           no_of_rooms: room.no_of_rooms
         }));
 
+        this.isVisible = true;
+        this.rmBookForm.get('booking_no')?.disable();
       },
       (error) => {
         console.error('Error fetching rooms Book:', error);

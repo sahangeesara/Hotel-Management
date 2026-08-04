@@ -20,16 +20,6 @@ export class SearchService {
     };
   }
 
-  //Room Booking search
-  getRoomBookByDate(data:any){
-    return this.http.get(`${this.besUrl}/roomBookByDate/${data}`, this.getAuthHeaders());
-  }
-  getRoomBookByRoom(data:any){
-    return this.http.get(`${this.besUrl}/roomBookByRoom/${data}`, this.getAuthHeaders());
-  }
-  getRoomBookByDateAndRoom(id:any,date:any){
-    return this.http.get<RoomBook>(`${this.besUrl}/roomBookByDateAndRoom/${id}/${date}`, this.getAuthHeaders());
-  }
 
   getEmployees(filters: {
     name?: string;
@@ -216,7 +206,7 @@ export class SearchService {
       params.food_status_id = filters.food_status_id;
     }
 
-    return this.http.get(`${this.besUrl}/food/search`, {
+    return this.http.get(`${this.besUrl}/foods/search`, {
       ...this.getAuthHeaders(),
       params
     });

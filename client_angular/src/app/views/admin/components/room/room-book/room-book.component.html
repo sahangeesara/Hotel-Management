@@ -4,6 +4,7 @@
   <c-row>
 <!--    <div *ngIf="message"> {{ message }}  </div>-->
     <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
+    @if (isVisible){
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="inputNumber-1">Room Booking Number: </label>
@@ -11,6 +12,7 @@
         <div cFormText> ex: RBN0021 </div>
       </div>
     </c-col>
+    }
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="max_guests-1">Guest Counts: </label>
@@ -159,11 +161,22 @@
 </c-col>
   <c-col [xs]="4">
     <div class="mb-3">
-      <label cLabel for="inputSearchRNo-1">Room No:</label>
-      <select id="inputSearchRNo-1" aria-label="Select Room No" cSelect name="search_r_id" formControlName="search_r_id">
-        <option selected="selected" value="">Select Room No</option>
-        <option *ngFor="let room of rooms" [value]="room.id">
-          {{ room.r_no }}
+      <label cLabel for="inputPackages-1">Packages :</label>
+      <select id="inputPackages-1" aria-label="Select a Package" cSelect name="package_id" formControlName="package_id">
+        <option selected="selected" value="">Select Book</option>
+        <option *ngFor="let type of packages" [value]="type.id">
+          {{ type.name }}
+        </option>
+      </select>
+    </div>
+  </c-col>
+    <c-col [xs]="4">
+    <div class="mb-3">
+      <label cLabel for="inputGuests-1">Guest :</label>
+      <select id="inputGuests-1" aria-label="Select a Guest" cSelect name="guest_id" formControlName="guest_id">
+        <option selected="selected" value="">Select Guest</option>
+        <option *ngFor="let guest of guests" [value]="guest.id">
+          {{ guest.nic }}
         </option>
       </select>
     </div>

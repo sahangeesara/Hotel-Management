@@ -3,6 +3,15 @@
   <form cForm [formGroup]="empForm" (ngSubmit)="onSubmit()">
     <c-row>
       <c-col [xs]="6">
+        <div class="mb-3">
+          <label cLabel for="inputNic-1">Employee Nic:</label>
+          <input cFormControl id="inputNic-1" type="text" name="nic" formControlName="nic" sizing="sm">
+          <div cFormText>
+            ex: 992404545V
+          </div>
+        </div>
+      </c-col>
+      <c-col [xs]="6">
     <div class="mb-3">
       <label cLabel for="inputName-1">Employee Name: </label>
       <input cFormControl id="inputName-1" type="text" sizing="sm" name="name" formControlName="name">
@@ -35,15 +44,7 @@
       </div>
     </div>
       </c-col>
-      <c-col [xs]="6">
-    <div class="mb-3">
-      <label cLabel for="inputNic-1">Employee Nic:</label>
-      <input cFormControl id="inputNic-1" type="text" name="nic" formControlName="nic" sizing="sm">
-      <div cFormText>
-        ex: 992404545V
-      </div>
-    </div>
-      </c-col>
+
       <c-col [xs]="6">
     <div class="mb-3">
       <label cLabel for="inputTel_no-1">Employee tel no:</label>

@@ -61,11 +61,12 @@ export class GuideAddComponent implements OnInit {
 
   }
 
-  get guideGenField(): FormControl { return this.guideForm.controls['gender_id'] as FormControl; }
-
   clearForm() {
     this.guideForm.reset();
-    this.guideGenField.setValue("Select Guide Gender");
+    this.guideForm.patchValue({ gender_id: '' });
+    if(this.guideForm.disabled){
+      this.guideForm.enable();
+    }
     }
 
   onSubmit() {
@@ -92,9 +93,54 @@ export class GuideAddComponent implements OnInit {
       (response: any) => { this.guideGenders = response.data; },
       (error) => { console.error('Error fetching guide Gender:', error); });
   }
+  checkNicAndSetGender(nic: string) {
+    const cleanNic = nic.replace(/\s+/g, '');
+
+    // Handle 10-character NIC (Old format: YYDOVXXXXX)
+    if (cleanNic.length === 10) {
+      const nicPrefix = parseInt(cleanNic.substring(2, 5), 10);
+      if (!isNaN(nicPrefix)) {
+        this.guideForm.patchValue({
+          gender_id: nicPrefix > 500 ? '2' : '1'
+        }, { emitEvent: false }); // { emitEvent: false } prevents infinite loops
+      }
+      const val= parseInt(cleanNic.substring(0, 2), 10);
+      const currentYear = new Date().getFullYear();
+      const birthYear =Number("19"+val);
+
+      const age = currentYear - birthYear;
+
+      if (age < 18) {
+        this.guideForm.disable();
+      }
+
+    }
+    // Handle 12-character NIC (New format: YYYYDOVXXXXX)
+    else if (cleanNic.length === 12) {
+      const nicPrefix = parseInt(cleanNic.substring(4, 7), 10);
+      if (!isNaN(nicPrefix)) {
+        this.guideForm.patchValue({
+          gender_id: nicPrefix > 500 ? '2' : '1'
+        }, { emitEvent: false });
+      }
+
+      const val= parseInt(cleanNic.substring(0, 5), 10);
+      const currentYear = new Date().getFullYear();
+      const birthYear =Number(val);
+
+      const age = currentYear - birthYear;
+
+      if (age < 18) {
+        this.guideForm.disable();
+      }
+    }
+  }
 
   ngOnInit() {
     this.getGuideGen();
+    this.guideForm.get('nic')?.valueChanges.subscribe(nicValue => {
+        this.checkNicAndSetGender(nicValue);
+    });
   }
 
 }

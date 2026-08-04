@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
   ButtonDirective,
   ColComponent,
@@ -12,7 +12,6 @@ import {NgForOf} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
-import {Employee} from "../../../../../entities/employee";
 import {Food} from "../../../../../entities/food";
 import {FoodStatus} from "../../../../../entities/foodStatus";
 import {ItemCategory} from "../../../../../entities/ItemCategory";
@@ -38,7 +37,7 @@ import {map} from "rxjs/operators";
   templateUrl: './food-add.component.html',
   styleUrl: './food-add.component.scss'
 })
-export class FoodAddComponent {
+export class FoodAddComponent  implements OnInit{
 
   imageUrl?: string = 'assets/default.png';
   file?: any;
