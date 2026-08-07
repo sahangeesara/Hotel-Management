@@ -9,6 +9,9 @@
   <div>
     <form cForm [formGroup]="searchGuestForm">
       <c-row>
+        <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+          {{ alertMessage }}
+        </c-alert>
         <c-col [xs]="3">
           <div class="mb-3">
             <label cLabel for="inputName-1">Search Name: </label>
@@ -90,7 +93,7 @@
     @if (guest.foreign_nic) {
       <td>{{ guest.foreign_nic }}</td>
     }
-      <td>{{ guest.tel_no }}</td>
+      <td>({{guest.country_code.country_code}}) {{ guest.tel_no }}</td>
     <td>
       {{
         Number(guest.booking_guest_counts[0]?.adults || 0) +

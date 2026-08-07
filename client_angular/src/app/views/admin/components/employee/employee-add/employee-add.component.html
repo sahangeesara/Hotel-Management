@@ -2,6 +2,9 @@
 <h3> <strong><em> Employee Add Form </em> </strong></h3>
   <form cForm [formGroup]="empForm" (ngSubmit)="onSubmit()">
     <c-row>
+      <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+        {{ alertMessage }}
+      </c-alert>
       <c-col [xs]="6">
         <div class="mb-3">
           <label cLabel for="inputNic-1">Employee Nic:</label>

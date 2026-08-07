@@ -1,45 +1,60 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {SearchService} from "../../../../../services/search.service";
 import {EventService} from "../../../../../services/event.service";
-import {ToastrService} from "ngx-toastr";
 import {
   FormBuilder,
   FormGroup,
-  FormControl,
   FormsModule,
-  ReactiveFormsModule, Validators,
+  ReactiveFormsModule,
 } from "@angular/forms";
 import {
+  AlertComponent,
   ButtonDirective, CardBodyComponent, CardComponent, CardHeaderComponent,
   ColComponent,
   FormControlDirective,
   FormDirective,
   FormLabelDirective,
   FormSelectDirective,
-  FormTextDirective,
   RowComponent,
   TableDirective
 } from "@coreui/angular";
-import {DatePipe, NgForOf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {HotelService} from "../../../../../services/hotel.service";
 import {IconDirective} from "@coreui/icons-angular";
-import {update} from "lodash-es";
 
 @Component({
   selector: 'app-restaurant-event',
   standalone: true,
-  imports: [FormControlDirective,
-    FormsModule, ColComponent, RowComponent, ReactiveFormsModule, FormSelectDirective, FormLabelDirective, NgForOf, ButtonDirective, CardBodyComponent, CardComponent, CardHeaderComponent, DatePipe, TableDirective, IconDirective, FormDirective],
+  imports: [
+    AlertComponent,
+    FormControlDirective,
+    FormsModule,
+    ColComponent,
+    RowComponent,
+    ReactiveFormsModule,
+    FormSelectDirective,
+    FormLabelDirective,
+    NgForOf,
+    NgIf,
+    ButtonDirective,
+    CardBodyComponent,
+    CardComponent,
+    CardHeaderComponent,
+    DatePipe,
+    TableDirective,
+    IconDirective,
+    FormDirective
+  ],
   templateUrl: './restaurant-event.component.html',
   styleUrl: './restaurant-event.component.scss'
 })
 export class RestaurantEventComponent implements OnInit {
 
-  organizers:any[] = [];
-  restaurantEvent:FormGroup;
-  restaurentSearchBookForm:FormGroup;
+  organizers: any[] = [];
+  restaurantEvent: FormGroup;
+  restaurantSearchBookForm: FormGroup;
   formData = new FormData();
   @Input() organizer_id!: number;
   rooms: any[] = [];
@@ -49,41 +64,44 @@ export class RestaurantEventComponent implements OnInit {
   events: any[] = [];
   packages: any[] = [];
   eventTypes: any[] = [];
-  restaurantData:any;
-  restaurantEventBooks:any [] = [];
-  private error: null | undefined;
+  restaurantData: any;
+  restaurantEventBooks: any[] = [];
+  public error: any = null;
 
-  constructor(   private route:ActivatedRoute,
-                 private allServe: AllServiceService,
-                 private searchServe: SearchService,
-                 private hotelServe: HotelService,
-                 private eventService: EventService,
-                 private router:Router,
-                 private toastr: ToastrService,
-                 private fb: FormBuilder,
+  // CoreUI Alert Variables
+  alertMessage: string = '';
+  alertColor: string = 'success'; // 'success', 'danger', 'warning', 'info'
 
+  constructor(
+    private route: ActivatedRoute,
+    private allServe: AllServiceService,
+    private searchServe: SearchService,
+    private hotelServe: HotelService,
+    private eventService: EventService,
+    private router: Router,
+    private fb: FormBuilder,
   ) {
     this.restaurantEvent = this.fb.group({
-      id:[''],
+      id: [''],
       event_no: [''],
-      event_id: ['',[Validators.required]],
-      event_type_id: ['',[Validators.required]],
-      event_date: ['',[Validators.required]],
-      start_time: ['',[Validators.required]],
-      end_time: ['',[Validators.required]],
-      passengers: ['',[Validators.required]],
-      hotel_id: ['',[Validators.required]],
-      room_id: ['',[Validators.required]],
-      package_id: ['',[Validators.required]],
-      section_id: ['',[Validators.required]],
+      event_id: [''],
+      event_type_id: [''],
+      event_date: [''],
+      start_time: [''],
+      end_time: [''],
+      passengers: [''],
+      hotel_id: [''],
+      room_id: [''],
+      package_id: [''],
+      section_id: [''],
       seating_preferences: [''],
-      organizer_id: ['',[Validators.required]],
-      book_status_id: ['',[Validators.required]],
+      organizer_id: [''],
+      book_status_id: [''],
       requests: [''],
       additional_services: [''],
     });
 
-    this.restaurentSearchBookForm = this.fb.group({
+    this.restaurantSearchBookForm = this.fb.group({
       hotel_id: [''],
       event_id: [''],
       event_type_id: [''],
@@ -92,14 +110,25 @@ export class RestaurantEventComponent implements OnInit {
     });
   }
 
+  showAlert(message: string, color: string = 'success') {
+    this.alertMessage = message;
+    this.alertColor = color;
+    setTimeout(() => {
+      this.clearAlert();
+    }, 4000);
+  }
+
+  clearAlert() {
+    this.alertMessage = '';
+  }
+
   search() {
     const filters = {
-      hotel_id: this.restaurentSearchBookForm.get('hotel_id')?.value?.trim() || '',
-      event_id: this.restaurentSearchBookForm.get('event_id')?.value?.trim() || '',
-      event_type_id: this.restaurentSearchBookForm.get('event_type_id')?.value?.trim() || '',
-      room_id: this.restaurentSearchBookForm.get('room_id')?.value?.trim() || '',
-      event_date: this.restaurentSearchBookForm.get('event_date')?.value?.trim() || '',
-
+      hotel_id: this.restaurantSearchBookForm.get('hotel_id')?.value?.trim() || '',
+      event_id: this.restaurantSearchBookForm.get('event_id')?.value?.trim() || '',
+      event_type_id: this.restaurantSearchBookForm.get('event_type_id')?.value?.trim() || '',
+      room_id: this.restaurantSearchBookForm.get('room_id')?.value?.trim() || '',
+      event_date: this.restaurantSearchBookForm.get('event_date')?.value?.trim() || '',
     };
 
     if (!filters.hotel_id && !filters.event_id && !filters.event_type_id && !filters.room_id && !filters.event_date) {
@@ -110,80 +139,90 @@ export class RestaurantEventComponent implements OnInit {
     this.searchServe.getRestaurantBookData(filters).subscribe({
       next: (data: any) => {
         this.restaurantEventBooks = data;
+        if (data.length === 0) {
+          this.showAlert('No records found for the search criteria.', 'info');
+        }
       },
       error: (error) => {
-        console.error('Error fetching restaurant event:', error);
+        this.handleError(error);
       }
     });
   }
 
   clearSearchForm() {
-    this.restaurentSearchBookForm.reset();
+    this.restaurantSearchBookForm.reset();
     this.getRestaurantEventBook();
-    this.restaurentSearchBookForm.patchValue(
-      {
-        hotel_id: '',
-        event_id: '',
-        event_type_id: '',
-        room_id: '',
-        event_date: '',
-      }
-    )
+    this.restaurantSearchBookForm.patchValue({
+      hotel_id: '',
+      event_id: '',
+      event_type_id: '',
+      room_id: '',
+      event_date: '',
+    });
   }
 
   getOrganizer() {
-    this.eventService.getOrganizer().subscribe(
-      (response: any) => {
+    this.eventService.getOrganizer().subscribe({
+      next: (response: any) => {
         this.organizers = response.data;
       },
-      (error) => {
-        console.error('Error fetching rooms:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
+
   getBookStatus() {
-    this.allServe.getBookStatus().subscribe(
-      (response: any) => {
+    this.allServe.getBookStatus().subscribe({
+      next: (response: any) => {
         this.bookStatus = response;
       },
-      (error) => {
-        console.error('Error fetching Book Status:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
+
   getEventTypes() {
-    this.eventService.getEventType().subscribe(
-      (response: any) => {
+    this.eventService.getEventType().subscribe({
+      next: (response: any) => {
         this.eventTypes = response.data;
       },
-      (error) => {
-        console.error('Error fetching Event Type:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
-  getPackage(){
-    this.hotelServe.getPackage().subscribe(
-      (response: any) => {
+
+  getPackage() {
+    this.hotelServe.getPackage().subscribe({
+      next: (response: any) => {
         this.packages = response;
       },
-      (error) => {
-        console.error('Error fetching rooms Book:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
+
   getEvent() {
-    this.eventService.getEvent().subscribe(
-      (response: any) => {
+    this.eventService.getEvent().subscribe({
+      next: (response: any) => {
         this.events = response;
       },
-      (error) => {
-        console.error('Error fetching Event:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
+
   clearForm() {
     this.restaurantEvent.reset();
+    this.restaurantEvent.patchValue({
+      organizer_id: this.organizer_id
+    });
   }
+
   ngOnInit(): void {
     this.restaurantEvent.patchValue({
       organizer_id: this.organizer_id
@@ -203,109 +242,132 @@ export class RestaurantEventComponent implements OnInit {
   }
 
   getRm() {
-    this.allServe.getRoom().subscribe(
-      (response: any) => {
+    this.allServe.getRoom().subscribe({
+      next: (response: any) => {
         this.rooms = response.data;
       },
-      (error) => {
-        console.error('Error fetching rooms:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
+
   getRestaurantEventBook() {
-    this.eventService.getRestaurantEvent().subscribe(
-      (response: any) => {
+    this.eventService.getRestaurantEvent().subscribe({
+      next: (response: any) => {
         this.restaurantEventBooks = response.data;
       },
-      (error) => {
-        console.error('Error fetching rooms:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
+
   getHotel() {
-    this.hotelServe.getHotel().subscribe(
-      (response: any) => {
+    this.hotelServe.getHotel().subscribe({
+      next: (response: any) => {
         this.hotels = response.data;
       },
-      (error) => {
-        console.error('Error fetching hotel:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
 
   getSection() {
-    this.hotelServe.getSections().subscribe(
-      (response: any) => {
+    this.hotelServe.getSections().subscribe({
+      next: (response: any) => {
         this.sections = response.data;
       },
-      (error) => {
-        console.error('Error fetching sections:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
 
-  onSubmit(){
-    this.restaurantData = this.restaurantEvent.getRawValue();
-
-    this.eventService.submitRestaurantEvent( this.restaurantData).subscribe(
-      (response: any) => {
-        this.getRestaurantEventBook()
-        this.toastr.success('Event Created Successfully',response.message,);
-        this.clearForm();
-      },
-      (error) => {
-        console.error('Error submitting event:', error);
-      }
-    )
-  }
-
-  handleError(error: { error: null; }){
-    return  this.error=error.error;
-  }
-  updateRmBook(){
-    this.formData = new FormData();
+  onSubmit() {
     if (this.restaurantEvent.valid) {
-
       this.restaurantData = this.restaurantEvent.getRawValue();
 
-      this.eventService.updateRestaurantEvent(this.restaurantData, this.restaurantData.id).subscribe(
-        (response) => {
-          this.getRestaurantEventBook()
+      this.eventService.submitRestaurantEvent(this.restaurantData).subscribe({
+        next: (response: any) => {
+          this.getRestaurantEventBook();
           this.clearForm();
+          this.showAlert('Restaurant event created successfully!', 'success');
         },
-        (error) => {
-          // Handle errors
+        error: (error) => {
           this.handleError(error);
         }
-      );
+      });
+    } else {
+      this.showAlert('Please fill in all required fields correctly.', 'warning');
+      this.restaurantEvent.markAllAsTouched();
     }
   }
-  deleteRmBook(id: any) {
-    this.eventService.deleteRestaurantEvent(id).subscribe(
-      (data: any) => {
-        this.getRestaurantEventBook()
-      },
-      (error) => {
-        console.error('Error fetching Restaurant Event:', error);
-      }
-    );
+
+  handleError(error: any) {
+
+    if (error?.error?.errors) {
+      const firstKey = Object.keys(error.error.errors)[0];
+      this.error = error.error.errors[firstKey][0];
+    } else if (error?.error?.message) {
+      this.error = error.error.message;
+    } else if (typeof error?.error === 'string') {
+      this.error = error.error;
+    } else {
+      this.error = 'An unexpected server error occurred.';
+    }
+
+    this.showAlert(this.error || 'An error occurred.', 'danger');
   }
 
+  updateRmBook() {
+    this.formData = new FormData();
+    if (this.restaurantEvent.valid) {
+      this.restaurantData = this.restaurantEvent.getRawValue();
+
+      this.eventService.updateRestaurantEvent(this.restaurantData, this.restaurantData.id).subscribe({
+        next: (response) => {
+          this.getRestaurantEventBook();
+          this.clearForm();
+          this.showAlert('Restaurant event updated successfully!', 'success');
+        },
+        error: (error) => {
+          this.handleError(error);
+        }
+      });
+    } else {
+      this.showAlert('Please fill in all required fields correctly.', 'warning');
+      this.restaurantEvent.markAllAsTouched();
+    }
+  }
+
+  deleteRmBook(id: any) {
+    this.eventService.deleteRestaurantEvent(id).subscribe({
+      next: (data: any) => {
+        this.getRestaurantEventBook();
+        this.showAlert('Restaurant event deleted successfully!', 'success');
+      },
+      error: (error) => {
+        this.handleError(error);
+      }
+    });
+  }
 
   getRmBookById(id: any) {
-    this.eventService.getRestaurantEventById(id).subscribe(
-      (data: any) => {
+    this.eventService.getRestaurantEventById(id).subscribe({
+      next: (data: any) => {
         this.restaurantEvent.patchValue({
           ...data,
           event_date: data.event_date
             ? new Date(data.event_date).toISOString().split('T')[0]
             : null
         });
+        this.showAlert('Restaurant event details loaded for updating.', 'info');
       },
-      (error) => {
-        console.error('Error fetching restaurant event:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
-
 }

@@ -1,12 +1,12 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {SearchService} from "../../../../../services/search.service";
 import {HotelService} from "../../../../../services/hotel.service";
 import {EventService} from "../../../../../services/event.service";
-import {ToastrService} from "ngx-toastr";
 import {
+  AlertComponent,
   ButtonDirective, CardBodyComponent, CardComponent, CardHeaderComponent,
   ColComponent,
   FormControlDirective, FormDirective,
@@ -14,13 +14,14 @@ import {
   FormSelectDirective,
   RowComponent, TableDirective
 } from "@coreui/angular";
-import {DatePipe, NgForOf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {IconDirective} from "@coreui/icons-angular";
 
 @Component({
   selector: 'app-hotel-event',
   standalone: true,
   imports: [
+    AlertComponent,
     RowComponent,
     ColComponent,
     FormLabelDirective,
@@ -28,6 +29,7 @@ import {IconDirective} from "@coreui/icons-angular";
     FormControlDirective,
     FormSelectDirective,
     NgForOf,
+    NgIf,
     ReactiveFormsModule,
     ButtonDirective,
     CardBodyComponent,
@@ -41,10 +43,10 @@ import {IconDirective} from "@coreui/icons-angular";
   templateUrl: './hotel-event.component.html',
   styleUrl: './hotel-event.component.scss'
 })
-export class HotelEventComponent implements OnInit{
-  organizers:any[] = [];
-  hotelEvent:FormGroup;
-  hotelSearchBookForm:FormGroup;
+export class HotelEventComponent implements OnInit {
+  organizers: any[] = [];
+  hotelEvent: FormGroup;
+  hotelSearchBookForm: FormGroup;
   formData = new FormData();
   @Input() organizer_id!: number;
   rooms: any[] = [];
@@ -54,20 +56,23 @@ export class HotelEventComponent implements OnInit{
   events: any[] = [];
   packages: any[] = [];
   eventTypes: any[] = [];
-  hotelData:any
-  private error: null | undefined;
-  constructor(
-                 private allServe: AllServiceService,
-                 private searchServe: SearchService,
-                 private hotelServe: HotelService,
-                 private eventService: EventService,
-                 private router:Router,
-                 private toastr: ToastrService,
-                 private fb: FormBuilder,
+  hotelData: any;
+  public error: any = null;
 
+  // CoreUI Alert Variables
+  alertMessage: string = '';
+  alertColor: string = 'success'; // 'success', 'danger', 'warning', 'info'
+
+  constructor(
+    private allServe: AllServiceService,
+    private searchServe: SearchService,
+    private hotelServe: HotelService,
+    private eventService: EventService,
+    private router: Router,
+    private fb: FormBuilder,
   ) {
     this.hotelEvent = this.fb.group({
-      id:[''],
+      id: [''],
       event_no: [''],
       event_id: [''],
       event_type_id: [''],
@@ -93,57 +98,73 @@ export class HotelEventComponent implements OnInit{
     });
   }
 
-  getOrganizer() {
-    this.eventService.getOrganizer().subscribe(
-      (response: any) => {
-        this.organizers = response.data;
-      },
-      (error) => {
-        console.error('Error fetching rooms:', error);
-      }
-    );
-  }
-  getBookStatus() {
-    this.allServe.getBookStatus().subscribe(
-      (response: any) => {
-        this.bookStatus = response;
-      },
-      (error) => {
-        console.error('Error fetching Book Status:', error);
-      }
-    );
-  }
-  getEventTypes() {
-    this.eventService.getEventType().subscribe(
-      (response: any) => {
-        this.eventTypes = response.data;
-      },
-      (error) => {
-        console.error('Error fetching Event Type:', error);
-      }
-    );
-  }
-  getEvent() {
-    this.eventService.getEvent().subscribe(
-      (response: any) => {
-        this.events = response;
-      },
-      (error) => {
-        console.error('Error fetching Event:', error);
-      }
-    );
+  showAlert(message: string, color: string = 'success') {
+    this.alertMessage = message;
+    this.alertColor = color;
+    setTimeout(() => {
+      this.clearAlert();
+    }, 4000);
   }
 
-  getPackage(){
-    this.hotelServe.getPackage().subscribe(
-      (response: any) => {
+  clearAlert() {
+    this.alertMessage = '';
+  }
+
+  getOrganizer() {
+    this.eventService.getOrganizer().subscribe({
+      next: (response: any) => {
+        this.organizers = response.data;
+      },
+      error: (error) => {
+        this.handleError(error);
+      }
+    });
+  }
+
+  getBookStatus() {
+    this.allServe.getBookStatus().subscribe({
+      next: (response: any) => {
+        this.bookStatus = response;
+      },
+      error: (error) => {
+        this.handleError(error);
+      }
+    });
+  }
+
+  getEventTypes() {
+    this.eventService.getEventType().subscribe({
+      next: (response: any) => {
+        this.eventTypes = response.data;
+      },
+      error: (error) => {
+        this.handleError(error);
+      }
+    });
+  }
+
+  getEvent() {
+    this.eventService.getEvent().subscribe({
+      next: (response: any) => {
+        this.events = response;
+      },
+      error: (error) => {
+        this.handleError(error);
+      }
+    });
+  }
+
+  getPackage() {
+    this.hotelServe.getPackage().subscribe({
+      next: (response: any) => {
         this.packages = response;
       },
-      (error) => {
-        console.error('Error fetching rooms Book:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
+
   search() {
     const filters = {
       hotel_id: this.hotelSearchBookForm.get('hotel_id')?.value?.trim() || '',
@@ -151,7 +172,6 @@ export class HotelEventComponent implements OnInit{
       event_type_id: this.hotelSearchBookForm.get('event_type_id')?.value?.trim() || '',
       room_id: this.hotelSearchBookForm.get('room_id')?.value?.trim() || '',
       event_date: this.hotelSearchBookForm.get('event_date')?.value?.trim() || '',
-
     };
 
     if (!filters.hotel_id && !filters.event_id && !filters.event_type_id && !filters.room_id && !filters.event_date) {
@@ -162,9 +182,12 @@ export class HotelEventComponent implements OnInit{
     this.searchServe.getHotelBookData(filters).subscribe({
       next: (data: any) => {
         this.hotelsBooks = data;
+        if (data.length === 0) {
+          this.showAlert('No records found for the search criteria.', 'info');
+        }
       },
       error: (error) => {
-        console.error('Error fetching hotel event:', error);
+        this.handleError(error);
       }
     });
   }
@@ -172,51 +195,70 @@ export class HotelEventComponent implements OnInit{
   clearSearchForm() {
     this.hotelSearchBookForm.reset();
     this.getHotelEventBook();
-    this.hotelSearchBookForm.patchValue(
-      {
-        hotel_id: '',
-        event_id: '',
-        event_type_id: '',
-        room_id: '',
-        event_date: '',
-      }
-    )
+    this.hotelSearchBookForm.patchValue({
+      hotel_id: '',
+      event_id: '',
+      event_type_id: '',
+      room_id: '',
+      event_date: '',
+    });
   }
+
   getHotelEventBook() {
-    this.eventService.getHotelEvent().subscribe(
-      (response: any) => {
+    this.eventService.getHotelEvent().subscribe({
+      next: (response: any) => {
         this.hotelsBooks = response.data;
       },
-      (error) => {
-        console.error('Error fetching Event:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
-  handleError(error: { error: null; }){
-    return  this.error=error.error;
+
+  handleError(error: any) {
+
+    if (error?.error?.errors) {
+      const firstKey = Object.keys(error.error.errors)[0];
+      this.error = error.error.errors[firstKey][0];
+    } else if (error?.error?.message) {
+      this.error = error.error.message;
+    } else if (typeof error?.error === 'string') {
+      this.error = error.error;
+    } else {
+      this.error = 'An unexpected server error occurred.';
+    }
+
+    this.showAlert(this.error || 'An error occurred.', 'danger');
   }
-  updateHotelBook(){
+
+  updateHotelBook() {
     this.formData = new FormData();
     if (this.hotelEvent.valid) {
-
       this.hotelData = this.hotelEvent.getRawValue();
 
-      this.eventService.updateHotelEvent(this.hotelData, this.hotelData.id).subscribe(
-        (response) => {
-          this.getHotelEventBook()
+      this.eventService.updateHotelEvent(this.hotelData, this.hotelData.id).subscribe({
+        next: (response) => {
+          this.getHotelEventBook();
           this.clearForm();
+          this.showAlert('Hotel event updated successfully!', 'success');
         },
-        (error) => {
-          // Handle errors
+        error: (error) => {
           this.handleError(error);
         }
-      );
+      });
+    } else {
+      this.showAlert('Please fill in all required fields correctly.', 'warning');
+      this.hotelEvent.markAllAsTouched();
     }
   }
 
   clearForm() {
     this.hotelEvent.reset();
+    this.hotelEvent.patchValue({
+      organizer_id: this.organizer_id
+    });
   }
+
   ngOnInit(): void {
     this.hotelEvent.patchValue({
       organizer_id: this.organizer_id
@@ -234,69 +276,75 @@ export class HotelEventComponent implements OnInit{
     this.getHotelEventBook();
     this.getPackage();
   }
+
   getRm() {
-    this.allServe.getRoom().subscribe(
-      (response: any) => {
+    this.allServe.getRoom().subscribe({
+      next: (response: any) => {
         this.rooms = response.data;
       },
-      (error) => {
-        console.error('Error fetching rooms:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
-  }
-  getHotel() {
-    this.hotelServe.getHotel().subscribe(
-      (response: any) => {
-        this.hotels = response.data;
-      },
-      (error) => {
-        console.error('Error fetching hotel:', error);
-      }
-    );
+    });
   }
 
-  onSubmit(){
+  getHotel() {
+    this.hotelServe.getHotel().subscribe({
+      next: (response: any) => {
+        this.hotels = response.data;
+      },
+      error: (error) => {
+        this.handleError(error);
+      }
+    });
+  }
+
+  onSubmit() {
     if (this.hotelEvent.valid) {
       this.hotelData = this.hotelEvent.getRawValue();
 
-      this.eventService.submitHotelEvent(this.hotelData).subscribe(
-        (response: any) => {
+      this.eventService.submitHotelEvent(this.hotelData).subscribe({
+        next: (response: any) => {
           this.getHotelEventBook();
-          this.toastr.success('Event Created Successfully', response.message,);
           this.clearForm();
+          this.showAlert('Event created successfully!', 'success');
         },
-        (error) => {
-          console.error('Error submitting event:', error);
+        error: (error) => {
+          this.handleError(error);
         }
-      )
+      });
+    } else {
+      this.showAlert('Please fill in all required fields correctly.', 'warning');
+      this.hotelEvent.markAllAsTouched();
     }
   }
 
-
-   deleteHotelBook(id:any) {
-     this.eventService.deleteHotelEvent(id).subscribe(
-       (data: any) => {
-         this.getHotelEventBook()
-       },
-       (error) => {
-         console.error('Error fetching Hotel Event:', error);
-       }
-     );
+  deleteHotelBook(id: any) {
+    this.eventService.deleteHotelEvent(id).subscribe({
+      next: (data: any) => {
+        this.getHotelEventBook();
+        this.showAlert('Hotel event deleted successfully!', 'success');
+      },
+      error: (error) => {
+        this.handleError(error);
+      }
+    });
   }
 
-  getHotelBookById(id:any) {
-    this.eventService.getHotelEventById(id).subscribe(
-      (data: any) => {
+  getHotelBookById(id: any) {
+    this.eventService.getHotelEventById(id).subscribe({
+      next: (data: any) => {
         this.hotelEvent.patchValue({
           ...data,
           event_date: data.event_date
             ? new Date(data.event_date).toISOString().split('T')[0]
             : null
         });
+        this.showAlert('Hotel event details loaded for updating.', 'info');
       },
-      (error) => {
-        console.error('Error fetching hotel event:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
 }

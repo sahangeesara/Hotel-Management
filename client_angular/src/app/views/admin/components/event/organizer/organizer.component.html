@@ -5,6 +5,9 @@
       <form [formGroup]="organizerForm" (ngSubmit)="onSubmit()">
         <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
         <c-row>
+          <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+            {{ alertMessage }}
+          </c-alert>
           <c-col [xs]="6">
             <!--Nic -->
             <div class="mb-3">

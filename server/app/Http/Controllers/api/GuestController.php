@@ -244,6 +244,7 @@ class GuestController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * @throws \Throwable
      */
     public function update(Request $request, string $id)
     {
@@ -268,17 +269,21 @@ class GuestController extends Controller
             'guest_type' => 'required',
             'guide_status' => '',
             'adults' => 'required',
-            'children' => 'required',
-            'infants' => 'required',
+            'children' => '',
+            'infants' => '',
         ]);
         if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
 
-        $existingNic = Guest::where('nic', $data['nic'])
-                            ->where('id', '<>', $id) // Exclude the current guest's ID
-                            ->first();
+        if($data['nic']) {
+            $existingNic = Guest::where('nic', $data['nic'])
+                ->where('id', '<>', $id) // Exclude the current guest's ID
+                ->first();
 
-        if ($existingNic) {  return response()->json(['error' => 'Nic already exists.']); }
+            if ($existingNic) {
+                return response()->json(['error' => 'Nic already exists.']);
+            }
 
+        }
         if ($data['guide_id'] != null){
             // Check if the guest_id and r_book combination already exists
             $existingGuide = Guest::where('guide_id', $data['guide_id'])
@@ -291,12 +296,14 @@ class GuestController extends Controller
             }
 
         }
+        DB::beginTransaction();
 
         try {
-            DB::beginTransaction();
 
             $guest = Guest::findOrFail($id);
-            $oldGuideID = empty($data['guide_id']) ? $guest->guide_id : $data['guide_id'];
+            $oldGuideID = !empty($data['guide_id'])
+                ? $data['guide_id']
+                : ($guest->guide_id ?? null);
             $guest->name = $data['name'];
             $guest->address = $data['address'];
             $guest->email = $data['email'];
@@ -310,22 +317,35 @@ class GuestController extends Controller
             $guest->country_id = $data['country_id'];
             $guest->cuntry_code_id = $data['cuntry_code_id'];
             $guest->guest_type = $data['guest_type'];
-            $guest->guest_no = $data['guest_no'];
 
             $guest->save();
 
-                $guides = Guides::findOrFail($oldGuideID);
-                $guides->guide_status = $data['guide_status'];
-                $guides->save();
+            if (!empty($oldGuideID)) {
+                $guides = Guides::find($oldGuideID);
+                if ($guides) {
+                    $guides->guide_status = $data['guide_status'] ?? $guides->guide_status;
+                    $guides->save();
+                }
+            }
 
-            $guestcount =BookingGuestCounts::findOrFail($id);
-            $guestcount->guest_id = $guest->id;
-            $guestcount->adults = $data['adults'];
-            $guestcount->children = $data['children'];
-            $guestcount->infants = $data['infants'];
-            $guestcount->total_amount = $data['infants'] + $data['children'] + $data['adults'];
+            $guestcount = BookingGuestCounts::where('guest_id', $id)->first();
 
-            $guestcount->save();
+            if ($guestcount) {
+                $guestcount->adults = $data['adults'];
+                $guestcount->children = $data['children'];
+                $guestcount->infants = $data['infants'];
+                $guestcount->total_amount = intval($data['infants']) + intval($data['children']) + intval($data['adults']);
+                $guestcount->save();
+            } else {
+                // Optionally create a new record if it doesn't exist yet
+                $guestcount = new BookingGuestCounts();
+                $guestcount->guest_id = $guest->id;
+                $guestcount->adults = $data['adults'];
+                $guestcount->children = $data['children'];
+                $guestcount->infants = $data['infants'];
+                $guestcount->total_amount = intval($data['infants']) + intval($data['children']) + intval($data['adults']);
+                $guestcount->save();
+            }
 
             if (!empty($details)) {
                 foreach ($details as $item) {

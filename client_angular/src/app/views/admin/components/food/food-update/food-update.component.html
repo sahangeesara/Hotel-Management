@@ -2,6 +2,9 @@
   <h3> <strong><em> Food Item Update Form </em> </strong></h3>
   <form cForm [formGroup]="foodUpdateForm">
     <c-row>
+      <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+        {{ alertMessage }}
+      </c-alert>
       <input cFormControl id="inputId-1" type="hidden" name="id" formControlName="id" sizing="sm">
       <c-col [xs]="6">
         <div class="mb-3">
@@ -11,6 +14,11 @@
             ex: FIN0021
           </div>
         </div>
+        @if (foodUpdateForm.get('food_no')?.invalid && foodUpdateForm.get('food_no')?.touched) {
+          @if (foodUpdateForm.get('food_no')?.errors?.['required']) {
+            <span style="color:red">Food number is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
@@ -20,12 +28,22 @@
             ex: chicken Kottu
           </div>
         </div>
+        @if (foodUpdateForm.get('name')?.invalid && foodUpdateForm.get('name')?.touched) {
+          @if (foodUpdateForm.get('name')?.errors?.['required']) {
+            <span style="color:red">Food name is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
           <label cLabel for="inputQuantity-1">Food Quantity:</label>
           <input cFormControl id="inputQuantity-1" type="text" sizing="sm" formControlName="quantity" name="quantity">
         </div>
+        @if (foodUpdateForm.get('quantity')?.invalid && foodUpdateForm.get('quantity')?.touched) {
+          @if (foodUpdateForm.get('quantity')?.errors?.['required']) {
+            <span style="color:red">Food quantity is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
@@ -40,11 +58,13 @@
         <div class="mb-3">
           <img [src]="imageUrl" style="width:50px;height:50px">&ngsp;
           <input id="inputImage-1" hidden="hidden" (change)="selectImage($event)" Select type="file" formControlName="image" sizing="sm" >
-          <label for="inputImage-1" id="selectbutton">Select</label>
-<!--          <img [src]="imageUrl" alt="Food Image" style="width:50px;height:50px">-->
-<!--          <label cLabel for="inputImage-1">Food Image: </label>-->
-<!--          <input cFormControl id="inputImage-1" (change)="selectImage($event)" name="image" formControlName="image" sizing="sm" type="file" />-->
+          <label for="inputImage-1" id="selection">Select</label>
         </div>
+        @if (foodUpdateForm.get('image')?.invalid && foodUpdateForm.get('image')?.touched) {
+          @if (foodUpdateForm.get('image')?.errors?.['required']) {
+            <span style="color:red">Food image is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
@@ -57,6 +77,11 @@
             </option>
           </select>
         </div>
+        @if (foodUpdateForm.get('item_category_id')?.invalid && foodUpdateForm.get('item_category_id')?.touched) {
+          @if (foodUpdateForm.get('item_category_id')?.errors?.['required']) {
+            <span style="color:red">Food category is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
@@ -69,6 +94,11 @@
             </option>
           </select>
         </div>
+        @if (foodUpdateForm.get('food_status_id')?.invalid && foodUpdateForm.get('food_status_id')?.touched) {
+          @if (foodUpdateForm.get('food_status_id')?.errors?.['required']) {
+            <span style="color:red">Food status is required.</span>
+          }
+        }
       </c-col>
       <div  class="mb-3">
         <input cButton color="primary" type="button" [disabled]="foodUpdateForm.invalid" (click)="foodUpdate()" value="Update"> &ngsp;

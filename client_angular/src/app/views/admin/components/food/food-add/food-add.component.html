@@ -1,6 +1,9 @@
 <div>
   <h3> <strong><em> Food Item Add Form </em> </strong></h3>
   <form cForm [formGroup]="foodForm" (ngSubmit)="onSubmit()">
+    <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+      {{ alertMessage }}
+    </c-alert>
     <c-row>
       <c-col [xs]="6">
         <div class="mb-3">
@@ -10,12 +13,22 @@
             ex: chicken Kottu
           </div>
         </div>
+        @if (foodForm.get('name')?.invalid && foodForm.get('name')?.touched) {
+          @if (foodForm.get('name')?.errors?.['required']) {
+            <span style="color:red">Food name is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
           <label cLabel for="inputQuantity-1">Food Quantity:</label>
           <input cFormControl id="inputQuantity-1" type="text" sizing="sm" formControlName="quantity" name="quantity">
         </div>
+        @if (foodForm.get('quantity')?.invalid && foodForm.get('quantity')?.touched) {
+          @if (foodForm.get('quantity')?.errors?.['required']) {
+            <span style="color:red">Food quantity is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
@@ -25,13 +38,22 @@
             ex: Lkr.700.00
           </div>
         </div>
+        @if (foodForm.get('food_amount')?.invalid && foodForm.get('food_amount')?.touched) {
+          @if (foodForm.get('food_amount')?.errors?.['required']) {
+            <span style="color:red">Food amount is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
           <label cLabel for="inputImage-1">Food Image: </label>
           <input cFormControl id="inputImage-1" (change)="selectImage($event)" name="image" formControlName="image" sizing="sm" type="file" />
-
         </div>
+        @if (foodForm.get('image')?.invalid && foodForm.get('image')?.touched) {
+          @if (foodForm.get('image')?.errors?.['required']) {
+            <span style="color:red">Food image is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
@@ -44,6 +66,11 @@
             </option>
           </select>
         </div>
+        @if (foodForm.get('item_category_id')?.invalid && foodForm.get('item_category_id')?.touched) {
+          @if (foodForm.get('item_category_id')?.errors?.['required']) {
+            <span style="color:red">Food category is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
@@ -56,6 +83,11 @@
             </option>
           </select>
         </div>
+        @if (foodForm.get('food_status_id')?.invalid && foodForm.get('food_status_id')?.touched) {
+          @if (foodForm.get('food_status_id')?.errors?.['required']) {
+            <span style="color:red">Food status is required.</span>
+          }
+        }
       </c-col>
       <div  class="mb-3">
         <input cButton color="primary" type="submit" [disabled]="foodForm.invalid"> &ngsp;

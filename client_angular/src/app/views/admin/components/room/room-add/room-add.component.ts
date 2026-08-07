@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {
+  AlertComponent,
   ButtonDirective, ColComponent,
   FormControlDirective,
   FormDirective,
@@ -9,7 +10,6 @@ import {
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgForOf, NgIf} from "@angular/common";
 import {AllServiceService} from "../../../../../services/all-service.service";
-import {ToastrService} from "ngx-toastr";
 import { IconDirective } from '@coreui/icons-angular';
 import {HotelService} from "../../../../../services/hotel.service";
 import {SearchService} from "../../../../../services/search.service";
@@ -18,6 +18,7 @@ import {SearchService} from "../../../../../services/search.service";
   selector: 'app-room-add',
   standalone: true,
   imports: [
+    AlertComponent,
     IconDirective,
     ButtonDirective,
     FormControlDirective,
@@ -38,29 +39,31 @@ import {SearchService} from "../../../../../services/search.service";
 })
 export class RoomAddComponent implements OnInit {
 
-  public error=null;
+  public error: any = null;
   rooms: any[] = [];
   hotels: any[] = [];
   roomsCategories: any[] = [];
   formData = new FormData();
   roomForm: FormGroup;
   roomSearchForm: FormGroup;
-  roomData:any;
-  isVisible:boolean = false;
+  roomData: any;
+  isVisible: boolean = false;
+
+  // CoreUI Alert Variables
+  alertMessage: string = '';
+  alertColor: string = 'success'; // 'success', 'danger', 'warning', 'info'
+
   constructor(
-                 private allServe: AllServiceService,
-                 private hotelServe: HotelService,
-                 private searchServe: SearchService,
-                 private toastr: ToastrService,
-                 private fb: FormBuilder,
+    private allServe: AllServiceService,
+    private hotelServe: HotelService,
+    private searchServe: SearchService,
+    private fb: FormBuilder,
   ) {
-
     this.roomForm = this.fb.group({
-
       id: [''],
       r_no: [''],
-      hotel_id: ['',[Validators.required]],
-      r_capacity: ['',[Validators.required]],
+      hotel_id: ['', [Validators.required]],
+      r_capacity: ['', [Validators.required]],
       r_cost: ['', [Validators.required]],
       r_category_id: ['', Validators.required],
     });
@@ -72,13 +75,30 @@ export class RoomAddComponent implements OnInit {
       r_capacity: [''],
     });
   }
+
+  showAlert(message: string, color: string = 'success') {
+    this.alertMessage = message;
+    this.alertColor = color;
+    setTimeout(() => {
+      this.clearAlert();
+    }, 4000);
+  }
+
+  clearAlert() {
+    this.alertMessage = '';
+  }
+
   get rmCategoryField(): FormControl {
     return this.roomForm.controls['r_category_id'] as FormControl;
   }
 
   clearForm() {
     this.roomForm.reset();
-    this.rmCategoryField.setValue("Select Rooms Category");
+    this.rmCategoryField.setValue('');
+    if (this.roomForm.get('r_no')?.disabled) {
+      this.roomForm.get('r_no')?.enable();
+    }
+    this.isVisible = false;
   }
 
   search() {
@@ -97,9 +117,12 @@ export class RoomAddComponent implements OnInit {
     this.searchServe.getRoomData(filters).subscribe({
       next: (data: any) => {
         this.rooms = data;
+        if (data.length === 0) {
+          this.showAlert('No rooms found matching the search criteria.', 'info');
+        }
       },
       error: (error) => {
-        console.error('Error fetching Room:', error);
+        this.handleError(error);
       }
     });
   }
@@ -107,120 +130,134 @@ export class RoomAddComponent implements OnInit {
   clearSearchForm() {
     this.roomSearchForm.reset();
     this.getRm();
-    this.roomSearchForm.patchValue(
-      {
-        hotel_id: '',
-        r_no: '',
-        r_capacity: '',
-        r_category_id: '',
-      }
-    )
+    this.roomSearchForm.patchValue({
+      hotel_id: '',
+      r_no: '',
+      r_capacity: '',
+      r_category_id: '',
+    });
   }
 
   getRoomById(id: any) {
-    this.allServe.getRoomById(id).subscribe(
-      (room: any) => {
+    this.allServe.getRoomById(id).subscribe({
+      next: (room: any) => {
         this.isVisible = true;
         this.roomForm.get('r_no')?.disable();
         this.roomForm.patchValue(room);
-        },
-      (error) => {
-        console.error('Error fetching room:', error);
+        this.showAlert('Room details loaded for update.', 'info');
+      },
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
 
   updateRoom() {
     if (this.roomForm.valid) {
       this.roomData = this.roomForm.getRawValue();
 
-      this.allServe.roomUpdate(this.roomData, this.roomData.id).subscribe(
-        (response) => {
-          // Handle successful response
+      this.allServe.roomUpdate(this.roomData, this.roomData.id).subscribe({
+        next: (response) => {
           this.getRm();
           this.clearForm();
+          this.showAlert('Room updated successfully!', 'success');
         },
-        (error) => {
-          // Handle error response
+        error: (error) => {
           this.handleError(error);
         }
-      );
+      });
+    } else {
+      this.showAlert('Please fill in all required fields correctly.', 'warning');
+      this.roomForm.markAllAsTouched();
     }
   }
 
   getRm() {
-    this.allServe.getRoom().subscribe(
-      (response: any) => {
+    this.allServe.getRoom().subscribe({
+      next: (response: any) => {
         this.rooms = response.data;
       },
-      (error) => {
-        console.error('Error fetching rooms:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
+
   getHotels() {
-    this.hotelServe.getHotel().subscribe(
-      (response: any) => {
+    this.hotelServe.getHotel().subscribe({
+      next: (response: any) => {
         this.hotels = response.data;
       },
-      (error) => {
-        console.error('Error fetching Hotel:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
 
   onSubmit() {
     if (this.roomForm.valid) {
-
       this.roomData = this.roomForm.getRawValue();
 
-      this.allServe.submitRoom(this.roomData).subscribe(
-        (response) => {
-          // Handle successful submission
+      this.allServe.submitRoom(this.roomData).subscribe({
+        next: (response) => {
           this.getRm();
           this.clearForm();
+          this.showAlert('Room created successfully!', 'success');
         },
-        (error) => {
-          // Handle errors
+        error: (error) => {
           this.handleError(error);
         }
-      );
+      });
+    } else {
+      this.showAlert('Please fill in all required fields correctly.', 'warning');
+      this.roomForm.markAllAsTouched();
     }
   }
 
-  handleError(error: { error: null; }){
-    return  this.error=error.error;
+  handleError(error: any) {
+    console.error('Backend Error:', error);
+
+    // Safely parse Laravel 10 validation or exception payloads
+    if (error?.error?.errors) {
+      const firstKey = Object.keys(error.error.errors)[0];
+      this.error = error.error.errors[firstKey][0];
+    } else if (error?.error?.message) {
+      this.error = error.error.message;
+    } else if (typeof error?.error === 'string') {
+      this.error = error.error;
+    } else {
+      this.error = 'An unexpected server error occurred.';
+    }
+
+    this.showAlert(this.error || 'An error occurred.', 'danger');
   }
 
-  deleteRoom(id:any){
-    this.allServe.deleteRoom(id).subscribe(
-      (data: any) => {
+  deleteRoom(id: any) {
+    this.allServe.deleteRoom(id).subscribe({
+      next: (data: any) => {
         this.getRm();
+        this.showAlert('Room deleted successfully!', 'success');
       },
-      (error) => {
-        console.error('Error fetching employee:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
-
+    });
   }
-
 
   getRmCategory() {
-    this.allServe.getRoomsCategory().subscribe(
-      (response: any) => {
+    this.allServe.getRoomsCategory().subscribe({
+      next: (response: any) => {
         this.roomsCategories = response.data;
       },
-      (error) => {
-        console.error('Error fetching rooms categories:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
-
 
   ngOnInit() {
     this.getRm();
     this.getRmCategory();
     this.getHotels();
   }
-
 }

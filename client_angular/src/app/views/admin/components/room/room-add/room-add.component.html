@@ -3,6 +3,9 @@
 
   <form cForm [formGroup]="roomForm" (ngSubmit)="onSubmit()">
     <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
+    <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+      {{ alertMessage }}
+    </c-alert>
     @if (isVisible){
     <div class="mb-3">
       <label cLabel for="inputNumber-1">Room Number: </label>

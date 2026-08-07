@@ -1,6 +1,10 @@
 <form [formGroup]="hotelEvent" (ngSubmit)="onSubmit()">
   <c-row>
     <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
+    <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+      {{ alertMessage }}
+    </c-alert>
+
     <c-col [md]="6" class="mb-3">
       <label cLabel>Event No</label>
       <input cFormControl type="text" formControlName="event_no" placeholder="Event No generated systematically ">

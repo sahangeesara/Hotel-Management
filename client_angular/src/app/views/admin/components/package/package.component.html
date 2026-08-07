@@ -1,6 +1,9 @@
 <div  id="AddForm" >
   <c-row>
     <h2><strong><em>Package Add Form</em></strong></h2>
+    <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+      {{ alertMessage }}
+    </c-alert>
     <c-col [xs]="12">
       <form [formGroup]="packageForm" (ngSubmit)="onSubmit()">
         <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
@@ -26,9 +29,11 @@
                 formControlName="name"
                 placeholder="Enter name"
               />
-              <div *ngIf="packageForm.get('name')?.invalid && packageForm.get('name')?.touched" class="invalid-feedback">
-                Name is required.
-              </div>
+              @if (packageForm.get('name')?.invalid && packageForm.get('name')?.touched) {
+                @if (packageForm.get('name')?.errors?.['required']) {
+                  <span style="color:red">Guest Guest is required.</span>
+                }
+              }
             </div>
           </c-col>
           <c-col [xs]="6">
@@ -43,9 +48,11 @@
                 formControlName="description"
                 placeholder="Enter description"
               />
-              <div *ngIf="packageForm.get('description')?.invalid && packageForm.get('description')?.touched" class="invalid-feedback">
-                Enter a valid description.
-              </div>
+              @if (packageForm.get('description')?.invalid && packageForm.get('description')?.touched) {
+                @if (packageForm.get('description')?.errors?.['required']) {
+                  <span style="color:red">Guest Guest is required.</span>
+                }
+              }
             </div>
           </c-col>
           <c-col [xs]="6">
@@ -60,6 +67,11 @@
                 </option>
               </select>
             </div>
+            @if (packageForm.get('package_type_id')?.invalid && packageForm.get('package_type_id')?.touched) {
+              @if (packageForm.get('package_type_id')?.errors?.['required']) {
+                <span style="color:red">Guest Guest is required.</span>
+              }
+            }
           </c-col>
           <c-col [xs]="6">
             <!-- Phone Number -->
@@ -74,16 +86,18 @@
                 placeholder="Enter Package Amount"
 
               />
-              <div *ngIf="packageForm.get('package_amount')?.invalid && packageForm.get('package_amount')?.touched" class="invalid-feedback">
-                Package Amount is required
-              </div>
+              @if (packageForm.get('package_amount')?.invalid && packageForm.get('package_amount')?.touched) {
+                @if (packageForm.get('package_amount')?.errors?.['required']) {
+                  <span style="color:red">Guest Guest is required.</span>
+                }
+              }
             </div>
           </c-col>
         </c-row>
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary" style="color:black" [disabled]="packageForm.invalid">Save</button> &ngsp;
+        <button type="submit" class="btn btn-primary" style="color:black" [disabled]="packageForm.invalid && isSubmitted">Save</button> &ngsp;
         <button type="button" class="btn btn-info" style="color:black"  (click)="clearForm()">Clear</button> &ngsp;
-        <button type="button" class="btn btn-danger" style="color:black"  (click)="updatePackage()">Update</button>
+        <button type="button" class="btn btn-danger" style="color:black"  (click)="updatePackage()" [disabled]="isEditMode" ]>Update</button>
       </form>
 
 

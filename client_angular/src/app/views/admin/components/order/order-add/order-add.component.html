@@ -1,6 +1,9 @@
 <h3> <strong><em> Order Form </em> </strong></h3>
 <form cForm [formGroup]="orderForm" (ngSubmit)="onSubmit()">
   <c-row>
+    <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+      {{ alertMessage }}
+    </c-alert>
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="inputRNo-1">Room No:</label>
@@ -11,6 +14,11 @@
           </option>
         </select>
       </div>
+      @if (orderForm.get('r_id')?.invalid && orderForm.get('r_id')?.touched) {
+        @if (orderForm.get('r_id')?.errors?.['required']) {
+          <span style="color:red">Guest Guest is required.</span>
+        }
+      }
     </c-col>
 
     <c-col [xs]="6">
@@ -30,6 +38,11 @@
           </option>
         </datalist>
       </div>
+      @if (orderForm.get('guest_id')?.invalid && orderForm.get('guest_id')?.touched) {
+        @if (orderForm.get('guest_id')?.errors?.['required']) {
+          <span style="color:red">Guest Guest is required.</span>
+        }
+      }
     </c-col>
     <c-col [xs]="6">
       <div class="mb-3">
@@ -41,6 +54,11 @@
           </option>
         </select>
       </div>
+      @if (orderForm.get('oder_status_id')?.invalid && orderForm.get('oder_status_id')?.touched) {
+        @if (orderForm.get('oder_status_id')?.errors?.['required']) {
+          <span style="color:red">Guest Guest is required.</span>
+        }
+      }
     </c-col>
     <c-col [xs]="6">
       <div class="mb-3">
@@ -50,6 +68,11 @@
           ex: Lkr.700.00
         </div>
       </div>
+      @if (orderForm.get('order_amount')?.invalid && orderForm.get('order_amount')?.touched) {
+        @if (orderForm.get('order_amount')?.errors?.['required']) {
+          <span style="color:red">Order Amount is required.</span>
+        }
+      }
     </c-col>
 
     <c-col [xs]="6">
@@ -63,6 +86,11 @@
         ngbDatepicker
         #d="ngbDatepicker"
       />
+      @if (orderForm.get('order_date')?.invalid && orderForm.get('order_date')?.touched) {
+        @if (orderForm.get('order_date')?.errors?.['required']) {
+          <span style="color:red">Guest Guest is required.</span>
+        }
+      }
     </c-col>
 
       <hr class="mt-2">

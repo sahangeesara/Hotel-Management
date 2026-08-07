@@ -1,7 +1,6 @@
 <div>
   <h3> <strong> <em> Event Book Form </em> </strong></h3>
 
-
   <div>
     <form cForm [formGroup]="eventBook">
     <c-col [xs]="6">
@@ -70,13 +69,10 @@
         <app-wedding-event [organizer_id]="eventBook.get('organizer_id')?.value"></app-wedding-event>
 
       </div>
-
-      <!-- Hotel -->
-      <div *ngIf="selectedEvent === 'hotel'">
+      <!-- Hotel --><div *ngIf="selectedEvent === 'hotel'">
         <button cButton color="secondary" (click)="back()">
           ← Back
         </button>
-
         <h1>Hotel Event</h1>
         <app-hotel-event [organizer_id]="eventBook.get('organizer_id')?.value"></app-hotel-event>
       </div>
@@ -94,35 +90,4 @@
       </div>
     </form>
 
-<!--<div>-->
-<!--  <h3> <strong><em>Room Book Table</em></strong> </h3>-->
-<!--  <table cTable style="width:900px" >-->
-<!--    <thead>-->
-<!--    <tr>-->
-<!--      <th scope="col">#</th>-->
-<!--      <th scope="col"> Book Number</th>-->
-<!--      <th scope="col">Room No</th>-->
-<!--      <th scope="col">Guest Name</th>-->
-<!--      <th scope="col">Guest Nic</th>-->
-<!--      <th scope="col"> Booking / Canceling </th>-->
-<!--      <th scope="col"> Check-in Date - Check-out Date: </th>-->
-<!--      <th scope="col">Action</th>-->
-<!--    </tr>-->
-<!--    </thead>-->
-<!--    <tbody *ngIf="roomsBooks">-->
-<!--    <tr  *ngFor="let book of objectValues(roomsBooks); let i = index">-->
-<!--      <th scope="row">{{i + 1}}</th>-->
-<!--      <td>{{ book.booking_no }}</td>-->
-<!--      <td>{{ book.room.r_no }}</td>-->
-<!--      <td>{{ book.guest.name }}</td>-->
-<!--      <td>{{ book.guest.nic }}</td>-->
-<!--      <td>{{ book.r_book }}</td>-->
-<!--      <td>{{ book.booking_Date|date:"Y-MM-d" }} - {{ book.cancel_Date|date:"Y-MM-d" }}</td>-->
-<!--      <td>-->
-<!--        <button (click)="getRmBookById(book.id)" cButton><svg cIcon name="cil-task" size="lg" title="Numbered List Icon"></svg></button>&ngsp;&ngsp;-->
-<!--        <button type="button" (click)="deleteRmBook(book.id)"cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>-->
-<!--      </td>-->
-<!--    </tr>-->
-<!--    </tbody>-->
-<!--  </table>-->
-<!--</div>-->
+<

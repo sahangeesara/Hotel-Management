@@ -2,6 +2,9 @@
 
   <form cForm [formGroup]="updateForm">
     <c-row>
+      <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+        {{ alertMessage }}
+      </c-alert>
       <c-col [xs]="12">
       <input cFormControl id="inputId-1" type="hidden" name="id" formControlName="id" sizing="sm">
       </c-col>

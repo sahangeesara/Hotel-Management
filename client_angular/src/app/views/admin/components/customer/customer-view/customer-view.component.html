@@ -2,6 +2,9 @@
   <c-row>
     <h2><strong><em>Customer Add Form</em></strong></h2>
     <c-col [xs]="12">
+      <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+        {{ alertMessage }}
+      </c-alert>
       <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
         <c-row>
           <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
@@ -17,10 +20,12 @@
                   formControlName="name"
                   placeholder="Enter name"
                 />
-                <div *ngIf="customerForm.get('name')?.invalid && customerForm.get('name')?.touched" class="invalid-feedback">
-                  Name is required.
-                </div>
               </div>
+              @if (customerForm.get('name')?.invalid && customerForm.get('name')?.touched) {
+                @if (customerForm.get('name')?.errors?.['required']) {
+                  <span style="color:red">Guide Gender is required.</span>
+                }
+              }
             </c-col>
             <c-col [xs]="6">
               <!-- Email -->
@@ -34,38 +39,86 @@
                   formControlName="email"
                   placeholder="Enter email"
                 />
-                <div *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched" class="invalid-feedback">
-                  Enter a valid email address.
-                </div>
               </div>
+              @if (customerForm.get('email')?.invalid && customerForm.get('email')?.touched) {
+                @if (customerForm.get('email')?.errors?.['required']) {
+                  <span style="color:red">Guide Gender is required.</span>
+                }
+              }
             </c-col>
           <c-col [xs]="6">
-            <!-- Phone Number -->
+            <!-- Customer Country Selection -->
             <div class="mb-3">
-              <label cLabel for="tellNo" class="form-label">Your Phone Number</label>
-              <c-col [xs]="3">
-                <div class="mb-3">
-                  <label cLabel>Country Code:</label>
+              <label cLabel for="inputCountry-1" class="form-label">Customer Country</label>
+              <select
+                cSelect
+                class="form-select"
+                formControlName="country_id"
+                #countrySelect
+                id="inputCountry-1"
+                (change)="setCountryCode($event)"
+              >
+                <option value="">Select Country</option>
+                <option *ngFor="let country of countries" [value]="country.id">
+                  {{ country.name }}
+                </option>
+              </select>
+            </div>
 
-                  <select cSelect formControlName="cuntry_code_id">
-                    <option value="">Select Country Code</option>
+            @if (customerForm.get('country_id')?.invalid && customerForm.get('country_id')?.touched) {
+              @if (customerForm.get('country_id')?.errors?.['required']) {
+                <span style="color:red; font-size: 0.85rem;">Country is required.</span>
+              }
+            }
+          </c-col>
+
+          <c-col [xs]="6">
+            <!-- Phone Number & Country Code Section -->
+            <div class="mb-3">
+              <label cLabel for="tel_no" class="form-label">Your Phone Number</label>
+
+              <div class="row g-2">
+                <!-- Country Code Selection -->
+                <c-col [xs]="4">
+                  <label cLabel class="form-label text-muted small">Country Code</label>
+                  <select cSelect formControlName="cuntry_code_id" class="form-select">
+                    <option value="">Select Code</option>
                     <option *ngFor="let code of countryCodes" [value]="code.id">
                       {{ code.country_code }}
                     </option>
                   </select>
-                </div>
-              </c-col>
-              <input
-                cFormControl
-                type="text"
-                class="form-control"
-                id="tel_no"
-                formControlName="tel_no"
-                placeholder="Enter Phone Number"
 
-              />
-              <div *ngIf="customerForm.get('tel_no')?.invalid && customerForm.get('tel_no')?.touched" class="invalid-feedback">
-                Phone Number is required
+                  @if (customerForm.get('cuntry_code_id')?.invalid && customerForm.get('cuntry_code_id')?.touched) {
+                    @if (customerForm.get('cuntry_code_id')?.errors?.['required']) {
+                      <span style="color:red; font-size: 0.85rem;">Country code is required.</span>
+                    }
+                  }
+                </c-col>
+
+                <!-- Phone Number Input -->
+                <c-col [xs]="8">
+                  <label cLabel class="form-label text-muted small">Phone Number</label>
+                  <input
+                    cFormControl
+                    type="text"
+                    class="form-control"
+                    id="tel_no"
+                    formControlName="tel_no"
+                    placeholder="Enter Phone Number"
+                  />
+
+                  <!-- Required Error -->
+                  @if (customerForm.get('tel_no')?.invalid && customerForm.get('tel_no')?.touched) {
+                    @if (customerForm.get('tel_no')?.errors?.['required']) {
+                      <span style="color:red; font-size: 0.85rem; display: block;">Phone number is required.</span>
+                    }
+
+                    <!-- Regex Pattern Error -->
+                    @if (customerForm.get('tel_no')?.errors?.['invalidPhonePattern']) {
+                      <span style="color:red; font-size: 0.85rem; display: block;">Invalid phone number format for the selected country.</span>
+                    }
+                  }
+                </c-col>
               </div>
             </div>
           </c-col>
@@ -79,6 +132,11 @@
                   <option value="Foreign">Foreign</option>
                 </select>
               </div>
+              @if (customerForm.get('custom_type')?.invalid && customerForm.get('custom_type')?.touched) {
+                @if (customerForm.get('custom_type')?.errors?.['required']) {
+                  <span style="color:red">Guide Gender is required.</span>
+                }
+              }
             </c-col>
           <c-col [xs]="6">
             <!--Nic -->
@@ -92,6 +150,11 @@
                       ex: 992404545V
                     </div>
                   </div>
+                  @if (customerForm.get('nic')?.invalid && customerForm.get('nic')?.touched) {
+                    @if (customerForm.get('nic')?.errors?.['required']) {
+                      <span style="color:red">Guide Gender is required.</span>
+                    }
+                  }
                 </c-col>
               }
               @if (isForeign) {
@@ -100,6 +163,11 @@
                     <label cLabel for="inputForeignNic-1">Guest Foreign Nic:</label>
                     <input cFormControl id="inputForeignNic-1" type="text" name="foreign_nic" formControlName="foreign_nic" sizing="sm">
                   </div>
+                  @if (customerForm.get('foreign_nic')?.invalid && customerForm.get('foreign_nic')?.touched) {
+                    @if (customerForm.get('foreign_nic')?.errors?.['required']) {
+                      <span style="color:red">Guide Gender is required.</span>
+                    }
+                  }
                 </c-col>
               }
             </div>
@@ -118,9 +186,11 @@
                   placeholder="Enter address"
 
                 />
-                <div *ngIf="customerForm.get('address')?.invalid && customerForm.get('address')?.touched" class="invalid-feedback">
-                  address is required
-                </div>
+                @if (customerForm.get('address')?.invalid && customerForm.get('address')?.touched) {
+                  @if (customerForm.get('address')?.errors?.['required']) {
+                    <span style="color:red">Guide Gender is required.</span>
+                  }
+                }
               </div>
             </c-col>
           <c-col [xs]="6">
@@ -135,26 +205,14 @@
                 </option>
               </select>
             </div>
+            @if (customerForm.get('gender_id')?.invalid && customerForm.get('gender_id')?.touched) {
+              @if (customerForm.get('gender_id')?.errors?.['required']) {
+                <span style="color:red">Guide Gender is required.</span>
+              }
+            }
           </c-col>
 
           <c-col [xs]="6">
-            <div class="mb-3">
-              <label cLabel for="inputCountry-1">Customer Country</label>
-              <select
-                cSelect
-                formControlName="country_id"
-                #countrySelect
-                (change)="setCountryCode($event)"
-              >
-                <option value="">Select Country</option>
-                <option *ngFor="let country of countries" [value]="country.id">
-                  {{ country.name }}
-                </option>
-              </select>
-
-            </div>
-          </c-col>
-            <c-col [xs]="6">
               <!--City -->
               <div class="mb-3">
                 <label cLabel for="city" class="form-label">Your City</label>
@@ -167,16 +225,18 @@
                   placeholder="Enter City"
 
                 />
-                <div *ngIf="customerForm.get('city')?.invalid && customerForm.get('city')?.touched" class="invalid-feedback">
-                  City is required
-                </div>
               </div>
+              @if (customerForm.get('city')?.invalid && customerForm.get('city')?.touched) {
+                @if (customerForm.get('city')?.errors?.['required']) {
+                  <span style="color:red">Guide Gender is required.</span>
+                }
+              }
             </c-col>
         </c-row>
         <!-- Submit Button -->
         <button type="submit" class="btn btn-primary" style="color:black" [disabled]="customerForm.invalid">Save</button>&ngsp;
         <button type="button" class="btn btn-warning" style="color:black"  (click)="clearForm()">Clear</button> &ngsp;
-        <button type="button" class="btn btn-danger" style="color:black" [disabled]="customerForm.invalid" (click)="customUpdate()">Update</button>
+        <button type="button" class="btn btn-danger" style="color:black" [disabled]="isUpdate" (click)="customUpdate()">Update</button>
       </form>
 
 
@@ -268,7 +328,7 @@
       <td>{{ type.city }}</td>
       <td>{{ type.country.name }}</td>
       <td>{{ type.nic }}</td>
-      <td>{{ type.tel_no }}</td>
+      <td>({{type.country_code.country_code}}) {{ type.tel_no }}</td>
        <td>
       <button type="button" (click)="getShow(type.id)" cButton>  <svg cIcon name="cil-task" size="lg" title="Numbered List Icon" ></svg></button> &ngsp;
        <button type="button" (click)="customerDelete(type.id)" cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>

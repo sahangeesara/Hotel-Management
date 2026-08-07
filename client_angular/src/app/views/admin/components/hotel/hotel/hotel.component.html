@@ -4,6 +4,9 @@
     <c-col [xs]="12">
       <form [formGroup]="hotelForm" (ngSubmit)="onSubmit()">
         <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
+        <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+          {{ alertMessage }}
+        </c-alert>
         <c-row>
           <!-- Name -->
           <c-col [xs]="6">
@@ -17,9 +20,11 @@
                 formControlName="name"
                 placeholder="Enter name"
               />
-              <div *ngIf="hotelForm.get('name')?.invalid && hotelForm.get('name')?.touched" class="invalid-feedback">
-                Name is required.
-              </div>
+              @if (hotelForm.get('name')?.invalid && hotelForm.get('name')?.touched) {
+                @if (hotelForm.get('name')?.errors?.['required']) {
+                  <span style="color:red">Guest Guest is required.</span>
+                }
+              }
             </div>
           </c-col>
           <c-col [xs]="6">
@@ -34,9 +39,11 @@
                 formControlName="location"
                 placeholder="Enter location"
               />
-              <div *ngIf="hotelForm.get('location')?.invalid && hotelForm.get('location')?.touched" class="invalid-feedback">
-                Enter a valid location address.
-              </div>
+              @if (hotelForm.get('location')?.invalid && hotelForm.get('location')?.touched) {
+                @if (hotelForm.get('location')?.errors?.['required']) {
+                  <span style="color:red">Guest Guest is required.</span>
+                }
+              }
             </div>
           </c-col>
           <c-col [xs]="6">
@@ -51,6 +58,11 @@
                 </option>
               </select>
             </div>
+            @if (hotelForm.get('room_setups_id')?.invalid && hotelForm.get('room_setups_id')?.touched) {
+              @if (hotelForm.get('room_setups_id')?.errors?.['required']) {
+                <span style="color:red">Guest Guest is required.</span>
+              }
+            }
           </c-col>
           <c-col [xs]="6">
             <!-- Phone Number -->
@@ -65,9 +77,11 @@
                 placeholder="Enter Phone Number"
 
               />
-              <div *ngIf="hotelForm.get('phone')?.invalid && hotelForm.get('phone')?.touched" class="invalid-feedback">
-                Phone Number is required
-              </div>
+              @if (hotelForm.get('phone')?.invalid && hotelForm.get('phone')?.touched) {
+                @if (hotelForm.get('phone')?.errors?.['required']) {
+                  <span style="color:red">Guest Guest is required.</span>
+                }
+              }
             </div>
           </c-col>
           <c-col [xs]="6">
@@ -83,10 +97,12 @@
                 placeholder="Enter capacity "
 
               />
-              <div *ngIf="hotelForm.get('capacity')?.invalid && hotelForm.get('capacity')?.touched" class="invalid-feedback">
-                Capacity is required
-              </div>
             </div>
+            @if (hotelForm.get('capacity')?.invalid && hotelForm.get('capacity')?.touched) {
+              @if (hotelForm.get('capacity')?.errors?.['required']) {
+                <span style="color:red">Guest Guest is required.</span>
+              }
+            }
           </c-col>
         </c-row>
         <!-- Submit Button -->

@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {
+  AlertComponent,
   ButtonDirective,
   ColComponent,
   FormControlDirective,
@@ -21,7 +22,6 @@ import {
 import {NgForOf, NgIf} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
-import {ToastrService} from "ngx-toastr";
 import {NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
 import {Food} from "../../../../../entities/food";
 import {FoodStatus} from "../../../../../entities/foodStatus";
@@ -35,10 +35,12 @@ import {Order} from "../../../../../entities/order";
   selector: 'app-order-add',
   standalone: true,
   imports: [
+    AlertComponent,
     FormDirective,
     ReactiveFormsModule,
     ColComponent,
     NgForOf,
+    NgIf,
     FormLabelDirective,
     FormSelectDirective,
     RowComponent,
@@ -52,8 +54,8 @@ import {Order} from "../../../../../entities/order";
   templateUrl: './order-add.component.html',
   styleUrl: './order-add.component.scss'
 })
-export class OrderAddComponent  implements OnInit{
-  public error=null;
+export class OrderAddComponent implements OnInit {
+  public error: any = null;
 
   notifications: string[] = [];
   itemCategories: ItemCategory[] = [];
@@ -65,17 +67,20 @@ export class OrderAddComponent  implements OnInit{
   orderStatus: any[] = [];
   formData = new FormData();
   orderForm: FormGroup;
-   totalAmount = 0;
-  constructor(   private route:ActivatedRoute,
-                 private allServe: AllServiceService,
-                 private router:Router,
-                 private toastr: ToastrService,
-                 private fb: FormBuilder,
+  totalAmount = 0;
+
+  // CoreUI Alert Variables
+  alertMessage: string = '';
+  alertColor: string = 'success'; // 'success', 'danger', 'warning', 'info'
+
+  constructor(
+    private route: ActivatedRoute,
+    private allServe: AllServiceService,
+    private router: Router,
+    private fb: FormBuilder,
   ) {
-
     this.orderForm = this.fb.group({
-
-      id:[''],
+      id: [''],
       guest_id: ['', [Validators.required]],
       r_id: [''],
       order_date: ['', [Validators.required]],
@@ -84,11 +89,20 @@ export class OrderAddComponent  implements OnInit{
       item_category_id: [''],
       food_id: [''],
       quantity: [''],
-
     });
-
   }
 
+  showAlert(message: string, color: string = 'success') {
+    this.alertMessage = message;
+    this.alertColor = color;
+    setTimeout(() => {
+      this.clearAlert();
+    }, 4000);
+  }
+
+  clearAlert() {
+    this.alertMessage = '';
+  }
 
   get roomIdField(): FormControl {
     return this.orderForm.controls['r_id'] as FormControl;
@@ -106,71 +120,72 @@ export class OrderAddComponent  implements OnInit{
     return this.orderForm.controls['oder_status_id'] as FormControl;
   }
 
-
   getRm() {
-    this.allServe.getRoom().subscribe(
-      (response: any) => {
+    this.allServe.getRoom().subscribe({
+      next: (response: any) => {
         this.rooms = response.data;
       },
-      (error) => {
-        console.error('Error fetching rooms:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
 
-  formatDate(obj:any){
-    return obj['year']+'-'+obj['month']+'-'+obj['day']
+  formatDate(obj: any) {
+    return obj['year'] + '-' + obj['month'] + '-' + obj['day'];
   }
+
   getGuest() {
-    this.allServe.getGuests().subscribe(
-      (response: any) => {
+    this.allServe.getGuests().subscribe({
+      next: (response: any) => {
         this.guests = response.data;
       },
-      (error) => {
-        console.error('Error fetching guest:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
 
   getItemCategory() {
-    this.allServe.getItemCategory().subscribe(
-      (response: any) => {
+    this.allServe.getItemCategory().subscribe({
+      next: (response: any) => {
         this.itemCategories = response.data;
       },
-      (error) => {
-        console.error('Error fetching Item Category:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
-  getFoods(data:any) {
-    this.allServe.getFoodByItemCateId(data).subscribe(
-      (data: any) => {
+
+  getFoods(data: any) {
+    this.allServe.getFoodByItemCateId(data).subscribe({
+      next: (data: any) => {
         this.foods = data;
       },
-      (error) => {
-        console.error('Error fetching Food:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
+
   addSelectedFood() {
     const selectedFoodId = this.orderForm.get('food_id')?.value;
     const quantityRaw = this.orderForm.get('quantity')?.value;
-
     const quantity = Number(quantityRaw);
 
     if (!selectedFoodId) {
-      alert('Please select a food item first.');
+      this.showAlert('Please select a food item first.', 'warning');
       return;
     }
 
     if (!quantity || quantity <= 0) {
-      alert('Please enter a valid quantity greater than 0.');
+      this.showAlert('Please enter a valid quantity greater than 0.', 'warning');
       return;
     }
 
     const food = this.foods.find((f: any) => String(f.id) === String(selectedFoodId));
     if (!food) {
-      alert('Selected food not found in available list.');
+      this.showAlert('Selected food not found in available list.', 'warning');
       return;
     }
 
@@ -186,43 +201,39 @@ export class OrderAddComponent  implements OnInit{
     }
 
     this.orderForm.patchValue({ quantity: '', food_id: '' });
-
     this.updateTotalAmount();
   }
 
-
-
   getOrderStatus() {
-    this.allServe.getOrderStatus().subscribe(
-      (response: any) => {
+    this.allServe.getOrderStatus().subscribe({
+      next: (response: any) => {
         this.orderStatus = response.data;
       },
-      (error) => {
-        console.error('Error fetching Item Category:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
+
   getFoodStatus() {
-    this.allServe.getFoodStatus().subscribe(
-      (response: any) => {
+    this.allServe.getFoodStatus().subscribe({
+      next: (response: any) => {
         this.foodStatus = response.data;
       },
-      (error) => {
-        console.error('Error fetching Item Category:', error);
+      error: (error) => {
+        this.handleError(error);
       }
-    );
+    });
   }
 
   updateTotalAmount() {
-    this.totalAmount=0;
+    this.totalAmount = 0;
 
     for (let i = 0; i < this.foodItems.length; i++) {
       this.totalAmount += (Number(this.foodItems[i]['food_amount']) || 0) * (Number(this.foodItems[i]['quantity']) || 0);
-      console.log(this.totalAmount);
     }
-    this.orderForm.controls['order_amount'].setValue(this.totalAmount+".00");
+    this.orderForm.controls['order_amount'].setValue(this.totalAmount + ".00");
   }
-
 
   ngOnInit() {
     this.getItemCategory();
@@ -230,9 +241,9 @@ export class OrderAddComponent  implements OnInit{
     this.getGuest();
     this.getOrderStatus();
     this.getFoodStatus();
-
   }
-  removeFoodItem(index: number,amount:any) {
+
+  removeFoodItem(index: number, amount: any) {
     let quantity = this.foodItems[index].quantity;
     const foodAmount = Number(amount) || 0;
 
@@ -241,62 +252,74 @@ export class OrderAddComponent  implements OnInit{
 
     this.foodItems.splice(index, 1);
     this.updateTotalAmount();
-    this.orderForm.controls['order_amount'].setValue(this.totalAmount+".00");
+    this.orderForm.controls['order_amount'].setValue(this.totalAmount + ".00");
   }
-
 
   clearForm() {
     this.foodItems = [];
     this.orderForm.reset();
-    this.totalAmount=0;
-    this.orderForm.controls['order_amount'].setValue(this.totalAmount+".00");
-    this.foodIdField.setValue("Select Food Item...");
-    this.itemCateField.setValue("Select Item Category...");
-    this.roomIdField.setValue("Select Room Number");
-    this.orderStatusField.setValue("Select Order Status: ");
-    this.guestIdField.setValue("Select Guest");
+    this.totalAmount = 0;
+    this.orderForm.controls['order_amount'].setValue(this.totalAmount + ".00");
+    this.foodIdField.setValue("");
+    this.itemCateField.setValue("");
+    this.roomIdField.setValue("");
+    this.orderStatusField.setValue("");
+    this.guestIdField.setValue("");
   }
 
   onSubmit() {
-
-    let data = (this.orderForm).value
-    let data2 = this.foodItems
-    this.formData = new FormData();
     if (this.orderForm.valid) {
+      let data = (this.orderForm).value;
+      let data2 = this.foodItems;
+      this.formData = new FormData();
 
       let order = new Order();
-
-      order.r_id= data.r_id;
-      order.guest_id= data.guest_id;
-      order.order_date= this.formatDate(data.order_date);
-      order.order_amount= data.order_amount;
-      order.oder_status_id= data.oder_status_id;
+      order.r_id = data.r_id;
+      order.guest_id = data.guest_id;
+      order.order_date = this.formatDate(data.order_date);
+      order.order_amount = data.order_amount;
+      order.oder_status_id = data.oder_status_id;
 
       this.formData.append('form', JSON.stringify(order));
       this.formData.append('food', JSON.stringify(data2));
-      const submissionObservable = from( this.allServe.submitOrder(this.formData));
+
+      const submissionObservable = from(this.allServe.submitOrder(this.formData));
 
       submissionObservable
         .pipe(
           map((data) => {
-            // Handle successful submission here
             this.clearForm();
-
             this.notifications.push('Order submitted successfully!');
-            return data; // If you need to return a value for further processing
+            this.showAlert('Order submitted successfully!', 'success');
+            return data;
           }),
           catchError((error) => {
-            // Handle errors here
             this.handleError(error);
-            return throwError(error); // Re-throw the error if you want to propagate it further
+            return throwError(error);
           })
         )
         .subscribe();
+    } else {
+      this.showAlert('Please fill in all required fields correctly.', 'warning');
+      this.orderForm.markAllAsTouched();
     }
   }
-  handleError(error: { error: null; }){
-   alert(this.error=error.error);
+
+  handleError(error: any) {
+    console.error('Backend Error:', error);
+
+    // Safely parse Laravel 10 validation or exception payloads
+    if (error?.error?.errors) {
+      const firstKey = Object.keys(error.error.errors)[0];
+      this.error = error.error.errors[firstKey][0];
+    } else if (error?.error?.message) {
+      this.error = error.error.message;
+    } else if (typeof error?.error === 'string') {
+      this.error = error.error;
+    } else {
+      this.error = 'An unexpected server error occurred.';
+    }
+
+    this.showAlert(this.error || 'An error occurred.', 'danger');
   }
-
-
 }

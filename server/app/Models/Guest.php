@@ -43,7 +43,7 @@ class Guest extends Model
     }
     public function countryCode(): BelongsTo
     {
-        return $this->belongsTo(CountryCode::class,'country_code_id');
+        return $this->belongsTo(CountryCode::class,'cuntry_code_id');
     }
 
     public function roomBook(): HasMany

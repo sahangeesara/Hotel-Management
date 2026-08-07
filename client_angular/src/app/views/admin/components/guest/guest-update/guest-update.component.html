@@ -3,6 +3,9 @@
   <form cForm [formGroup]="guestUpdateForm" (ngSubmit)="guestUpdate()">
     <c-row>
       <input type="hidden" formControlName="id" >
+      <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+        {{ alertMessage }}
+      </c-alert>
       <c-col [xs]="6">
         <div class="mb-3">
           <label cLabel for="inputName-1">Guest Name: </label>
@@ -42,12 +45,15 @@
         </div>
       </c-col>
       <c-col [xs]="6">
+        <!-- Guest Country Selection -->
         <div class="mb-3">
-          <label cLabel for="inputCountry-1">Guide Country</label>
+          <label cLabel for="inputCountry-1" class="form-label">Guest Country</label>
           <select
             cSelect
+            class="form-select"
             formControlName="country_id"
             #countrySelect
+            id="inputCountry-1"
             (change)="setCountryCode($event)"
           >
             <option value="">Select Country</option>
@@ -55,25 +61,63 @@
               {{ country.name }}
             </option>
           </select>
-
         </div>
-      </c-col>
-      <c-col [xs]="6">
-        <div class="mb-3">
-          <label cLabel for="inputTel_no-1">Guest tel no:</label>
-          <c-col [xs]="3">
-            <div class="mb-3">
-              <label cLabel>Country Code:</label>
 
-              <select cSelect formControlName="cuntry_code_id">
-                <option value="">Select Country Code</option>
+        @if (guestUpdateForm.get('country_id')?.invalid && guestUpdateForm.get('country_id')?.touched) {
+          @if (guestUpdateForm.get('country_id')?.errors?.['required']) {
+            <span style="color:red; font-size: 0.85rem;">Country is required.</span>
+          }
+        }
+      </c-col>
+
+      <c-col [xs]="6">
+        <!-- Phone Number & Country Code Section -->
+        <div class="mb-3">
+          <label cLabel for="tel_no" class="form-label">Your Phone Number</label>
+
+          <div class="row g-2">
+            <!-- Country Code Selection -->
+            <c-col [xs]="4">
+              <label cLabel class="form-label text-muted small">Country Code</label>
+              <select cSelect formControlName="cuntry_code_id" class="form-select">
+                <option value="">Select Code</option>
                 <option *ngFor="let code of countryCodes" [value]="code.id">
                   {{ code.country_code }}
                 </option>
               </select>
-            </div>
-          </c-col>
-          <input cFormControl id="inputTel_no-1" type="text" name="tel_no" formControlName="tel_no" sizing="sm">
+
+              @if (guestUpdateForm.get('cuntry_code_id')?.invalid && guestUpdateForm.get('cuntry_code_id')?.touched) {
+                @if (guestUpdateForm.get('cuntry_code_id')?.errors?.['required']) {
+                  <span style="color:red; font-size: 0.85rem;">Country code is required.</span>
+                }
+              }
+            </c-col>
+
+            <!-- Phone Number Input -->
+            <c-col [xs]="8">
+              <label cLabel class="form-label text-muted small">Phone Number</label>
+              <input
+                cFormControl
+                type="text"
+                class="form-control"
+                id="tel_no"
+                formControlName="tel_no"
+                placeholder="Enter Phone Number"
+              />
+
+              <!-- Required Error -->
+              @if (guestUpdateForm.get('tel_no')?.invalid && guestUpdateForm.get('tel_no')?.touched) {
+                @if (guestUpdateForm.get('tel_no')?.errors?.['required']) {
+                  <span style="color:red; font-size: 0.85rem; display: block;">Phone number is required.</span>
+                }
+
+                <!-- Regex Pattern Error -->
+                @if (guestUpdateForm.get('tel_no')?.errors?.['invalidPhonePattern']) {
+                  <span style="color:red; font-size: 0.85rem; display: block;">Invalid phone number format for the selected country.</span>
+                }
+              }
+            </c-col>
+          </div>
         </div>
       </c-col>
       <c-col [xs]="6">
@@ -202,7 +246,7 @@
       </table>
 
       <div  class="mb-3">
-        <button cButton color="primary" type="submit">
+        <button cButton color="primary" type="submit" [disabled] = "guestUpdateForm.invalid">
           Update
         </button>&ngsp;
         <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">
