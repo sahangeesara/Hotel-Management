@@ -72,9 +72,14 @@ class GuestController extends Controller
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
         }
+        $existingNic='';
 
-        $existingNic = Guest::where('nic', $data['nic'])
-                             ->first();
+            if ($data['nic']) {
+                $existingNic = Guest::where('nic', $data['nic'])
+                    ->first();
+            }
+
+
 
         // If the booking exists, return an error message or handle the situation as needed
         if ($existingNic) {  return response()->json(['error' => 'Nic already exists.']); }
@@ -103,8 +108,8 @@ class GuestController extends Controller
             $guest->address = $data['address'];
             $guest->email = $data['email'];
             $guest->city = $data['city'];
-            $guest->nic = $data['nic'];
-            $guest->foreign_nic = $data['foreign_nic'];
+            $guest->nic = !empty($data['nic']) ? $data['nic'] : null;
+            $guest->foreign_nic = !empty($data['foreign_nic']) ? $data['foreign_nic'] : null;
             $guest->tel_no = $data['tel_no'];
             // Set guide_id to null if empty
             $guest->guide_id = empty($data['guide_id']) ? null : $data['guide_id'];

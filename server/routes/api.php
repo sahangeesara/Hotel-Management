@@ -25,6 +25,8 @@ use App\Http\Controllers\api\OrderStatusController;
 use App\Http\Controllers\api\OrganizerDetailsController;
 use App\Http\Controllers\api\PackageController;
 use App\Http\Controllers\api\PackageTypeController;
+use App\Http\Controllers\api\PaymentController;
+use App\Http\Controllers\api\PaymentStatusController;
 use App\Http\Controllers\api\ProvincesController;
 use App\Http\Controllers\api\ReportController;
 use App\Http\Controllers\api\RestaurantEventsController;
@@ -177,5 +179,9 @@ Route::middleware(['auth:api'])->group(function () {
         'organizers' => OrganizerDetailsController::class,
         'bookStatus' => BookStatusController::class,
         'durations' => DurationController::class,
+        'payments' => PaymentController::class,
+        'paymentStatus' => PaymentStatusController::class,
+        'paymentMethods' => PaymentStatusController::class,
+
     ]);
 });

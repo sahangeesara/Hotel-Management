@@ -28,7 +28,7 @@ import {SearchService} from "../../../../../services/search.service";
     NgIf,
     ReactiveFormsModule,
     RowComponent,
-    TableDirective, ColComponent, FormDirective, FormTextDirective,
+    TableDirective, ColComponent, FormDirective,
   ],
   templateUrl: './hotel.component.html',
   styleUrl: './hotel.component.scss'
@@ -40,8 +40,11 @@ export class HotelComponent implements OnInit {
   formData = new FormData();
   hotelForm: FormGroup;
   hotelSearchForm: FormGroup;
-  HotelData:any;
+  hotelData:any;
   public isEditMode = false;
+  isUpdateVisible: boolean = true;
+  isSubmitVisible: boolean = false;
+
   constructor(   private hotelServe: HotelService,
                  private searchServe: SearchService,
                  private toastr: ToastrService,
@@ -75,12 +78,10 @@ export class HotelComponent implements OnInit {
 
   getHotelById(id:any){
     this.hotelServe.getHotelById(id).subscribe(
-      (Hotel:any) => {
-        this.hotelForm.patchValue({
-          id: Hotel.id,
-          Hotel_no: Hotel.Hotel_no,
-          name: Hotel.name
-        });
+      (hotel:any) => {
+        this.isUpdateVisible = false;
+        this.isSubmitVisible = true;
+        this.hotelForm.patchValue(hotel);
         this.isEditMode = true; // Enable update button
       },
       (error) => {
@@ -91,13 +92,15 @@ export class HotelComponent implements OnInit {
 
   updateHotel() {
     if (this.hotelForm.valid) {
-      this.HotelData = this.hotelForm.getRawValue();
+      this.hotelData = this.hotelForm.getRawValue();
 
-      this.hotelServe.updateHotel(this.HotelData, this.HotelData.id).subscribe(
+      this.hotelServe.updateHotel(this.hotelData, this.hotelData.id).subscribe(
         (response) => {
           // Handle successful response
           this.getHotel();
           this.clearForm();
+          this.isUpdateVisible = true;
+          this.isSubmitVisible = false;
         },
         (error) => {
           // Handle error response
@@ -170,9 +173,9 @@ export class HotelComponent implements OnInit {
   onSubmit() {
     if (this.hotelForm.valid) {
 
-      this.HotelData = this.hotelForm.getRawValue();
+      this.hotelData = this.hotelForm.getRawValue();
 
-      this.hotelServe.submitHotel(this.HotelData).subscribe(
+      this.hotelServe.submitHotel(this.hotelData).subscribe(
         (response) => {
           // Handle successful submission
           this.getHotel();
@@ -193,6 +196,8 @@ export class HotelComponent implements OnInit {
   deleteHotel(id:any){
     this.hotelServe.deleteHotel(id).subscribe(
       (data: any) => {
+        this.isUpdateVisible = false;
+        this.isSubmitVisible = true;
         this.getHotel();
       },
       (error) => {

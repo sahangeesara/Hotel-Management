@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BookStatus;
+use App\Models\Currency;
 use App\Models\Package;
 use App\Models\RestaurantEvent;
 use App\Models\Rooms;
@@ -63,6 +64,10 @@ class RestaurantEventsController extends Controller
             return response()->json(['error' => 'This Date is Booking.'], 409);
         }
 
+        $currency_name = "LKR";
+
+        $currency_id = Currency::where('currency', $currency_name)->value('id');
+
         try {
             $nextId = RestaurantEvent::max('id') + 1;
             $heNo = 'REN' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
@@ -70,6 +75,7 @@ class RestaurantEventsController extends Controller
             $room = Rooms::findOrFail($validatedData['room_id']);
             $package = Package::where('id', $validatedData['package_id'])->first() ;
             $package_amount = $package->package_amount ?? 0;
+            $totalAmount = ($room->r_cost ?? 0) + $package_amount;
             $request_price = 0;
             if ($validatedData['requests']) {
                 $request_price += 3000;
@@ -78,7 +84,7 @@ class RestaurantEventsController extends Controller
             if ($validatedData['additional_services']) {
                 $request_price += 3000;
             }
-            $totalAmount += $room->r_cost ?? 0 + $package_amount + $request_price;
+            $totalAmount =$totalAmount+ $request_price;
 
             $restaurantEvent= RestaurantEvent::create(
                 [
@@ -98,6 +104,7 @@ class RestaurantEventsController extends Controller
                     'requests' => $validatedData['requests'],
                     'additional_services' => $validatedData['additional_services'],
                     'total_amount' => $totalAmount,
+                    'currencies_id' => $currency_id,
                     'event_no'=> $heNo,
                 ]
             );
@@ -184,7 +191,8 @@ class RestaurantEventsController extends Controller
             'book_status_id' => 'required|integer',
             'requests' => '',
             'additional_services' => '',
-            'total_amount'    => 'required|numeric',
+            'currency_id' => 'nullable|integer',
+            'total_amount'    => 'nullable|numeric',
 
         ]);
 
@@ -208,6 +216,8 @@ class RestaurantEventsController extends Controller
 
         $bookStatus = BookStatus::findOrFail($validatedData['book_status_id']);
 
+
+
         try {
             $restaurantEvent = RestaurantEvent::findOrFail($id);
 
@@ -216,7 +226,15 @@ class RestaurantEventsController extends Controller
             if($validatedData['room_id' ] != $restaurantEvent->room_id || $validatedData['package_id'] != $restaurantEvent->package_id) {
                 $room = Rooms::findOrFail($validatedData['room_id']);
                 $package = Package::findOrFail($validatedData['package_id']);
-                $package_amount = $package->package_amount ?? 0;
+
+                if($validatedData['package_id'] != $restaurantEvent->package_id) {
+                    $oldPackage = Package::find($restaurantEvent->package_id);
+                    $oldPackageAmount = $oldPackage->package_amount ?? 0;
+                    $totalAmount -= $oldPackageAmount;
+                    $package_amount = $package->package_amount ?? 0;
+                }else{
+                    $package_amount = $package->package_amount ?? 0;
+                }
                 $request_price = 0;
                 if ($validatedData['requests']) {
                     $request_price += 3000;
@@ -225,15 +243,15 @@ class RestaurantEventsController extends Controller
                 if ($validatedData['additional_services']) {
                     $request_price += 3000;
                 }
-                $totalAmount += $room->r_cost ?? 0 + $package_amount + $request_price;
+                $totalAmount += ($room->r_cost ?? 0) + $package_amount + $request_price;
 
             }
 
-            if($validatedData['requests'] == null && $restaurantEvent->requests != null){
+            if($validatedData['requests'] == null && $restaurantEvent->requests){
                 $totalAmount = $totalAmount - 3000;
             }
 
-            if($validatedData['additional_services'] == null && $restaurantEvent->additional_services != null){
+            if($validatedData['additional_services'] == null && $restaurantEvent->additional_services){
                 $totalAmount =$totalAmount - 3000;
             }
 
@@ -252,6 +270,7 @@ class RestaurantEventsController extends Controller
                 'book_status_id' => $validatedData['book_status_id'],
                 'passengers' => $validatedData['passengers'],
                 'event_no' => $validatedData['event_no'],
+                'currency_id' => $validatedData['currency_id'] ?? $restaurantEvent->currency_id,
                 'total_amount' => $totalAmount,
                 'is_active' => $bookStatus->name === "Cancelled" ? false : $restaurantEvent->is_active,
             ]);

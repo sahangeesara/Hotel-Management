@@ -103,6 +103,11 @@ export const routes: Routes = [
         data: { preload: true }
       },
       {
+        path: 'payments',
+        loadChildren: () => import('./views/admin/components/payment/routes').then((m) => m.routes),
+        data: { preload: true }
+      },
+      {
         path: 'customer',
         loadChildren: () => import('./views/admin/components/customer/routes').then((m) => m.routes),
         data: { preload: true }

@@ -174,10 +174,8 @@ class DashboardController extends Controller
     public function bookingIncome()
     {
         // Room Revenue
-        $room = RoomBook::join('packages', 'packages.id', '=', 'room_books.package_id')
-            ->whereYear('booking_Date', Carbon::now()->year)
-            ->where('room_books.r_book', 'Booking')
-            ->sum(DB::raw('packages.package_amount * room_books.number_of_room'));
+        $room = RoomBook::whereYear('booking_Date', Carbon::now()->year)
+            ->sum('total_amount');
 
         // Transport Revenue
         $transport = TransportBook::whereYear('pickup_date', Carbon::now()->year)

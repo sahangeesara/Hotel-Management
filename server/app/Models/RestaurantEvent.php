@@ -27,6 +27,7 @@ class RestaurantEvent extends Model
         'book_status_id',
         'requests',
         'additional_services',
+        'currencies_id',
         'total_amount',
         'is_active',
     ];
@@ -68,5 +69,9 @@ class RestaurantEvent extends Model
     public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class, 'section_id');
+    }
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class, 'currency_id');
     }
 }

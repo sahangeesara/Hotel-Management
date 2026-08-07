@@ -18,6 +18,11 @@
       <div cFormText>
         ex: Rs.29000.00
       </div>
+      @if (roomForm.get('r_cost')?.invalid && roomForm.get('r_cost')?.touched) {
+        @if (roomForm.get('r_cost')?.errors?.['required']) {
+          <span style="color:red">Guest Room Cost is required.</span>
+        }
+      }
     </div>
     <div class="mb-3">
       <label cLabel for="inputCapacity-1">Room Capacity: </label>
@@ -25,6 +30,11 @@
       <div cFormText>
         ex: 30,3
       </div>
+      @if (roomForm.get('r_capacity')?.invalid && roomForm.get('r_capacity')?.touched) {
+        @if (roomForm.get('r_capacity')?.errors?.['required']) {
+          <span style="color:red">Guest Room Capacity is required.</span>
+        }
+      }
     </div>
     <div class="mb-3">
       <label cLabel for="inputCost-1">Room Category: </label>
@@ -35,6 +45,11 @@
           {{ type.name }}
         </option>
       </select>
+      @if (roomForm.get('r_category_id')?.invalid && roomForm.get('r_category_id')?.touched) {
+        @if (roomForm.get('r_category_id')?.errors?.['required']) {
+          <span style="color:red">Guest Room Category is required.</span>
+        }
+      }
     </div>
     <div class="mb-3">
       <label cLabel for="inputCost-1">Hotel: </label>
@@ -45,6 +60,11 @@
           {{ type.name }}
         </option>
       </select>
+      @if (roomForm.get('hotel_id')?.invalid && roomForm.get('hotel_id')?.touched) {
+        @if (roomForm.get('hotel_id')?.errors?.['required']) {
+          <span style="color:red">Guest hotel is required.</span>
+        }
+      }
     </div>
     <div  class="mb-3">
       <input cButton color="primary" type="submit" [disabled]="roomForm.invalid">&ngsp;

@@ -5,6 +5,24 @@
       <form [formGroup]="organizerForm" (ngSubmit)="onSubmit()">
         <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
         <c-row>
+          <c-col [xs]="6">
+            <!--Nic -->
+            <div class="mb-3">
+              <label cLabel for="nic" class="form-label">Organizer Nic</label>
+              <input
+                cFormControl
+                type="text"
+                class="form-control"
+                id="nic"
+                formControlName="nic"
+                placeholder="Enter Nic"
+
+              />
+              <div *ngIf="organizerForm.get('nic')?.invalid && organizerForm.get('nic')?.touched" class="invalid-feedback">
+                Nic is required
+              </div>
+            </div>
+          </c-col>
           <!-- Name -->
           <c-col [xs]="6">
             <div class="mb-3">
@@ -67,24 +85,6 @@
               />
               <div *ngIf="organizerForm.get('phone')?.invalid && organizerForm.get('phone')?.touched" class="invalid-feedback">
                 Phone Number is required
-              </div>
-            </div>
-          </c-col>
-          <c-col [xs]="6">
-            <!--Nic -->
-            <div class="mb-3">
-              <label cLabel for="nic" class="form-label">Organizer Nic</label>
-              <input
-                cFormControl
-                type="text"
-                class="form-control"
-                id="nic"
-                formControlName="nic"
-                placeholder="Enter Nic"
-
-              />
-              <div *ngIf="organizerForm.get('nic')?.invalid && organizerForm.get('nic')?.touched" class="invalid-feedback">
-                Nic is required
               </div>
             </div>
           </c-col>

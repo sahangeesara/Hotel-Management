@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('rooms', function (Blueprint $table) {
             $table->integer('capacity')->after('r_cost')->nullable();
             $table->unsignedBigInteger('hotel_id')->after('capacity')->nullable();
-            $table->foreign('hotel_id')->references('id')->on('rooms');
+            $table->foreign('hotel_id')->references('id')->on('hotels');
         });
     }
 

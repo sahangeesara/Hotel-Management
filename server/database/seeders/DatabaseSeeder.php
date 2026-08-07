@@ -35,6 +35,9 @@ class DatabaseSeeder extends Seeder
         $this->call(DurationsSeedeSeederr::class);
         $this->call(BookStatusSeeder::class);
         $this->call(PackageTypeSeeder::class);
+        $this->call(PaymentMethodSeeder::class);
+        $this->call(PaymentStatusSeeder::class);
+        $this->call(HotelSeeder::class);
 
     }
 }

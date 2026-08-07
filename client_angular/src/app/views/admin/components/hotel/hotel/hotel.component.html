@@ -90,9 +90,9 @@
           </c-col>
         </c-row>
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary" style="color:black" [disabled]="hotelForm.invalid">Save</button> &ngsp;
+        <button type="submit" class="btn btn-primary" style="color:black" [disabled]="hotelForm.invalid && !isSubmitVisible">Save</button> &ngsp;
         <button type="button" class="btn btn-info" style="color:black"  (click)="clearForm()">Clear</button> &ngsp;
-        <button type="button" class="btn btn-danger" style="color:black"  (click)="updateHotel()">Update</button>
+        <button type="button" class="btn btn-danger" style="color:black"  (click)="updateHotel()" [disabled]="isUpdateVisible">Update</button>
       </form>
 
 

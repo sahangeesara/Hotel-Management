@@ -12,9 +12,6 @@ import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} fr
 import {ActivatedRoute, Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
 import {ToastrService} from "ngx-toastr";
-import {Guest} from "../../../../../entities/guest";
-import {catchError, from, throwError} from "rxjs";
-import {map} from "rxjs/operators";
 import {CuntryService} from "../../../../../services/cuntry.service";
 
 @Component({
@@ -51,6 +48,9 @@ export class GuestUpdateComponent implements OnInit{
   foreignGuestDependId:any;
   isForeign=false;
   isLocal=false;
+  guestData:any;
+
+
   constructor(   private route:ActivatedRoute,
                  private allServe: AllServiceService,
                  private router:Router,
@@ -309,9 +309,14 @@ export class GuestUpdateComponent implements OnInit{
     this.formData = new FormData();
     if (this.guestUpdateForm.valid) {
 
-      this.guest = this.guestUpdateForm.getRawValue();
+      this.guestData = this.guestUpdateForm.getRawValue();
+      let data = this.guestDetails;
 
-      this.allServe.updateGuests(this.guest, this.guest.id).subscribe(
+      this.formData.append('form', JSON.stringify(this.guestData));
+      this.formData.append('guestDetails', JSON.stringify(data));
+      this.formData.append('_method', 'PATCH');
+
+      this.allServe.updateGuests(this.formData, this.guest.id).subscribe(
         (response) => {
           // Handle successful update
           this.clearForm();

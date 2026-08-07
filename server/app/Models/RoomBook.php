@@ -16,10 +16,12 @@ class RoomBook extends Model
         'id',
         'booking_no',
         'guest_id',
+        'hotel_id',
         'r_book',
         'max_guests',
         'number_of_room',
         'package_id',
+        'currencies_id',
         'total_amount',
         'additional_services',
         'booking_Date',
@@ -44,5 +46,15 @@ class RoomBook extends Model
     public function bookingRooms(): HasMany
     {
         return $this->hasMany(BookingRooms::class, 'booking_id');
+    }
+
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class, 'currency_id');
+    }
+
+    public function hotel(): BelongsTo
+    {
+        return $this->belongsTo(Hotel::class, 'hotel_id');
     }
 }

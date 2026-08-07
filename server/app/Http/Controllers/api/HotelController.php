@@ -122,7 +122,6 @@ class HotelController extends Controller
             'phone' => 'required|max:10',
             'room_setups_id' => 'required',
             'capacity' => 'required',
-            'hotel_code' => 'required',
         ]);
         // Create and save the new hotel
         try{

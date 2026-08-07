@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
   ButtonDirective,
   ColComponent,
@@ -36,7 +36,7 @@ import {map} from "rxjs/operators";
   templateUrl: './employee-type.component.html',
   styleUrl: './employee-type.component.scss'
 })
-export class EmployeeTypeComponent {
+export class EmployeeTypeComponent implements OnInit{
   employeeTypes: any[] = [];
   formData = new FormData();
   empTypeForm: FormGroup;

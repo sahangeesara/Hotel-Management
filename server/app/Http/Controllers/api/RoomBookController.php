@@ -4,9 +4,11 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BookingRooms;
+use App\Models\Currency;
 use App\Models\Package;
 use App\Models\RoomBook;
 use App\Models\Rooms;
+use App\Models\TransportBook;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -55,6 +57,7 @@ class RoomBookController extends Controller
     {
 
         $data = json_decode($request->form, true);
+            info(print_r($data, true));
         $data2 = json_decode($request->room, true);
 
         $bookingRoom='';
@@ -62,6 +65,7 @@ class RoomBookController extends Controller
         $validatedData = Validator::make($data, [
             'guest_id' => 'required',
             'package_id' => 'required',
+            'hotel_id' => 'required',
             'max_guests' => 'required',
             'number_of_room' => 'required',
             'additional_services' => '',
@@ -85,6 +89,11 @@ class RoomBookController extends Controller
         if ($existingBooking) {
             return response()->json(['error' => 'Booking already exists for this room and guest.'], 409);
         }
+
+        $currency_name = "LKR";
+
+        $currency_id = Currency::where('currency', $currency_name)->value('id');
+
         DB::beginTransaction();
 
         try {
@@ -95,11 +104,13 @@ class RoomBookController extends Controller
 
             $roomBook = RoomBook::create([
                 'guest_id' => $data['guest_id'],
+                'hotel_id' => $data['hotel_id'],
                 'r_book' => $data['r_book'],
                 'number_of_room' => $data['number_of_room'],
                 'max_guests' => $data['max_guests'],
                 'package_id' => $data['package_id'],
                 'booking_Date' => $data['booking_Date'],
+                'currencies_id' => $currency_id ?? null,
                 'cancel_Date' => $data['cancel_Date'],
                 'booking_no' => $rNo,
                 'additional_services' => $data['additional_services'],
@@ -109,6 +120,7 @@ class RoomBookController extends Controller
                 $requestedRooms = $item['no_of_rooms'];
 
                 $rooms = Rooms::where('r_category_id', $item['room_category_id'])
+                    ->where('hotel_id',$data['hotel_id'])
                     ->where('status', 'available')
                     ->take($requestedRooms)
                     ->get();
@@ -137,11 +149,14 @@ class RoomBookController extends Controller
                     $room->save();
                 }
 
+                $transportBooking = TransportBook::where('guest_id', $data['guest_id'])->first();
+                $booking_amount = $transportBooking->total_amount ?? 0;
+
 
                 if(!empty($data['additional_services'])){
                     $request_price = 6000;
                 }
-                $totalAmount = $totalAmount + $request_price;
+                $totalAmount = $totalAmount + $request_price + $booking_amount;
                 $roomBook = RoomBook::where('booking_no', $rNo)->first();
                 $roomBook->update([
                     'total_amount' => $totalAmount,
@@ -254,37 +269,74 @@ class RoomBookController extends Controller
      * Update the specified resource in storage.
      * @throws \Throwable
      */
+
     public function update(Request $request, string $id)
     {
-        $data = json_decode($request->form, true);
-        $roomsData = json_decode($request->room, true);
+
+        $bookingAmount='';
+
+        $data = json_decode($request->input('form'), true);
+        info(print_r($data, true));
+        $roomsData = json_decode($request->input('room'), true);
+
+        if (!is_array($data)) {
+            return response()->json([
+                'message' => 'Invalid or missing form data.',
+                'received_form' => $request->input('form'),
+            ], 422);
+        }
+
+        if (!is_array($roomsData)) {
+            return response()->json([
+                'message' => 'Invalid or missing room data.',
+                'received_room' => $request->input('room'),
+            ], 422);
+        }
 
         $validator = Validator::make($data, [
-            'guest_id'        => 'required',
-            'package_id'      => 'required',
-            'max_guests'      => 'required|integer',
-            'number_of_room'  => 'required|integer',
-            'r_book'          => 'required',
-            'booking_Date'    => 'required|date',
-            'cancel_Date'     => 'required|date|after_or_equal:booking_Date',
+            'guest_id'           => 'required',
+            'package_id'         => 'required',
+            'hotel_id'         => 'required',
+            'max_guests'         => 'required|integer',
+            'number_of_room'     => 'required|integer',
+            'r_book'             => 'required',
+            'booking_Date'       => 'required|date',
+            'cancel_Date'        => 'required|date|after_or_equal:booking_Date',
             'additional_services' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
         }
+
 
         DB::beginTransaction();
 
         try {
 
-            $roomBook = RoomBook::findOrFail($id);
+              $roomBook = RoomBook::findOrFail($id);
 
-            $oldBookingRooms = BookingRooms::where('booking_id', $roomBook->id)->get();
+
+           $oldBookingRooms = BookingRooms::where(
+                'booking_id',
+                $roomBook->id
+            )->get();
 
             foreach ($oldBookingRooms as $bookingRoom) {
 
-                foreach ($bookingRoom->r_no as $roomNo) {
+                $roomNumbers = $bookingRoom->r_no;
+
+                if (is_string($roomNumbers)) {
+                    $roomNumbers = json_decode($roomNumbers, true);
+                }
+
+                if (!is_array($roomNumbers)) {
+                    continue;
+                }
+
+                foreach ($roomNumbers as $roomNo) {
 
                     Rooms::where('r_no', $roomNo)->update([
                         'status' => 'Available'
@@ -292,8 +344,10 @@ class RoomBookController extends Controller
                 }
             }
 
-
-            BookingRooms::where('booking_id', $roomBook->id)->delete();
+            BookingRooms::where(
+                'booking_id',
+                $roomBook->id
+            )->delete();
 
 
             $roomBook->update([
@@ -302,56 +356,84 @@ class RoomBookController extends Controller
                 'number_of_room'  => $data['number_of_room'],
                 'max_guests'      => $data['max_guests'],
                 'package_id'      => $data['package_id'],
+                'hotel_id'      => $data['hotel_id'],
                 'booking_Date'    => $data['booking_Date'],
+                'currencies_id'      => $data['currency_id'] ??  $roomBook->currency_id,
                 'cancel_Date'     => $data['cancel_Date'],
-                'is_active'       => $data['r_book'] == 'Canceling' ? false : $roomBook->is_active,
+                'is_active'       => $data['r_book'] === 'Canceling'
+                    ? false
+                    : $roomBook->is_active,
             ]);
+
+
+
+            $grandTotal = 0;
+
 
             foreach ($roomsData as $item) {
 
-                $requestedRooms = $item['no_of_rooms'];
+                $requestedRooms = (int) $item['no_of_rooms'];
 
-                $availableRooms = Rooms::where('r_category_id', $item['room_category_id'])
+                $availableRooms = Rooms::where(
+                    'r_category_id',
+                    $item['room_category_id']
+                )->where(
+                    'hotel_id',
+                    $item['hotel_id']
+                )
                     ->where('status', 'Available')
                     ->take($requestedRooms)
                     ->get();
+
+
 
                 if ($availableRooms->count() < $requestedRooms) {
 
                     DB::rollBack();
 
                     return response()->json([
-                        'message' => 'Not enough available rooms for selected category.'
+                        'message' =>
+                            'Not enough available rooms for selected category.'
                     ], 400);
                 }
 
-                $assignedRooms = [];
-                $totalAmount=0;
-                $request_price = 0;
 
+
+                $package = Package::findOrFail(
+                    $data['package_id']
+                );
+
+                $packageAmount = $package->package_amount ?? 0;
+
+                $assignedRooms = [];
+                $categoryTotal = 0;
 
                 foreach ($availableRooms as $room) {
-                    $roomDetails = Rooms::findOrFail($room->id);
-                    $package = Package::findOrFail($data['package_id']);
 
-//                    if($roomBook->package_id == $data['package_id'] ){
-//
-//                    }
-                    $package_amount = $package->package_amount ?? 0;
+                    $roomCost = $room->r_cost ?? 0;
 
-                    $totalAmount += ($roomDetails->r_cost ?? 0) + $package_amount;
+                    $categoryTotal += $roomCost + $packageAmount;
 
                     $assignedRooms[] = $room->r_no;
 
-                    $room->status = 'Booked';
-                    $room->save();
+
+                    $room->update([
+                        'status' => 'Booked'
+                    ]);
                 }
 
-                $totalAmount = $totalAmount + $request_price;
-                $roomBook = RoomBook::where('booking_no', $rNo)->first();
-                $roomBook->update([
-                    'total_amount' => $totalAmount,
-                ]);
+
+                $transportBooking = TransportBook::where(
+                    'guest_id',
+                    $data['guest_id']
+                )->first();
+
+                $bookingAmount = $transportBooking->total_amount ?? 0;
+
+
+                $grandTotal += $categoryTotal;
+
+
                 BookingRooms::create([
                     'room_category_id' => $item['room_category_id'],
                     'booking_id'       => $roomBook->id,
@@ -361,22 +443,38 @@ class RoomBookController extends Controller
                 ]);
             }
 
+            $grandTotal += $bookingAmount;
+
+
+            $roomBook->update([
+                'total_amount' => $grandTotal
+            ]);
+
+
             DB::commit();
 
+
             return response()->json([
-                'message' => 'Room booking updated successfully.',
-                'roomBook' => $roomBook
+                'message'  => 'Room booking updated successfully.',
+                'roomBook' => $roomBook->load([
+                    'guest',
+                    'package',
+                    'bookingRooms.roomCategory'
+                ])
             ], 200);
+
 
         } catch (\Exception $e) {
 
             DB::rollBack();
 
-            Log::error($e->getMessage());
+            Log::error(
+                'Room booking update failed: ' . $e->getMessage()
+            );
 
             return response()->json([
                 'message' => 'An error occurred while updating the booking.',
-                'error' => $e->getMessage()
+                'error'   => $e->getMessage()
             ], 500);
         }
     }

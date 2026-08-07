@@ -25,6 +25,7 @@ class HotelEvent extends Model
         'book_status_id',
         'requests',
         'additional_services',
+        'currencies_id',
         'total_amount',
         'is_active',
     ];
@@ -63,5 +64,10 @@ class HotelEvent extends Model
     public function bookStatus(): BelongsTo
     {
         return $this->belongsTo(BookStatus::class, 'book_status_id');
+    }
+
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class, 'currency_id');
     }
 }

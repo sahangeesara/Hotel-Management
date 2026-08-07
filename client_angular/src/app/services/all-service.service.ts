@@ -71,9 +71,15 @@ import {BookStatusEntity} from "../entities/bookStatusEntity";
     return this.http.delete(`${this.besUrl}/roomBook/`+data,this.getAuthHeaders());
   }
 
-  updateRoomBook(data:any, id:any){
-    return this.http.put(`${this.besUrl}/roomBook/${id}`,data,this.getAuthHeaders());
-  }
+
+updateRoomBook(data: FormData, id: any) {
+  return this.http.post(`${this.besUrl}/roomBook/${id}`,
+    data,
+    this.getAuthHeaders()
+  );
+}
+
+
 
   submitRoomsBook(data:any){
     return this.http.post<RoomBook[]>(`${this.besUrl}/roomBook`,data,this.getAuthHeaders());
@@ -172,8 +178,8 @@ import {BookStatusEntity} from "../entities/bookStatusEntity";
   guestDelete(data:any){
     return this.http.delete(`${this.besUrl}/guests/`+data,this.getAuthHeaders());
   }
-  updateGuests(data:any, id:any){
-    return this.http.put(`${this.besUrl}/guests/${id}`,data,this.getAuthHeaders());
+  updateGuests(data:FormData, id:any){
+    return this.http.post(`${this.besUrl}/guests/${id}`,data,this.getAuthHeaders());
   }
 
   //Guide

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BookStatus;
+use App\Models\Currency;
 use App\Models\HotelEvent;
 use App\Models\Package;
 use App\Models\Rooms;
@@ -78,7 +79,11 @@ class HotelEventsController extends Controller
             if ($validatedData['additional_services']) {
                 $request_price += 3000;
             }
-            $totalAmount += $room->r_cost ?? 0 + $package_amount + $request_price;
+            $totalAmount += ($room->r_cost ?? 0) + $package_amount + $request_price;
+
+            $currency_name = "LKR";
+
+            $currency_id = Currency::where('currency', $currency_name)->value('id');
 
             $hotelEvent= HotelEvent::create(
                 [
@@ -96,6 +101,7 @@ class HotelEventsController extends Controller
                     'book_status_id' => $validatedData['book_status_id'],
                     'passengers' => $validatedData['passengers'],
                     'event_no'=> $heNo,
+                    'currencies_id' => $currency_id,
                     'total_amount' => $totalAmount,
                 ]
             );
@@ -179,6 +185,7 @@ class HotelEventsController extends Controller
             'additional_services' => '',
             'passengers' => 'required',
             'event_id' => 'required',
+            'currency_id' => 'integer',
             'event_no'=> 'required',
             'book_status_id' => 'required|integer',
         ]);
@@ -226,7 +233,8 @@ class HotelEventsController extends Controller
                 $room = Rooms::findOrFail($validatedData['room_id']);
                 $package = Package::where('id', $validatedData['package_id'])->first();
                 $package_amount = $package->package_amount ?? 0;
-                info($package_amount);
+
+                $totalAmount = ($room->r_cost ?? 0)+ $package_amount;
                 $request_price = 0;
                 if ($validatedData['requests']) {
                     $request_price += 3000;
@@ -235,9 +243,7 @@ class HotelEventsController extends Controller
                 if ($validatedData['additional_services']) {
                     $request_price += 3000;
                 }
-                $totalAmount += $room->r_cost ?? 0 + $package_amount + $request_price;
-                info($totalAmount);
-                info($package_amount);
+                $totalAmount = $totalAmount + $request_price;
 
             }
 
@@ -264,6 +270,7 @@ class HotelEventsController extends Controller
                     'requests' => $validatedData['requests'],
                     'additional_services' => $validatedData['additional_services'],
                     'book_status_id' => $validatedData['book_status_id'],
+                    'currency_id' => $validatedData['currency_id'] ?? $hotelEvent->currency_id,
                     'passengers' => $validatedData['passengers'],
                     'event_no'=> $validatedData['event_no'],
                     'total_amount' => $totalAmount,

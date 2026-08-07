@@ -8,4 +8,11 @@ export const routes: Routes = [
       title: 'Package View'
     }
   },
+  {
+    path: 'package_type',
+    loadComponent: () => import('./package-type/package-type.component').then(m => m.PackageTypeComponent),
+    data: {
+      title: 'Package Type'
+    }
+  },
 ];

@@ -132,6 +132,49 @@ export class OrganizerComponent implements OnInit {
 
     }
   }
+  checkNicAndSetGender(nic: string) {
+    const cleanNic = nic.replace(/\s+/g, '');
+
+    // Handle 10-character NIC (Old format: YYDOVXXXXX)
+    if (cleanNic.length === 10) {
+      const nicPrefix = parseInt(cleanNic.substring(2, 5), 10);
+      if (!isNaN(nicPrefix)) {
+        this.organizerForm.patchValue({
+          gender_id: nicPrefix > 500 ? '2' : '1'
+        }, { emitEvent: false }); // { emitEvent: false } prevents infinite loops
+      }
+      const val= parseInt(cleanNic.substring(0, 2), 10);
+      const currentYear = new Date().getFullYear();
+      const birthYear =Number("19"+val);
+
+      const age = currentYear - birthYear;
+
+      if (age < 17) {
+        this.organizerForm.disable();
+      }
+
+    }
+    // Handle 12-character NIC (New format: YYYYDOVXXXXX)
+    else if (cleanNic.length === 12) {
+      const nicPrefix = parseInt(cleanNic.substring(4, 7), 10);
+      if (!isNaN(nicPrefix)) {
+        this.organizerForm.patchValue({
+          gender_id: nicPrefix > 500 ? '2' : '1'
+        }, { emitEvent: false });
+      }
+
+      const val= parseInt(cleanNic.substring(0, 5), 10);
+      const currentYear = new Date().getFullYear();
+      const birthYear =Number(val);
+
+      const age = currentYear - birthYear;
+
+      if (age < 17) {
+        this.organizerForm.disable();
+      }
+    }
+  }
+
   handleError(error: { error: null; }) {
     return this.error = error.error;
   }
@@ -149,5 +192,8 @@ export class OrganizerComponent implements OnInit {
   ngOnInit() {
     this.getOrganizer();
     this.getOrganizerGen();
+    this.organizerForm.get('nic')?.valueChanges.subscribe(nicValue => {
+        this.checkNicAndSetGender(nicValue);
+    });
   }
 }

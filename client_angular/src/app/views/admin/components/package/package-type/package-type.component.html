@@ -1,0 +1,51 @@
+<div>
+  <h3> <strong> <em> Package Type Form </em> </strong></h3>
+  <form cForm [formGroup]="packageTypeForm" (ngSubmit)="onSubmit()">
+    <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
+    <c-row>
+      <c-col [xs]="3">
+        <div class="mb-3">
+          <label cLabel for="inputName-1">Package Type Name: </label>
+          <input cFormControl id="inputName-1" type="text" sizing="sm" name="name" formControlName="name">
+        </div>
+      </c-col>
+    </c-row>
+    <div  class="mb-3">
+      <input cButton color="primary" type="submit" [disabled]="isSubmitVisible" >&ngsp;
+      <input cButton color="danger" style="color: white" type="button" (click)="clearForm()" value="Clear">&ngsp;
+      <input cButton color="secondary" style="color: white" type="button" (click)="updatePackageType()" value="Update" [disabled]="isUpdateVisible">
+    </div>
+  </form>
+</div>
+
+<hr />
+<div>
+  <h1> Package Type Table </h1>
+  <table [striped]="true" cTable>
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Package Type Name</th>
+      <th scope="col">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+      @for (type of packageTypes; track type.id; let key = $index) {
+        <tr>
+          <th scope="row">{{ key + 1 }}</th>
+          <td>{{ type.name }}</td>
+          <td>
+            <button cButton (click)="getPackageTypeById(type.id)">
+              <svg cIcon name="cil-task" size="lg"></svg>
+            </button>&ngsp;
+
+            <button cButton color="danger" (click)="packageTypeDelete(type.id)">
+              <svg cIcon name="cil-trash" size="lg"></svg>
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+</div>

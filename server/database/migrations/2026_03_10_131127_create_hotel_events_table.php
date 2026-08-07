@@ -25,8 +25,8 @@ return new class extends Migration
             $table->time('end_time');
             $table->integer('passengers');
             $table->unsignedBigInteger('hotel_id')->nullable();
-            $table->unsignedBigInteger('organizer_id')->unique();
-            $table->unsignedBigInteger('package_id')->unique();
+            $table->unsignedBigInteger('organizer_id');
+            $table->unsignedBigInteger('package_id');
             $table->foreign('package_id')->references('id')->on('packages')->onDelete("cascade");
             $table->text('requests')->nullable();
             $table->string('additional_services')->nullable();

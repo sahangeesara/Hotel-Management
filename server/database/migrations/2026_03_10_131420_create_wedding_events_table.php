@@ -24,8 +24,8 @@ return new class extends Migration
             $table->unsignedBigInteger('hotel_id')->nullable();
             $table->unsignedBigInteger('room_id')->nullable();
             $table->foreign('room_id')->references('id')->on('rooms');
-            $table->unsignedBigInteger('organizer_id')->unique();
-            $table->unsignedBigInteger('package_id')->unique();
+            $table->unsignedBigInteger('organizer_id');
+            $table->unsignedBigInteger('package_id');
             $table->foreign('package_id')->references('id')->on('packages')->onDelete("cascade");
             $table->string('additional_services')->nullable();
             $table->unsignedBigInteger('book_status_id')->nullable();

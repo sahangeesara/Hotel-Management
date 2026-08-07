@@ -1,0 +1,253 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+  <c-row class="w-100">
+
+    <c-col xs="12">
+      <h2><strong><em>Payment Form</em></strong></h2>
+    </c-col>
+
+    <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+
+      <c-row>
+        <!-- Guest -->
+        <c-col md="4" class="mb-3">
+          <label cLabel for="guest_id">Guest</label>
+
+          <select cSelect id="guest_id" formControlName="guest_id">
+            <option value="">Select Guest</option>
+            <option *ngFor="let guest of guests" [value]="guest.id">
+              {{ guest.name }}
+            </option>
+          </select>
+        </c-col>
+        <c-col md="4" class="mb-3">
+          <label cLabel for="customer_id">Customer:</label>
+
+          <select cSelect id="customer_id" formControlName="customer_id">
+            <option value="">Select Customer</option>
+            <option *ngFor="let customer of customers" [value]="customer.id">
+              {{ customer.name }}
+            </option>
+          </select>
+        </c-col>
+        <c-col md="4" class="mb-3">
+          <label cLabel for="organizer_id">Organizer</label>
+
+          <select cSelect id="organizer_id" formControlName="organizer_id">
+            <option value="">Select Customer</option>
+            <option *ngFor="let customer of organizers" [value]="customer.id">
+              {{ customer.name }}
+            </option>
+          </select>
+        </c-col>
+        <hr >
+        <!-- Order -->
+        <c-col md="4" class="mb-3">
+          <label cLabel for="order_id">Order</label>
+
+          <select cSelect id="order_id" formControlName="order_id">
+            <option value="">Select Order</option>
+            <option *ngFor="let order of orderData" [value]="order.id">
+              {{ order.order_no }}
+            </option>
+          </select>
+        </c-col>
+
+        <!-- Room Booking -->
+        <c-col md="4" class="mb-3">
+          <label cLabel for="room_book_id">Room Booking</label>
+
+          <select cSelect id="room_book_id" formControlName="room_book_id">
+            <option value="">Select Room Booking</option>
+            <option *ngFor="let room of roomsBooks" [value]="room.id">
+              {{ room.booking_no }}
+            </option>
+          </select>
+        </c-col>
+
+        <!-- Hotel Event -->
+        <c-col md="4" class="mb-3">
+          <label cLabel for="hotel_event_id">Hotel Event</label>
+
+          <select cSelect id="hotel_event_id" formControlName="hotel_event_id">
+            <option value="">Select Hotel Event</option>
+            <option *ngFor="let hotel of hotelsBooks" [value]="hotel.id">
+              {{ hotel.event_no }}
+            </option>
+          </select>
+        </c-col>
+
+        <!-- Restaurant Event -->
+        <c-col md="4" class="mb-3">
+          <label cLabel for="restaurant_event_id">Restaurant Event</label>
+
+          <select cSelect id="restaurant_event_id" formControlName="restaurant_event_id">
+            <option value="">Select Restaurant Event</option>
+            <option *ngFor="let event of restaurantEventBooks" [value]="event.id">
+              {{ event.event_no }}
+            </option>
+          </select>
+        </c-col>
+
+        <!-- Wedding Event -->
+        <c-col md="4" class="mb-3">
+          <label cLabel for="wedding_event_id">Wedding Event</label>
+
+          <select cSelect id="wedding_event_id" formControlName="wedding_event_id">
+            <option value="">Select Wedding Event</option>
+            <option *ngFor="let event of weddingEvents" [value]="event.id">
+              {{ event.event_no }}
+            </option>
+          </select>
+        </c-col>
+
+        <!-- Payment Method -->
+        <c-col md="4" class="mb-3">
+          <label cLabel for="payment_method_id">Payment Method</label>
+
+          <select cSelect id="payment_method_id" formControlName="payment_method_id">
+            <option value="">Select Payment Method</option>
+            <option *ngFor="let method of paymentMethods" [value]="method.id">
+              {{ method.name }}
+            </option>
+          </select>
+        </c-col>
+
+        <!-- Payment Status -->
+        <c-col md="4" class="mb-3">
+          <label cLabel for="payment_status_id">Payment Status</label>
+
+          <select cSelect id="payment_status_id" formControlName="payment_status_id">
+            <option value="">Select Payment Status</option>
+            <option *ngFor="let status of paymentStatus" [value]="status.id">
+              {{ status.name }}
+            </option>
+          </select>
+        </c-col>
+
+      </c-row>
+
+    </form>
+
+  </c-row>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<!--<c-card *ngIf="payment">-->
+<!--  <c-card-header>-->
+<!--    <strong>Payment Details</strong>-->
+<!--  </c-card-header>-->
+
+<!--  <c-card-body>-->
+
+<!--    <div class="row">-->
+
+<!--      &lt;!&ndash; Payment Number &ndash;&gt;-->
+<!--      <div class="col-md-6 mb-3">-->
+<!--        <label class="form-label">Payment No</label>-->
+<!--        <div class="form-control">-->
+<!--          {{ payment.payment_no }}-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Payment Date &ndash;&gt;-->
+<!--      <div class="col-md-6 mb-3">-->
+<!--        <label class="form-label">Payment Date</label>-->
+<!--        <div class="form-control">-->
+<!--          {{ payment.payment_date | date:'yyyy-MM-dd HH:mm' }}-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Amount &ndash;&gt;-->
+<!--      <div class="col-md-6 mb-3">-->
+<!--        <label class="form-label">Amount</label>-->
+<!--        <div class="form-control">-->
+<!--          {{ payment.amount }}-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Payment Type &ndash;&gt;-->
+<!--      <div class="col-md-6 mb-3">-->
+<!--        <label class="form-label">Payment Type</label>-->
+<!--        <div class="form-control">-->
+<!--          {{ payment.payment_type || '-' }}-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Customer &ndash;&gt;-->
+<!--      <div class="col-md-6 mb-3">-->
+<!--        <label class="form-label">Customer</label>-->
+<!--        <div class="form-control">-->
+<!--          {{ payment.customer?.name || '-' }}-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Guest &ndash;&gt;-->
+<!--      <div class="col-md-6 mb-3">-->
+<!--        <label class="form-label">Guest</label>-->
+<!--        <div class="form-control">-->
+<!--          {{ payment.guest?.name || '-' }}-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Payment Status &ndash;&gt;-->
+<!--      <div class="col-md-6 mb-3">-->
+<!--        <label class="form-label">Payment Status</label>-->
+<!--        <div class="form-control">-->
+<!--          {{ payment.payment_status?.name || '-' }}-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Payment Method &ndash;&gt;-->
+<!--      <div class="col-md-6 mb-3">-->
+<!--        <label class="form-label">Payment Method</label>-->
+<!--        <div class="form-control">-->
+<!--          {{ payment.payment_method?.name || '-' }}-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Currency &ndash;&gt;-->
+<!--      <div class="col-md-6 mb-3">-->
+<!--        <label class="form-label">Currency</label>-->
+<!--        <div class="form-control">-->
+<!--          {{ payment.currency?.code || payment.currency?.name || '-' }}-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Order &ndash;&gt;-->
+<!--      <div class="col-md-6 mb-3">-->
+<!--        <label class="form-label">Order</label>-->
+<!--        <div class="form-control">-->
+<!--          {{ payment.order?.order_no || '-' }}-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Room Booking &ndash;&gt;-->
+<!--      <div class="col-md-6 mb-3">-->
+<!--        <label class="form-label">Room Booking</label>-->
+<!--        <div class="form-control">-->
+<!--          {{ payment.room_book?.booking_no || '-' }}-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; Payment Note &ndash;&gt;-->
+<!--      <div class="col-md-12 mb-3">-->
+<!--        <label class="form-label">Payment Note</label>-->
+<!--        <div class="form-control">-->
+<!--          {{ payment.payment_note || '-' }}-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--    </div>-->
+
+<!--  </c-card-body>-->
+<!--</c-card>-->

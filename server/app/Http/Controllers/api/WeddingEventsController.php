@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BookStatus;
+use App\Models\Currency;
 use App\Models\Package;
 use App\Models\Rooms;
 use App\Models\WeddingEvent;
@@ -79,8 +80,11 @@ class WeddingEventsController extends Controller
             if ($validatedData['additional_services']) {
                 $request_price += 3000;
             }
-            $totalAmount += $room->r_cost ?? 0 + $package_amount + $request_price;
+            $totalAmount += ($room->r_cost ?? 0) + $package_amount + $request_price;
 
+            $currency_name = "LKR";
+
+            $currency_id = Currency::where('currency', $currency_name)->value('id');
 
             $weddingEvent= WeddingEvent::create(
                 [
@@ -97,6 +101,7 @@ class WeddingEventsController extends Controller
                     'requests' => $validatedData['requests'],
                     'additional_services' => $validatedData['additional_services'],
                     'event_no'=> $heNo,
+                    'currencies_id' => $currency_id,
                     'total_amount' => $totalAmount,
                 ]
             );
@@ -172,6 +177,7 @@ class WeddingEventsController extends Controller
             'book_status_id'=> 'required|integer',
             'requests' => 'required',
             'additional_services' => 'required',
+            'currency_id' => 'nullable|integer',
             'event_no'=> 'required',
         ]);
 
@@ -209,6 +215,7 @@ class WeddingEventsController extends Controller
                 $room = Rooms::findOrFail($validatedData['room_id']);
                 $package = Package::where('id', $validatedData['package_id'])->first();
                 $package_amount = $package->package_amount ?? 0;
+                $totalAmount = ($room->r_cost ?? 0) + $package_amount ;
                 $request_price = 0;
                 if ($validatedData['requests']) {
                     $request_price += 3000;
@@ -217,7 +224,7 @@ class WeddingEventsController extends Controller
                 if ($validatedData['additional_services']) {
                     $request_price += 3000;
                 }
-                $totalAmount += $room->r_cost ?? 0 + $package_amount + $request_price;
+                $totalAmount = $totalAmount + $request_price;
 
             }
 
@@ -245,6 +252,7 @@ class WeddingEventsController extends Controller
                     'additional_services' => $validatedData['additional_services'],
                     'event_no'=> $validatedData['event_no'],
                     'total_amount' => $totalAmount,
+                    'currency_id' => $validatedData['currency_id'] ?? $weddingEvent->currency_id,
                     'is_active' =>$bookStatus->name === "Cancelled" ? false : $weddingEvent->is_active,
 
                 ]

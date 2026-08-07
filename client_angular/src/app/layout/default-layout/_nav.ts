@@ -138,6 +138,11 @@ export const navItems: INavData[] = [
         url: '/package/package_view',
         icon: 'nav-icon-bullet'
       },
+      {
+        name: 'Package Type',
+        url: '/package/package_type',
+        icon: 'nav-icon-bullet'
+      },
     ]
   },
   {
@@ -190,6 +195,23 @@ export const navItems: INavData[] = [
       },
     ]
   },
+  {
+    name: 'Payment',
+    title: true
+  },
+  {
+    name: 'Payment Details',
+    url: '/payments',
+    iconComponent: { name: 'cil-location-pin' },
+    children: [
+      {
+        name: 'Payment view',
+        url: '/payments/payment_view',
+        icon: 'nav-icon-bullet'
+      },
+    ]
+  },
+
   {
     name: 'Status/Category',
     title: true

@@ -21,6 +21,11 @@
           <label cLabel for="inputEmail-1">Guest Email address</label>
           <input cFormControl id="inputEmail-1" type="email" sizing="sm" formControlName="email" name="email">
         </div>
+        @if (guestForm.get('email')?.invalid && guestForm.get('email')?.touched) {
+          @if (guestForm.get('email')?.errors?.['required']) {
+            <span style="color:red">Guest email is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
@@ -39,10 +44,15 @@
             ex: Colombo
           </div>
         </div>
+        @if (guestForm.get('city')?.invalid && guestForm.get('city')?.touched) {
+          @if (guestForm.get('city')?.errors?.['required']) {
+            <span style="color:red">Guest city is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
-          <label cLabel for="inputCountry-1">Guide Country</label>
+          <label cLabel for="inputCountry-1">Guest Country</label>
           <select
             cSelect
             formControlName="country_id"
@@ -56,6 +66,11 @@
           </select>
 
         </div>
+        @if (guestForm.get('country_id')?.invalid && guestForm.get('country_id')?.touched) {
+          @if (guestForm.get('country_id')?.errors?.['required']) {
+            <span style="color:red">Guest country is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
@@ -74,6 +89,11 @@
           </c-col>
           <input cFormControl id="inputTel_no-1" type="text" name="tel_no" formControlName="tel_no" sizing="sm">
         </div>
+        @if (guestForm.get('tel_no')?.invalid && guestForm.get('tel_no')?.touched) {
+          @if (guestForm.get('tel_no')?.errors?.['required']) {
+            <span style="color:red">Guest Tel number is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
@@ -84,6 +104,11 @@
             <option value="Foreign">Foreign</option>
           </select>
         </div>
+        @if (guestForm.get('guest_type')?.invalid && guestForm.get('guest_type')?.touched) {
+          @if (guestForm.get('guest_type')?.errors?.['required']) {
+            <span style="color:red">Guest Guest Type is required.</span>
+          }
+        }
       </c-col>
       @if (isLocal) {
       <c-col [xs]="6">
@@ -94,6 +119,11 @@
             ex: 992404545V
           </div>
         </div>
+        @if (guestForm.get('nic')?.invalid && guestForm.get('nic')?.touched) {
+          @if (guestForm.get('nic')?.errors?.['required']) {
+            <span style="color:red">Guest nic is required.</span>
+          }
+        }
       </c-col>
       }
       @if (isForeign) {
@@ -102,6 +132,11 @@
           <label cLabel for="inputForeignNic-1">Guest Foreign Nic:</label>
           <input cFormControl id="inputForeignNic-1" type="text" name="foreign_nic" formControlName="foreign_nic" sizing="sm">
         </div>
+        @if (guestForm.get('foreign_nic')?.invalid && guestForm.get('foreign_nic')?.touched) {
+          @if (guestForm.get('foreign_nic')?.errors?.['required']) {
+            <span style="color:red">Guest foreign nic is required.</span>
+          }
+        }
       </c-col>
       }
       <c-col [xs]="6">
@@ -115,6 +150,11 @@
             </option>
           </select>
         </div>
+        @if (guestForm.get('gender_id')?.invalid && guestForm.get('gender_id')?.touched) {
+          @if (guestForm.get('gender_id')?.errors?.['required']) {
+            <span style="color:red">Guest Gender is required.</span>
+          }
+        }
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
