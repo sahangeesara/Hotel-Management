@@ -68,7 +68,7 @@
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel for="inputHotel-1">Hotel :</label>
-        <select id="inputHotel-1" aria-label="Select a Hotel" cSelect name="hotel_id" formControlName="hotel_id">
+        <select id="inputHotel-1" aria-label="Select a Hotel" cSelect name="hotel_id" formControlName="hotel_id" (change)="getHotelById()">
           <option selected="selected" value="">Select Hotel</option>
           <option *ngFor="let type of hotels" [value]="type.id">
             {{ type.name }}
@@ -80,6 +80,46 @@
           <span style="color:red">Guest Guest is required.</span>
         }
       }
+    </c-col>
+
+    <h6>select hotels view avable room (no, and ctegary)</h6>
+    <hr>
+    <c-col [xs]="12">
+      <div class="mb-3">
+        <label cLabel class="fw-bold">Selected Hotel & Available Rooms:</label>
+
+        <!-- Display the selected hotel's name -->
+        <div class="p-2 mb-3 bg-light border rounded">
+          <strong>Hotel: </strong> {{ selectedHotelName || 'No Hotel Selected' }}
+        </div>
+
+        <!-- Preview Table or List of Available Rooms (Read-only view) -->
+        <div *ngIf="availableRooms && availableRooms.length > 0; else noRooms">
+          <table [striped]="true" cTable class="small">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Room Number</th>
+              <th>Room Capacity</th>
+              <th scope="col">Room Category</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let room of availableRooms; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ room.r_no }}</td>
+              <td>{{ room.r_capacity }}</td>
+              <td>{{ room.room_category?.name || room.room_category }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Fallback if no rooms are available -->
+        <ng-template #noRooms>
+          <p class="text-muted fst-italic">Please select a hotel to view available rooms, or no rooms are currently available.</p>
+        </ng-template>
+      </div>
     </c-col>
     <c-col [xs]="6">
       <div class="mb-3">
@@ -269,6 +309,7 @@
       <th>Guest NIC/  Foreign Nic</th>
       <th>Guest Count</th>
       <th>No of Rooms</th>
+      <th>Booking Price</th>
       <th>Booking Type</th>
       <th>Booking Date</th>
       <th>Cancel Date</th>
@@ -311,7 +352,7 @@
           {{ book.number_of_room }}
         </div>
       </td>
-
+      <td>{{ book.total_amount }}</td>
       <td>{{ book.r_book }}</td>
 
       <td>{{ book.booking_Date | date:'yyyy-MM-dd' }}</td>

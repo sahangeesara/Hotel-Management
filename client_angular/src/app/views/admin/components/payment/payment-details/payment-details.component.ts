@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {
   CardBodyComponent,
   CardComponent,
@@ -6,12 +6,12 @@ import {
   FormLabelDirective,
   FormSelectDirective, RowComponent
 } from "@coreui/angular";
-import {NgForOf, NgIf} from "@angular/common";
-import {Payment} from "../../../../../entities/payment";
-import {PaymentService} from "../../../../../services/payment.service";
-import {AllServiceService} from "../../../../../services/all-service.service";
-import {EventService} from "../../../../../services/event.service";
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { NgForOf, NgIf, DatePipe } from "@angular/common";
+import { Payment } from "../../../../../entities/payment";
+import { PaymentService } from "../../../../../services/payment.service";
+import { AllServiceService } from "../../../../../services/all-service.service";
+import { EventService } from "../../../../../services/event.service";
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 @Component({
   selector: 'app-payment-details',
@@ -20,179 +20,141 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular
     FormLabelDirective,
     FormSelectDirective,
     NgForOf,
+    NgIf,
+    DatePipe,
     FormsModule,
     ReactiveFormsModule,
     RowComponent,
-    ColComponent
+    ColComponent,
+    CardComponent,
+    CardHeaderComponent,
+    CardBodyComponent
   ],
   templateUrl: './payment-details.component.html',
   styleUrl: './payment-details.component.scss'
 })
 export class PaymentDetailsComponent implements OnInit {
 
-  @Input() payment!: Payment;
+  @Input() payment!: Payment | null;
   orderData: any[] = [];
   roomsBooks: any[] = [];
   guests: any[] = [];
   hotelsBooks: any[] = [];
   restaurantEventBooks: any[] = [];
-  weddingEvents : any[] = [];
-  payments: any[] = [];
+  weddingEvents: any[] = [];
   paymentMethods: any[] = [];
   paymentStatus: any[] = [];
-  paymentForm:FormGroup;
+  paymentForm: FormGroup;
   customers: any[] = [];
   organizers: any[] = [];
 
-  constructor(private paymentService: PaymentService,
-              private service: AllServiceService,
-              private eventService: EventService,
-              private fb: FormBuilder,
-  )
-  {
-      this.paymentForm = this.fb.group({
-        payment_id: [''],
-        customer_id:[''],
-        order_id: [''],
-        guest_id: [''],
-        room_book_id: [''],
-        currencies_id: [''],
-        organizer_id: [''],
-        hotel_event_id: [''],
-        restaurant_event_id: [''],
-        wedding_event_id: [''],
-        payment_method_id: [''],
-        payment_status_id: [''],
-        amount: [''],
-      })
+  selectedPersonType: string = '';
+  selectedPersonId: number | null = null;
+
+  constructor(
+    private paymentService: PaymentService,
+    private service: AllServiceService,
+    private eventService: EventService,
+    private fb: FormBuilder
+  ) {
+    this.paymentForm = this.fb.group({
+      numberment_id: [''],
+      customer_id: [''],
+      order_id: [''],
+      guest_id: [''],
+      room_book_id: [''],
+      currencies_id: [''],
+      organizer_id: [''],
+      hotel_event_id: [''],
+      restaurant_event_id: [''],
+      wedding_event_id: [''],
+      payment_method_id: [''],
+      payment_status_id: [''],
+      amount: [''],
+    });
   }
-
-  getOrder() {
-    this.service.getOrders().subscribe(
-      (data: any) => {
-        this.orderData = data;
-
-      },
-      (error) => {
-        console.error('Error fetching Food:', error);
-      }
-    );
-  }
-    getRmBook() {
-      this.service.getRoomBook().subscribe(
-        (response: any) => {
-          this.roomsBooks = response.data;
-        },
-        (error) => {
-          console.error('Error fetching rooms Book:', error);
-        }
-      );
-    }
-
-  getOrganizer() {
-    this.eventService.getOrganizer().subscribe((response: any) => { this.organizers = response.data;},
-      (error) => { console.error('Error fetching supplier:', error); });
-  }
-
-  getGuest() {
-    this.service.getGuests().subscribe(
-      (response: any) => {
-        this.guests = response.data;
-      },
-      (error) => {
-        console.error('Error fetching Guest:', error);
-      }
-    );
-  }
-
-
-  getRestaurantEventBook() {
-    this.eventService.getRestaurantEvent().subscribe(
-      (response: any) => {
-        this.restaurantEventBooks = response.data;
-      },
-      (error) => {
-        console.error('Error fetching rooms:', error);
-      }
-    );
-  }
-
-  getHotelEventBook() {
-    this.eventService.getHotelEvent().subscribe(
-      (response: any) => {
-        this.hotelsBooks = response.data;
-      },
-      (error) => {
-        console.error('Error fetching Event:', error);
-      }
-    );
-  }
-
-  getWeddingEventBook() {
-    this.eventService.getWeddingEvent().subscribe(
-      (response: any) => {
-        this.weddingEvents = response.data;
-      },
-      (error) => {
-        console.error('Error fetching rooms:', error);
-      }
-    );
-  }
-
-  getPayment() {
-    this.paymentService.paymentGetAll().subscribe(
-      (response: any) => {
-        this.payments = response.data;
-      },
-      (error) => {
-        console.error('Error fetching rooms:', error);
-      }
-    );
-  }
-
-  getCustom() {
-    this.service.getCustomer().subscribe((response: any) => { this.customers = response.data;},
-      (error) => { console.error('Error fetching supplier:', error); });
-  }
-   getPaymentStatus() {
-    this.paymentService.paymentStatus().subscribe(
-      (response: any) => {
-        this.paymentStatus = response;
-      },
-      (error) => {
-        console.error('Error fetching rooms:', error);
-      }
-    );
-  }
-
-  getPaymentMethod() {
-    this.paymentService.paymentMethod().subscribe(
-      (response: any) => {
-        this.paymentMethods = response;
-      },
-      (error) => {
-        console.error('Error fetching rooms:', error);
-      }
-    );
-  }
-
 
   ngOnInit(): void {
-      this.getOrder();
-      this.getCustom();
-      this.getHotelEventBook();
-      this.getRmBook();
-      this.getGuest();
-      this.getRestaurantEventBook();
-      this.getWeddingEventBook();
-      this.getPayment();
-      this.getPaymentMethod();
-      this.getPaymentStatus();
-      this.getOrganizer();
+    this.getOrder();
+    this.getCustom();
+    this.getHotelEventBook();
+    this.getRmBook();
+    this.getGuest();
+    this.getRestaurantEventBook();
+    this.getWeddingEventBook();
+    this.getPaymentMethod();
+    this.getPaymentStatus();
+    this.getOrganizer();
   }
 
-  onSubmit(){
+  // Handle Person Selection Change (Guest, Customer, or Organizer)
+  onPersonChange(type: 'guest' | 'customer' | 'organizer', event: any) {
+    const id = event.target.value;
 
+    // Reset other fields to maintain single-selection exclusivity
+    if (type === 'guest') {
+      this.paymentForm.patchValue({ customer_id: '', organizer_id: '' }, { emitEvent: false });
+    } else if (type === 'customer') {
+      this.paymentForm.patchValue({ guest_id: '', organizer_id: '' }, { emitEvent: false });
+    } else if (type === 'organizer') {
+      this.paymentForm.patchValue({ guest_id: '', customer_id: '' }, { emitEvent: false });
+    }
+
+    if (id) {
+      this.selectedPersonType = type;
+      this.selectedPersonId = id;
+      this.fetchPersonDetails(type, id);
+    } else {
+      this.selectedPersonType = '';
+      this.selectedPersonId = null;
+      this.payment = null;
+    }
   }
 
+  // Fetch payment details for the selected person to display in the card below
+  fetchPersonDetails(type: string, id: number) {
+    this.paymentService.getPaymentByPerson(type, id).subscribe(
+      (response: any) => {
+        // Assuming response returns the payment object or list
+        this.payment = response.data || response;
+      },
+      (error) => {
+        console.error('Error fetching payment details:', error);
+      }
+    );
+  }
+
+  // Trigger PDF download for the selected person
+  downloadPaymentPdf() {
+    if (!this.selectedPersonType || !this.selectedPersonId) return;
+
+    this.paymentService.downloadPdf(this.selectedPersonType, this.selectedPersonId).subscribe(
+      (response: Blob) => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${this.selectedPersonType}-payment-report.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      (error) => {
+        console.error('Error downloading PDF:', error);
+      }
+    );
+  }
+
+  // Other fetch methods...
+  getOrder() { this.service.getOrders().subscribe((data: any) => this.orderData = data); }
+  getRmBook() { this.service.getRoomBook().subscribe((res: any) => this.roomsBooks = res.data); }
+  getOrganizer() { this.eventService.getOrganizer().subscribe((res: any) => this.organizers = res.data); }
+  getGuest() { this.service.getGuests().subscribe((res: any) => this.guests = res.data); }
+  getRestaurantEventBook() { this.eventService.getRestaurantEvent().subscribe((res: any) => this.restaurantEventBooks = res.data); }
+  getHotelEventBook() { this.eventService.getHotelEvent().subscribe((res: any) => this.hotelsBooks = res.data); }
+  getWeddingEventBook() { this.eventService.getWeddingEvent().subscribe((res: any) => this.weddingEvents = res.data); }
+  getCustom() { this.service.getCustomer().subscribe((res: any) => this.customers = res.data); }
+  getPaymentStatus() { this.paymentService.paymentStatus().subscribe((res: any) => this.paymentStatus = res); }
+  getPaymentMethod() { this.paymentService.paymentMethod().subscribe((res: any) => this.paymentMethods = res); }
+
+  onSubmit() {}
 }

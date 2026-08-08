@@ -69,20 +69,6 @@
       </c-col>
       <c-col [xs]="6">
         <div class="mb-3">
-          <label cLabel for="inputNic-1">Guide Nic:</label>
-          <input cFormControl id="inputNic-1" type="text" name="nic" formControlName="nic" sizing="sm">
-          <div cFormText>
-            ex: 992404545V
-          </div>
-        </div>
-        @if (guideForm.get('nic')?.invalid && guideForm.get('nic')?.touched) {
-          @if (guideForm.get('nic')?.errors?.['required']) {
-            <span style="color:red">Guest Guest is required.</span>
-          }
-        }
-      </c-col>
-      <c-col [xs]="6">
-        <div class="mb-3">
           <label cLabel for="inputTel_no-1">Guide tel no:</label>
           <input cFormControl id="inputTel_no-1" type="text" name="tel_no" formControlName="tel_no" sizing="sm">
           <div cFormText>

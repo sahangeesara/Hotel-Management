@@ -44,6 +44,7 @@
     "chart.js": "^4.5.1",
     "datatables.net": "^2.1.6",
     "datatables.net-dt": "^2.1.6",
+    "jwt-decode": "^4.0.0",
     "laravel-echo": "^1.16.1",
     "lodash-es": "^4.17.21",
     "ng2-charts": "^7.0.0",

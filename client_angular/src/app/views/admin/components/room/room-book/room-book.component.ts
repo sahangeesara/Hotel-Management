@@ -54,7 +54,8 @@ export class RoomBookComponent implements OnInit {
   booksRooms: any[] = [];
   roomCategories: any[] = [];
   hotels: any[] = [];
-  public error = null;
+  selectedHotelName: string = '';
+  availableRooms: any[] = [];  public error = null;
   formData = new FormData();
   rmBookForm: FormGroup;
   rmSearchBookForm: FormGroup;
@@ -125,6 +126,7 @@ export class RoomBookComponent implements OnInit {
   clearForm() {
     this.rmBookForm.reset();
     this.booksRooms = [];
+    this.availableRooms = [];
     this.isVisible = false;
     this.rmBookForm.get('r_book')?.setValue('Booking');
     this.rmBookForm.get('booking_no')?.enable();
@@ -177,7 +179,31 @@ export class RoomBookComponent implements OnInit {
       }
     );
   }
+  getHotelById() {
+    const hotelId = this.rmBookForm.get('hotel_id')?.value;
 
+    if (!hotelId) {
+      this.availableRooms = [];
+      this.selectedHotelName = '';
+      return;
+    }
+
+    // Find the hotel name from your already loaded hotels array
+    const currentHotel = this.hotels.find((h: any) => h.id == hotelId);
+    this.selectedHotelName = currentHotel ? currentHotel.name : '';
+
+    // Fetch available rooms for this specific hotel from your service
+    this.hotelServes.getRoomByHotelId(hotelId).subscribe({
+      next: (response: any) => {
+          this.availableRooms = response.data || response;
+
+      },
+      error: (error) => {
+        this.handleError(error);
+        this.availableRooms = [];
+      }
+    });
+  }
   onSubmit() {
     if (this.rmBookForm.invalid) {
       this.showAlert('Please fill in all required fields correctly.', 'warning');

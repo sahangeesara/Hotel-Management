@@ -107,5 +107,7 @@ export class HotelService {
     return this.http.post<Section[]>(`${this.besUrl}/section`,data,this.getAuthHeaders());
   }
 
-
+  getRoomByHotelId(id:any){
+    return this.http.get(`${this.besUrl}/roomByHotelId/${id}`,this.getAuthHeaders());
+  }
 }

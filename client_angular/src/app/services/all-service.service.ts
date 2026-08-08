@@ -218,8 +218,10 @@ updateRoomBook(data: FormData, id: any) {
     return this.http.delete(`${this.besUrl}/user/`+data,this.getAuthHeaders());
   }
   userUpdate(data:any, id:any){
-    console.log(data);
     return this.http.put(`${this.besUrl}/user/${id}`,data,this.getAuthHeaders());
+  }
+  userRoleUpdate(roleData: any, userId: any) {
+    return this.http.patch(`${this.besUrl}/userRole/${userId}`, roleData, this.getAuthHeaders());
   }
 
   //order Status

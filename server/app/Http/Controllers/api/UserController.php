@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
-class UserController extends Controller
+class  UserController extends Controller
 {
     public function index()
     {
@@ -72,7 +72,22 @@ class UserController extends Controller
         return response()->json(['message' => 'Password successfully changed'], ResponseAlias::HTTP_OK);
 
     }
+    public function updateUserRole(Request $request, User $user)
+    {
+        // Prevent changing role if user is already an Admin
+        if ($user->role && $user->role->name === 'Admin' && $request->has('role_id') && $request->role_id != $user->role_id) {
+            return response()->json(['message' => 'Admin roles cannot be modified.'], 403);
+        }
 
+        $request->validate([
+            'role_id' => 'required|exists:roles,id'
+        ]);
+
+        $user->update($request->only(['role_id']));
+        $user->load('role'); // Reload relationship so the frontend gets the updated role object immediately
+
+        return response()->json(['message' => 'User role updated successfully', 'user' => $user]);
+    }
     /**
      * Display the specified resource.
      */

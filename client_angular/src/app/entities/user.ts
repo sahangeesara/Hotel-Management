@@ -5,6 +5,6 @@ export class User{
   name?:string;
   email?:string;
   password?:string;
-  role?:Role;
+  role_id?:Role;
 
 }

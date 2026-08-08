@@ -18,7 +18,9 @@
         <c-row>
 
           <!-- Guest -->
-
+          <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+            {{ alertMessage }}
+          </c-alert>
           <c-col [xs]="6">
             <div class="mb-3">
               <label cLabel>Guest</label>

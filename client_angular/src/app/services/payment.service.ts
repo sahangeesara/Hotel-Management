@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {TokenService} from "./token.service";
 import {TransportBooking} from "../entities/TransportBooking";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -52,5 +53,21 @@ export class PaymentService {
 
   getCurrency() {
     return this.http.get(`${this.besUrl}/currencies`, this.getAuthHeaders());
+  }
+  downloadPdf(type: string, id: number):  Observable<Blob> {
+    return this.http.get(`${this.besUrl }/payments/download-pdf?type=${type}&id=${id}`, {
+      responseType: 'blob'
+    });
+  }
+
+  getPaymentByPerson(type: string, id: number): Observable<any> {
+    const params = new HttpParams()
+      .set('type', type)
+      .set('id', id.toString());
+
+    return this.http.get(`${this.besUrl}/payments/paymentByPerson`, {
+      ...this.getAuthHeaders(),
+      params: params
+    });
   }
 }

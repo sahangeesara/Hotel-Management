@@ -118,6 +118,22 @@ class RoomsController extends Controller
 
     }
 
+    public function getRoomByHotelId(string $id)
+    {
+        try {
+            $rooms = Rooms::with('roomCategory','hotel')
+                            ->where('hotel_id',$id)
+                            ->where('status','available')->get();
+
+            return response()->json($rooms);
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'An error occurred while retrieving room.'], 500);
+        }
+
+    }
+
     /**
      * Update the specified resource in storage.
      */

@@ -15,6 +15,7 @@ import {AllServiceService} from "../../../../services/all-service.service";
 import {HotelService} from "../../../../services/hotel.service";
 import {SearchService} from "../../../../services/search.service";
 import {NgForOf, NgIf} from "@angular/common";
+import {AuthService} from "../../../../services/auth.service";
 
 @Component({
   selector: 'app-package',
@@ -50,10 +51,12 @@ export class PackageComponent implements OnInit {
   // CoreUI Alert Variables
   alertMessage: string = '';
   alertColor: string = 'success'; // 'success', 'danger', 'warning', 'info'
-
+  isCanModify: boolean = true;
+  isUpdate: boolean = true;
+  isSubmit: boolean = false;
   constructor(
     private hotelServes: HotelService,
-    private searchServe: SearchService,
+    private authService: AuthService,
     private fb: FormBuilder,
   ) {
     this.packageForm = this.fb.group({
@@ -144,8 +147,17 @@ export class PackageComponent implements OnInit {
   }
 
   ngOnInit() {
+    const role = this.authService.getUserRole();
+
+    // Restrict editing capabilities if the role is Receptionist (or read-only roles)
+    if (role === 'Receptionist') {
+      this.isCanModify = false;
+    }
+
     this.getPackage();
     this.getPackageType();
+
+
   }
 
   updatePackage() {
@@ -171,6 +183,8 @@ export class PackageComponent implements OnInit {
   getPackageById(id: any) {
     this.hotelServes.getPackageById(id).subscribe({
       next: (Package: any) => {
+        this.isUpdate =false;
+        this.isSubmit =true;
         this.packageForm.patchValue({
           id: Package.id,
           package_no: Package.package_no,

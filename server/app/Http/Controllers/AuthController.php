@@ -95,7 +95,7 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user' => auth()->user()->name,
-            'role' => auth()->user()->role->pluck('name') // Assuming "role" is a column in your users table
+            'roles' => auth()->user()->role()->pluck('name')
         ]);
     }
 

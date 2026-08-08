@@ -3,7 +3,9 @@
   <h3> <strong><em> User Add Form </em> </strong></h3>
   <form cForm   [formGroup]="userForm" (ngSubmit)="onSubmit()">
     <input autoComplete="id" type="hidden" name="id" cFormControl placeholder="id" formControlName="id"  />
-
+    <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
+      {{ alertMessage }}
+    </c-alert>
     <c-input-group class="mb-3">
                 <span cInputGroupText>
                   <svg cIcon name="cilUser"></svg>
@@ -44,15 +46,25 @@
       <th scope="col">User Email</th>
       <th scope="col">User Role</th>
       <th scope="col">Action</th>
-
     </tr>
     </thead>
     <tbody>
     <tr *ngFor="let user of users; let key = index;">
       <th scope="row">{{ key + 1 }}</th>
       <td>{{ user.name }}</td>
-      <td>{{ user.email}}</td>
-      <td>{{ user.role.name}}</td>
+      <td>{{ user.email }}</td>
+      <td>
+        <!-- Role Combox / Select dropdown -->
+        <select
+          cFormControl
+          [disabled]="user.role?.name === 'Admin'"
+          [(ngModel)]="user.role_id"
+          (change)="onRoleChange(user)">
+          <option *ngFor="let role of rolesList" [value]="role.id">
+            {{ role.name }}
+          </option>
+        </select>
+      </td>
       <td>
         <button (click)="getUserById(user.id)" cButton>
           <svg cIcon name="cil-task" size="lg" aria-label="Numbered List Icon" title="Numbered List Icon"></svg>
@@ -62,8 +74,6 @@
         </button>
       </td>
     </tr>
-
     </tbody>
   </table>
-
 </div>

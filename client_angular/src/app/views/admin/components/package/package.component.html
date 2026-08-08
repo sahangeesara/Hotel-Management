@@ -1,4 +1,5 @@
-<div  id="AddForm" >
+<!-- Package Add/Edit Form: Visible only if user has modify permissions -->
+<div id="AddForm" *ngIf="isCanModify">
   <c-row>
     <h2><strong><em>Package Add Form</em></strong></h2>
     <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">
@@ -12,107 +13,57 @@
             <div class="mb-3">
               <label cLabel for="inputNumber-1">Package Number: </label>
               <input cFormControl id="inputNumber-1" type="text" sizing="sm" name="package_no" formControlName="package_no" readonly="readonly">
-              <div cFormText>
-                ex: PCK0021
-              </div>
+              <div cFormText>ex: PCK0021</div>
             </div>
           </c-col>
-          <!-- Name -->
+
           <c-col [xs]="6">
             <div class="mb-3">
               <label for="name" class="form-label">Package Name</label>
-              <input
-                cFormControl
-                type="text"
-                class="form-control"
-                id="name"
-                formControlName="name"
-                placeholder="Enter name"
-              />
-              @if (packageForm.get('name')?.invalid && packageForm.get('name')?.touched) {
-                @if (packageForm.get('name')?.errors?.['required']) {
-                  <span style="color:red">Guest Guest is required.</span>
-                }
-              }
+              <input cFormControl type="text" class="form-control" id="name" formControlName="name" placeholder="Enter name"/>
             </div>
           </c-col>
+
           <c-col [xs]="6">
-            <!-- location -->
             <div class="mb-3">
               <label for="description" class="form-label">Package description: </label>
-              <input
-                cFormControl
-                type="textField"
-                class="form-control"
-                id="description"
-                formControlName="description"
-                placeholder="Enter description"
-              />
-              @if (packageForm.get('description')?.invalid && packageForm.get('description')?.touched) {
-                @if (packageForm.get('description')?.errors?.['required']) {
-                  <span style="color:red">Guest Guest is required.</span>
-                }
-              }
+              <input cFormControl type="text" class="form-control" id="description" formControlName="description" placeholder="Enter description"/>
             </div>
           </c-col>
+
           <c-col [xs]="6">
-            <!-- Room setups -->
             <div class="mb-3">
               <label cLabel>Packages Types:</label>
-
-              <select aria-label="Select room_setups" cSelect name="package_type_id" formControlName="package_type_id">
+              <select aria-label="Select package types" cSelect name="package_type_id" formControlName="package_type_id">
                 <option selected="selected" value="">Select Package Type</option>
-                <option *ngFor="let type of packageTypes" [value]="type.id">
-                  {{ type.name }}
-                </option>
+                <option *ngFor="let type of packageTypes" [value]="type.id">{{ type.name }}</option>
               </select>
             </div>
-            @if (packageForm.get('package_type_id')?.invalid && packageForm.get('package_type_id')?.touched) {
-              @if (packageForm.get('package_type_id')?.errors?.['required']) {
-                <span style="color:red">Guest Guest is required.</span>
-              }
-            }
           </c-col>
+
           <c-col [xs]="6">
-            <!-- Phone Number -->
             <div class="mb-3">
               <label cLabel for="package_amount" class="form-label">Package amount :</label>
-              <input
-                cFormControl
-                type="text"
-                class="form-control"
-                id="package_amount"
-                formControlName="package_amount"
-                placeholder="Enter Package Amount"
-
-              />
-              @if (packageForm.get('package_amount')?.invalid && packageForm.get('package_amount')?.touched) {
-                @if (packageForm.get('package_amount')?.errors?.['required']) {
-                  <span style="color:red">Guest Guest is required.</span>
-                }
-              }
+              <input cFormControl type="text" class="form-control" id="package_amount" formControlName="package_amount" placeholder="Enter Package Amount"/>
             </div>
           </c-col>
         </c-row>
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary" style="color:black" [disabled]="packageForm.invalid && isSubmitted">Save</button> &ngsp;
-        <button type="button" class="btn btn-info" style="color:black"  (click)="clearForm()">Clear</button> &ngsp;
-        <button type="button" class="btn btn-danger" style="color:black"  (click)="updatePackage()" [disabled]="isEditMode" ]>Update</button>
+
+        <!-- Form Action Buttons -->
+        <button type="submit" class="btn btn-primary" style="color:black" [disabled]="isSubmit">Save</button> &ngsp;
+        <button type="button" class="btn btn-info" style="color:black" (click)="clearForm()">Clear</button> &ngsp;
+        <button type="button" class="btn btn-danger" style="color:black" (click)="updatePackage()" [disabled]="isUpdate">Update</button>
       </form>
-
-
     </c-col>
-
   </c-row>
 </div>
 
+<hr *ngIf="isCanModify">
 
-<hr>
+<!-- Package View Table -->
 <h3>
   <strong>
-    <em>
-      Package view Table
-    </em>
+    <em>Package View Table</em>
   </strong>
 </h3>
 <table [striped]="true" cTable>
@@ -123,7 +74,8 @@
     <th scope="col">Package Description</th>
     <th scope="col">Package Type</th>
     <th scope="col">Package Amount</th>
-    <th scope="col">Action</th>
+    <!-- Conditionally hide action header if user cannot modify -->
+    <th scope="col" *ngIf="isCanModify">Action</th>
   </tr>
   </thead>
   <tbody *ngIf="packages">
@@ -132,11 +84,12 @@
         <th scope="row">{{key + 1}}</th>
         <td>{{ type.name }}</td>
         <td>{{ type.description }}</td>
-        <td>{{ type.package_type.name }}</td>
+        <td>{{ type.package_type?.name }}</td>
         <td>{{ type.package_amount }}</td>
-        <td>
-          <button type="button" (click)="getPackageById(type.id)" cButton>  <svg cIcon name="cil-task" size="lg" title="Numbered List Icon" ></svg></button> &ngsp;
-          <button type="button" (click)="deletePackage(type.id)" cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
+        <!-- Conditionally hide action buttons cell for view-only roles -->
+        <td *ngIf="isCanModify">
+          <button type="button" (click)="getPackageById(type.id)" cButton><svg cIcon name="cil-task" size="lg" title="Select Icon"></svg></button> &ngsp;
+          <button type="button" (click)="deletePackage(type.id)" cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Delete Icon"></svg></button>
         </td>
       </tr>
     }

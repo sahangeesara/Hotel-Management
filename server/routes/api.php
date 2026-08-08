@@ -66,62 +66,28 @@ use Illuminate\Support\Facades\Route;
     Route::post('sendPasswordResetLink', [ResetPasswordController::class, 'sendEmail']);
     Route::post('resetPassword', [ChangePasswordController::class, 'process']);
 
-// Protected routes (Require authentication)
 Route::middleware(['auth:api'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('me', [AuthController::class, 'me']);
     Route::put('passwordReset', [UserController::class, 'changePassword']);
-
-
-    // Food
-    Route::get('foodsByItemCateId/{id}', [FoodItemController::class, 'foodsByItemCateId']);
-
-    // Guide
-    Route::get('getGuide', [GuestController::class, 'getGuide']);
-    Route::get('dependentDetail/{id}', [GuestController::class, 'getDependentDetail']);
-
-    // Guest
-
-
-    //search
-    Route::get('/guide/search', [GuideController::class, 'searchGuide']);
-    Route::get('/hotel/search', [HotelController::class, 'searchHotels']);
-    Route::get('/guest/search', [GuestController::class, 'searchGuest']);
-    Route::get('/employees/search', [EmployeeController::class, 'searchEmployees']);
-    Route::get('/foods/search', [FoodItemController::class, 'searchFood']);
-    Route::get('/customer/search', [CustomerController::class, 'searchCustomer']);
-    Route::get('/hotelEvent/search', [HotelEventsController::class, 'searchHotelsEvent']);
-    Route::get('/restaurantEvent/search', [RestaurantEventsController::class, 'searchRestaurantEvent']);
-    Route::get('/weddingEvent/search', [WeddingEventsController::class, 'searchWeddingEvent']);
-    Route::get('/transportBook/search', [TransportBooksController::class, 'searchTransportBook']);
-    Route::get('/room/search', [RoomsController::class, 'searchRoom']);
-    Route::get('/roomBook/search', [RoomBookController::class, 'searchRoomBook']);
-
-
-    //Customer
-    Route::get('countCustomer', [DashboardController::class, 'countCustomer']);
-    Route::get('countGuest', [DashboardController::class, 'countGuest']);
-    Route::get('countOrder', [DashboardController::class, 'countOrder']);
-    Route::get('roomBookingCount', [DashboardController::class, 'countRoomBooking']);
-    Route::get('/dashboard/booking-chart', [DashboardController::class, 'bookingChart']);
-    Route::get('/dashboard/booking-income', [DashboardController::class, 'bookingIncome']);
-
-
-    //user
     Route::get('authProfile', [UserProfileController::class, 'authProfile']);
 
 
-    //Report
-    Route::get('/reports/monthly-booking', [ReportController::class, 'monthlyBookingReport']);
-    Route::get('/reports/bookingTrendReport', [ReportController::class, 'bookingTrendReport']);
-    Route::get('/reports/orderReport', [ReportController::class, 'ordersReport']);
-    Route::get('/reports/eventBookReport', [ReportController::class, 'eventBookingReport']);
-    Route::get('/reports/transportVehicleReport', [ReportController::class, 'transportVehicleReport']);
-    Route::get('/reports/travelBookingTrendReport', [ReportController::class, 'travelBookingTrendReport']);
-    Route::get('/reports/incomeRevenueReport', [ReportController::class, 'incomeRevenueReport']);
-    Route::get('/reports/paymentCollectionReport', [ReportController::class, 'paymentCollectionReport']);
+});
 
+Route::middleware(['auth:api', 'role:Admin'])->group(function () {
+    Route::apiResources([
+        'role' => RoleController::class,
+        'user' => UserController::class,
+        'userProfile' => UserProfileController::class,
+        'employees' => EmployeeController::class,
+        'employeeTypes' => EmployeeTypeController::class,
+
+    ]);
+    Route::get('/employees/search', [EmployeeController::class, 'searchEmployees']);
+
+    Route::patch('/userRole/{user}', [UserController::class, 'updateUserRole']);
 
     //Export
     Route::get(
@@ -136,26 +102,22 @@ Route::middleware(['auth:api'])->group(function () {
     );
 
 
+});
 
-    // Resource routes (Require authentication)
+Route::middleware(['auth:api', 'role:Admin,Receptionist,Manager'])->group(function () {
     Route::apiResources([
-        'user' => UserController::class,
-        'employees' => EmployeeController::class,
+        'orders' => OrderController::class,
         'foodItems' => FoodItemController::class,
         'foodStatus' => FoodStatusController::class,
         'orderStatus' => OrderStatusController::class,
         'itemCategory' => ItemCategoryController::class,
-        'employeeTypes' => EmployeeTypeController::class,
-        'orders' => OrderController::class,
         'guests' => GuestController::class,
         'guides' => GuideController::class,
         'roomBook' => RoomBookController::class,
         'roomsCategory' => RoomsCategoryController::class,
         'rooms' => RoomsController::class,
         'genders' => GenderController::class,
-        'role' => RoleController::class,
         'customer' => CustomerController::class,
-        'userProfile' => UserProfileController::class,
         'event' => EventController::class,
         'package' => PackageController::class,
         'packageTypes' => PackageTypeController::class,
@@ -182,6 +144,66 @@ Route::middleware(['auth:api'])->group(function () {
         'payments' => PaymentController::class,
         'paymentStatus' => PaymentStatusController::class,
         'paymentMethods' => PaymentStatusController::class,
+        ]);
 
-    ]);
+
+    Route::get('countCustomer', [DashboardController::class, 'countCustomer']);
+    Route::get('countGuest', [DashboardController::class, 'countGuest']);
+    Route::get('countOrder', [DashboardController::class, 'countOrder']);
+    Route::get('roomBookingCount', [DashboardController::class, 'countRoomBooking']);
+    Route::get('/dashboard/booking-chart', [DashboardController::class, 'bookingChart']);
+    Route::get('/dashboard/booking-income', [DashboardController::class, 'bookingIncome']);
+
+    Route::get('foodsByItemCateId/{id}', [FoodItemController::class, 'foodsByItemCateId']);
+    Route::get('getGuide', [GuestController::class, 'getGuide']);
+    Route::get('dependentDetail/{id}', [GuestController::class, 'getDependentDetail']);
+    Route::get('roomByHotelId/{id}', [RoomsController::class, 'getRoomByHotelId']);
+
+    //search
+    Route::get('/foods/search', [FoodItemController::class, 'searchFood']);
+    Route::get('/hotel/search', [HotelController::class, 'searchHotels']);
+    Route::get('/room/search', [RoomsController::class, 'searchRoom']);
+    Route::get('/roomBook/search', [RoomBookController::class, 'searchRoomBook']);
+
+    Route::get('/payments/download-pdf', [PaymentController::class, 'downloadPdf']);
+    Route::get('/payments/paymentByPerson', [PaymentController::class, 'getPaymentByPerson']);
+
+});
+
+Route::middleware(['auth:api', 'role:Admin,User,Receptionist'])->group(function () {
+
+    // Food
+
+    // Guide
+
+});
+
+
+// Protected routes (Require authentication)
+Route::middleware(['auth:api','role:Admin,Manager'])->group(function () {
+       //search
+    Route::get('/guide/search', [GuideController::class, 'searchGuide']);
+    Route::get('/guest/search', [GuestController::class, 'searchGuest']);
+    Route::get('/customer/search', [CustomerController::class, 'searchCustomer']);
+    Route::get('/hotelEvent/search', [HotelEventsController::class, 'searchHotelsEvent']);
+    Route::get('/restaurantEvent/search', [RestaurantEventsController::class, 'searchRestaurantEvent']);
+    Route::get('/weddingEvent/search', [WeddingEventsController::class, 'searchWeddingEvent']);
+    Route::get('/transportBook/search', [TransportBooksController::class, 'searchTransportBook']);
+
+
+    //Report
+    Route::get('/reports/monthly-booking', [ReportController::class, 'monthlyBookingReport']);
+    Route::get('/reports/bookingTrendReport', [ReportController::class, 'bookingTrendReport']);
+    Route::get('/reports/orderReport', [ReportController::class, 'ordersReport']);
+    Route::get('/reports/eventBookReport', [ReportController::class, 'eventBookingReport']);
+    Route::get('/reports/transportVehicleReport', [ReportController::class, 'transportVehicleReport']);
+    Route::get('/reports/travelBookingTrendReport', [ReportController::class, 'travelBookingTrendReport']);
+    Route::get('/reports/incomeRevenueReport', [ReportController::class, 'incomeRevenueReport']);
+    Route::get('/reports/paymentCollectionReport', [ReportController::class, 'paymentCollectionReport']);
+
+
+    //Customer
+
+    //user
+
 });
