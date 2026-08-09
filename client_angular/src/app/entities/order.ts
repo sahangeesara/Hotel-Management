@@ -1,13 +1,14 @@
 import {Room} from "./room";
 import {Gender} from "./gender";
 import {OrderStatus} from "./OrderStatus";
+import {Customer} from "./customer";
 
 export class Order{
   id?:number;
   order_no?:string;
   r_id?:Room;
-  guest_id?:Gender;
+  customer_id?:Customer;
   order_date?:any;
   order_amount?:number;
-  oder_status_id?:OrderStatus;
+  order_status_id?:OrderStatus;
 }

@@ -15,7 +15,7 @@ class Order extends Model
         'id',
         'r_id',
         'order_no',
-        'guest_id',
+        'customer_id',
         'order_date',
         'order_amount',
         'order_status_id',
@@ -30,9 +30,9 @@ class Order extends Model
     {
         return $this->belongsTo(Rooms::class,'r_id');
     }
-    public function guest(): BelongsTo
+    public function customer(): BelongsTo
     {
-        return $this->belongsTo(Guest::class,'guest_id');
+        return $this->belongsTo(Customer::class,'customer_id');
     }
     public function orderStatus(): BelongsTo
     {

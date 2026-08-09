@@ -174,6 +174,22 @@
         color="primary">
         Save Booking
       </button>
+      &nbsp;
+      <button
+        cButton
+        type="button"
+        color="danger"
+        (click)="clearForm()">
+        Clear
+      </button>
+      &nbsp;
+      <button
+        cButton
+        type="button"
+        color="success"
+        (click)="updateWeddingBook()">
+        Update Booking
+      </button>
     </form>
 <br>
     <hr>
@@ -240,6 +256,7 @@
         <th>Time</th>
         <th>Guests</th>
         <th>Status</th>
+        <th>Action</th>
       </tr>
       </thead>
       <tbody>
@@ -256,7 +273,10 @@
         <td>{{item.event_time}}</td>
         <td>{{item.passengers}}</td>
         <td>{{item.book_status?.name}}</td>
-
+        <td>
+          <button (click)="getWeddingBookById(item.id)" cButton><svg cIcon name="cil-task" size="lg" title="Numbered List Icon"></svg></button>&ngsp;&ngsp;
+          <button type="button" (click)="deleteWeddingEvent(item.id)" cButton color="danger"><svg cIcon name="cil-trash" size="lg" title="Numbered List Icon"></svg></button>
+        </td>
       </tr>
 
       </tbody>

@@ -16,6 +16,8 @@ import {AllServiceService} from "../../../../../services/all-service.service";
 import {SearchService} from "../../../../../services/search.service";
 import {HotelService} from "../../../../../services/hotel.service";
 import {EventService} from "../../../../../services/event.service";
+import Swal from 'sweetalert2';
+import {IconDirective} from "@coreui/icons-angular";
 
 @Component({
   selector: 'app-wedding-event',
@@ -37,7 +39,8 @@ import {EventService} from "../../../../../services/event.service";
     FormControlDirective,
     FormLabelDirective,
     FormDirective,
-    FormSelectDirective
+    FormSelectDirective,
+    IconDirective
   ],
   templateUrl: './wedding-event.component.html',
   styleUrl: './wedding-event.component.scss'
@@ -54,6 +57,7 @@ export class WeddingEventComponent implements OnInit {
   weddingEvents: any[] = [];
   weddingData: any;
   public error: any = null;
+  formData = new FormData();
 
   // CoreUI Alert Variables
   alertMessage: string = '';
@@ -69,6 +73,7 @@ export class WeddingEventComponent implements OnInit {
     private fb: FormBuilder,
   ) {
     this.weddingForm = this.fb.group({
+      id: [''],
       event_no: [''],
       bride_name: ['', Validators.required],
       groom_name: ['', Validators.required],
@@ -186,12 +191,25 @@ export class WeddingEventComponent implements OnInit {
   }
 
   clearSearchForm() {
-    this.weddingSearchBookForm.reset();
-    this.getWeddingEventBook();
-    this.weddingSearchBookForm.patchValue({
-      hotel_id: '',
-      room_id: '',
-      event_date: '',
+    Swal.fire({
+      title: 'Clear Search Filters?',
+      text: "This will reset search criteria and reload all wedding events.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, clear it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.weddingSearchBookForm.reset();
+        this.weddingSearchBookForm.patchValue({
+          hotel_id: '',
+          room_id: '',
+          event_date: '',
+        });
+        this.getWeddingEventBook();
+        this.showAlert('Search filters cleared successfully.', 'success');
+      }
     });
   }
 
@@ -215,16 +233,28 @@ export class WeddingEventComponent implements OnInit {
 
   onSubmit() {
     if (this.weddingForm.valid) {
-      this.weddingData = this.weddingForm.getRawValue();
+      Swal.fire({
+        title: 'Create Wedding Event?',
+        text: "Do you want to save this new wedding event booking?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, create it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.weddingData = this.weddingForm.getRawValue();
 
-      this.eventService.submitWeddingEvent(this.weddingData).subscribe({
-        next: (response: any) => {
-          this.getWeddingEventBook();
-          this.clearForm();
-          this.showAlert('Wedding event created successfully!', 'success');
-        },
-        error: (error) => {
-          this.handleError(error);
+          this.eventService.submitWeddingEvent(this.weddingData).subscribe({
+            next: (response: any) => {
+              this.getWeddingEventBook();
+              this.clearForm();
+              this.showAlert('Wedding event created successfully!', 'success');
+            },
+            error: (error) => {
+              this.handleError(error);
+            }
+          });
         }
       });
     } else {
@@ -233,8 +263,141 @@ export class WeddingEventComponent implements OnInit {
     }
   }
 
-  handleError(error: any) {
+  updateWeddingEvent() {
+    if (this.weddingForm.valid) {
+      Swal.fire({
+        title: 'Update Wedding Event?',
+        text: "Do you want to update this wedding event's details?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, update it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.weddingData = this.weddingForm.getRawValue();
 
+          this.eventService.updateWeddingEvent(this.weddingData, this.weddingData.id).subscribe({
+            next: (response: any) => {
+              this.getWeddingEventBook();
+              this.clearForm();
+
+              const updatedFields: string[] = [];
+              Object.keys(this.weddingForm.controls).forEach(key => {
+                const control = this.weddingForm.get(key);
+                if (control && control.dirty) {
+                  const formattedName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                  updatedFields.push(formattedName);
+                }
+              });
+
+              const eventNo = response?.event_no || this.weddingData.event_no || 'Event';
+              if (updatedFields.length > 0) {
+                this.showAlert(`Wedding event "${eventNo}" updated successfully. Updated fields: ${updatedFields.join(', ')}`, 'success');
+              } else {
+                this.showAlert(`Wedding event "${eventNo}" updated successfully.`, 'success');
+              }
+            },
+            error: (error) => {
+              this.handleError(error);
+            }
+          });
+        }
+      });
+    } else {
+      this.showAlert('Please fill in all required fields correctly.', 'warning');
+      this.weddingForm.markAllAsTouched();
+    }
+  }
+
+  deleteWeddingEvent(id: any) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this wedding event deletion!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.eventService.deleteWeddingEvent(id).subscribe({
+          next: (data: any) => {
+            this.getWeddingEventBook();
+            this.showAlert('Wedding event deleted successfully!', 'success');
+          },
+          error: (error) => {
+            this.handleError(error);
+          }
+        });
+      }
+    });
+  }
+
+  getWeddingBookById(id: any) {
+    this.eventService.getWeddingEventById(id).subscribe({
+      next: (data: any) => {
+        this.weddingForm.patchValue({
+          ...data,
+          event_date: data.event_date
+            ? new Date(data.event_date).toISOString().split('T')[0]
+            : null
+        });
+        this.showAlert('Wedding event details loaded for updating.', 'info');
+      },
+      error: (error) => {
+        this.handleError(error);
+      }
+    });
+  }
+  updateWeddingBook() {
+    if (this.weddingForm.valid) {
+      Swal.fire({
+        title: 'Update Wedding Event?',
+        text: "Do you want to update this wedding event's details?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, update it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.formData = new FormData();
+          this.weddingData = this.weddingForm.getRawValue();
+
+          this.eventService.updateWeddingEvent(this.weddingData, this.weddingData.id).subscribe({
+            next: (response: any) => {
+              this.getWeddingEventBook();
+              this.clearForm();
+
+              const updatedFields: string[] = [];
+              Object.keys(this.weddingForm.controls).forEach(key => {
+                const control = this.weddingForm.get(key);
+                if (control && control.dirty) {
+                  const formattedName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                  updatedFields.push(formattedName);
+                }
+              });
+
+              const eventNo = response?.event_no || this.weddingData.event_no || 'Wedding Event';
+              if (updatedFields.length > 0) {
+                this.showAlert(`Wedding event "${eventNo}" updated successfully. Updated fields: ${updatedFields.join(', ')}`, 'success');
+              } else {
+                this.showAlert(`Wedding event "${eventNo}" updated successfully.`, 'success');
+              }
+            },
+            error: (error) => {
+              this.handleError(error);
+            }
+          });
+        }
+      });
+    } else {
+      this.showAlert('Please fill in all required fields correctly.', 'warning');
+      this.weddingForm.markAllAsTouched();
+    }
+  }
+  handleError(error: any) {
     if (error?.error?.errors) {
       const firstKey = Object.keys(error.error.errors)[0];
       this.error = error.error.errors[firstKey][0];

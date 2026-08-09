@@ -19,6 +19,7 @@ import {NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
 import {IconDirective} from "@coreui/icons-angular";
 import {SearchService} from "../../../../../services/search.service";
 import {HotelService} from "../../../../../services/hotel.service";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-room-book',
@@ -124,12 +125,25 @@ export class RoomBookComponent implements OnInit {
   }
 
   clearForm() {
-    this.rmBookForm.reset();
-    this.booksRooms = [];
-    this.availableRooms = [];
-    this.isVisible = false;
-    this.rmBookForm.get('r_book')?.setValue('Booking');
-    this.rmBookForm.get('booking_no')?.enable();
+    Swal.fire({
+      title: 'Clear Form?',
+      text: "This will reset all current booking inputs.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, clear it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.rmBookForm.reset();
+        this.booksRooms = [];
+        this.availableRooms = [];
+        this.isVisible = false;
+        this.rmBookForm.get('r_book')?.setValue('Booking');
+        this.rmBookForm.get('booking_no')?.enable();
+        this.showAlert('Form cleared successfully.', 'success');
+      }
+    });
   }
 
   search() {
@@ -158,12 +172,25 @@ export class RoomBookComponent implements OnInit {
   }
 
   clearSearchForm() {
-    this.rmSearchBookForm.reset();
-    this.getRmBook();
-    this.rmSearchBookForm.patchValue({
-      search_booking_Date: '',
-      guest_id: '',
-      package_id: '',
+    Swal.fire({
+      title: 'Clear Search Filters?',
+      text: "This will reset search criteria and reload all bookings.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, clear it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.rmSearchBookForm.reset();
+        this.getRmBook();
+        this.rmSearchBookForm.patchValue({
+          search_booking_Date: '',
+          guest_id: '',
+          package_id: '',
+        });
+        this.showAlert('Search filters cleared successfully.', 'success');
+      }
     });
   }
 
@@ -179,6 +206,7 @@ export class RoomBookComponent implements OnInit {
       }
     );
   }
+
   getHotelById() {
     const hotelId = this.rmBookForm.get('hotel_id')?.value;
 
@@ -188,15 +216,12 @@ export class RoomBookComponent implements OnInit {
       return;
     }
 
-    // Find the hotel name from your already loaded hotels array
     const currentHotel = this.hotels.find((h: any) => h.id == hotelId);
     this.selectedHotelName = currentHotel ? currentHotel.name : '';
 
-    // Fetch available rooms for this specific hotel from your service
     this.hotelServes.getRoomByHotelId(hotelId).subscribe({
       next: (response: any) => {
-          this.availableRooms = response.data || response;
-
+        this.availableRooms = response.data || response;
       },
       error: (error) => {
         this.handleError(error);
@@ -204,6 +229,7 @@ export class RoomBookComponent implements OnInit {
       }
     });
   }
+
   onSubmit() {
     if (this.rmBookForm.invalid) {
       this.showAlert('Please fill in all required fields correctly.', 'warning');
@@ -219,27 +245,44 @@ export class RoomBookComponent implements OnInit {
       return;
     }
 
-    this.formData = new FormData();
-    if (this.roomData.booking_Date && typeof this.roomData.booking_Date === 'object') {
-      this.roomData.booking_Date = this.formatDate(this.roomData.booking_Date);
-    }
-    if (this.roomData.cancel_Date && typeof this.roomData.cancel_Date === 'object') {
-      this.roomData.cancel_Date = this.formatDate(this.roomData.cancel_Date);
-    }
+    Swal.fire({
+      title: 'Create Room Booking?',
+      text: "Do you want to save this new room booking record?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, create it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.formData = new FormData();
+        if (this.roomData.booking_Date && typeof this.roomData.booking_Date === 'object') {
+          this.roomData.booking_Date = this.formatDate(this.roomData.booking_Date);
+        }
+        if (this.roomData.cancel_Date && typeof this.roomData.cancel_Date === 'object') {
+          this.roomData.cancel_Date = this.formatDate(this.roomData.cancel_Date);
+        }
 
-    this.formData.append('form', JSON.stringify(this.roomData));
-    this.formData.append('room', JSON.stringify(data));
+        this.formData.append('form', JSON.stringify(this.roomData));
+        this.formData.append('room', JSON.stringify(data));
 
-    this.allServe.submitRoomsBook(this.formData).subscribe({
-      next: (data) => {
-        this.getRm();
-        this.getRmBook();
-        this.clearForm();
-        this.showAlert('Room booking created successfully!', 'success');
-      },
-      error: (error) => {
-        this.handleError(error);
-        this.showAlert('Failed to create room booking.', 'danger');
+        this.allServe.submitRoomsBook(this.formData).subscribe({
+          next: (data) => {
+            this.getRm();
+            this.getRmBook();
+            this.rmBookForm.reset();
+            this.booksRooms = [];
+            this.availableRooms = [];
+            this.isVisible = false;
+            this.rmBookForm.get('r_book')?.setValue('Booking');
+            this.rmBookForm.get('booking_no')?.enable();
+            this.showAlert('Room booking created successfully!', 'success');
+          },
+          error: (error) => {
+            this.handleError(error);
+            this.showAlert('Failed to create room booking.', 'danger');
+          }
+        });
       }
     });
   }
@@ -254,7 +297,6 @@ export class RoomBookComponent implements OnInit {
   }
 
   handleError(error: any) {
-
     if (error?.error?.errors) {
       const firstKey = Object.keys(error.error.errors)[0];
       this.error = error.error.errors[firstKey][0];
@@ -267,7 +309,6 @@ export class RoomBookComponent implements OnInit {
       this.error = 'An unexpected error occurred.';
     }
 
-    // Display it using your CoreUI alert
     // @ts-ignore
     this.showAlert(this.error, 'danger');
   }
@@ -366,15 +407,27 @@ export class RoomBookComponent implements OnInit {
   }
 
   deleteRmBook(id: any) {
-    this.allServe.deleteRoomBook(id).subscribe({
-      next: (data: any) => {
-        this.getRmBook();
-        this.getRm();
-        this.showAlert('Room booking deleted successfully!', 'success');
-      },
-      error: (error) => {
-        this.handleError(error);
-        this.showAlert('Failed to delete room booking.', 'danger');
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this room booking deletion!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.allServe.deleteRoomBook(id).subscribe({
+          next: (data: any) => {
+            this.getRmBook();
+            this.getRm();
+            this.showAlert('Room booking deleted successfully!', 'success');
+          },
+          error: (error) => {
+            this.handleError(error);
+            this.showAlert('Failed to delete room booking.', 'danger');
+          }
+        });
       }
     });
   }
@@ -421,31 +474,63 @@ export class RoomBookComponent implements OnInit {
       return;
     }
 
-    const roomData = this.rmBookForm.getRawValue();
+    Swal.fire({
+      title: 'Update Room Booking?',
+      text: "Do you want to update this room booking's details?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, update it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const roomData = this.rmBookForm.getRawValue();
 
-    if (roomData.booking_Date && typeof roomData.booking_Date === 'object') {
-      roomData.booking_Date = this.formatDate(roomData.booking_Date);
-    }
-    if (roomData.cancel_Date && typeof roomData.cancel_Date === 'object') {
-      roomData.cancel_Date = this.formatDate(roomData.cancel_Date);
-    }
+        if (roomData.booking_Date && typeof roomData.booking_Date === 'object') {
+          roomData.booking_Date = this.formatDate(roomData.booking_Date);
+        }
+        if (roomData.cancel_Date && typeof roomData.cancel_Date === 'object') {
+          roomData.cancel_Date = this.formatDate(roomData.cancel_Date);
+        }
 
-    const formData = new FormData();
-    formData.append('form', JSON.stringify(roomData));
-    formData.append('room', JSON.stringify(this.booksRooms));
-    formData.append('_method', 'PATCH');
+        const formData = new FormData();
+        formData.append('form', JSON.stringify(roomData));
+        formData.append('room', JSON.stringify(this.booksRooms));
+        formData.append('_method', 'PATCH');
 
-    this.allServe.updateRoomBook(formData, roomData.id).subscribe({
-      next: (response) => {
-        this.getRm();
-        this.getRmBook();
-        this.clearForm();
-        this.showAlert('Room booking updated successfully!', 'success');
-      },
-      error: (error) => {
-        console.error('Update error:', error);
-        this.handleError(error);
-        this.showAlert('Failed to update room booking.', 'danger');
+        this.allServe.updateRoomBook(formData, roomData.id).subscribe({
+          next: (response: any) => {
+            this.getRm();
+            this.getRmBook();
+            this.rmBookForm.reset();
+            this.booksRooms = [];
+            this.availableRooms = [];
+            this.isVisible = false;
+            this.rmBookForm.get('r_book')?.setValue('Booking');
+            this.rmBookForm.get('booking_no')?.enable();
+
+            const updatedFields: string[] = [];
+            Object.keys(this.rmBookForm.controls).forEach(key => {
+              const control = this.rmBookForm.get(key);
+              if (control && control.dirty) {
+                const formattedName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                updatedFields.push(formattedName);
+              }
+            });
+
+            const bookingNo = response?.booking_no || roomData.booking_no || 'Booking';
+            if (updatedFields.length > 0) {
+              this.showAlert(`Room booking "${bookingNo}" updated successfully. Updated fields: ${updatedFields.join(', ')}`, 'success');
+            } else {
+              this.showAlert(`Room booking "${bookingNo}" updated successfully.`, 'success');
+            }
+          },
+          error: (error) => {
+            console.error('Update error:', error);
+            this.handleError(error);
+            this.showAlert('Failed to update room booking.', 'danger');
+          }
+        });
       }
     });
   }
@@ -456,7 +541,6 @@ export class RoomBookComponent implements OnInit {
       (error) => {
         this.handleError(error);
         this.showAlert('Error fetching hotel', 'danger');
-
       }
     );
   }

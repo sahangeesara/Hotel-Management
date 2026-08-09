@@ -13,6 +13,7 @@ class Payment extends Model
     protected $fillable = [
         'payment_no',
         'customer_id',
+        'generated_ref_no',
         'guest_id',
         'order_id',
         'room_book_id',

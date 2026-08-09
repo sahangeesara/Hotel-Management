@@ -16,47 +16,47 @@
       </div>
       @if (orderForm.get('r_id')?.invalid && orderForm.get('r_id')?.touched) {
         @if (orderForm.get('r_id')?.errors?.['required']) {
-          <span style="color:red">Guest Guest is required.</span>
+          <span style="color:red">Room is required.</span>
         }
       }
     </c-col>
 
     <c-col [xs]="6">
       <div class="mb-3">
-        <label cLabel for="inputGuest-1">Guest:</label>
+        <label cLabel for="inputOrder-1">Customer:</label>
         <input
-          id="inputGuest-1"
+          id="inputCustomer-1"
           class="form-control"
-          list="guests-list"
-          name="guest_id"
-          formControlName="guest_id"
-          placeholder="Select Guest"
+          list="customers-list"
+          name="customer_id"
+          formControlName="customer_id"
+          placeholder="Select Customer"
         />
-        <datalist id="guests-list">
-          <option *ngFor="let guest of guests" [value]="guest.id">
-            {{ guest.nic }}
+        <datalist id="customers-list">
+          <option *ngFor="let customer of customers" [value]="customer.id">
+            {{ customer.nic }}
           </option>
         </datalist>
       </div>
-      @if (orderForm.get('guest_id')?.invalid && orderForm.get('guest_id')?.touched) {
-        @if (orderForm.get('guest_id')?.errors?.['required']) {
-          <span style="color:red">Guest Guest is required.</span>
+      @if (orderForm.get('customer_id')?.invalid && orderForm.get('customer_id')?.touched) {
+        @if (orderForm.get('customer_id')?.errors?.['required']) {
+          <span style="color:red">Customer is required.</span>
         }
       }
     </c-col>
     <c-col [xs]="6">
       <div class="mb-3">
         <label cLabel>Order Status:</label>
-         <select aria-label="Select Order Status" cSelect name="oder_status_id" formControlName="oder_status_id">
-          <option selected="selected">Select Order Status: </option>
-          <option *ngFor="let status of orderStatus" [value]="status.id">
+        <select aria-label="Select Order Status" cSelect name="order_status_id" formControlName="order_status_id">
+          <option selected="selected" value="">Select Order Status: </option>
+          <option *ngFor="let status of orderStatus" [ngValue]="status.id">
             {{ status.name }}
           </option>
         </select>
       </div>
-      @if (orderForm.get('oder_status_id')?.invalid && orderForm.get('oder_status_id')?.touched) {
-        @if (orderForm.get('oder_status_id')?.errors?.['required']) {
-          <span style="color:red">Guest Guest is required.</span>
+      @if (orderForm.get('order_status_id')?.invalid && orderForm.get('order_status_id')?.touched) {
+        @if (orderForm.get('order_status_id')?.errors?.['required']) {
+          <span style="color:red">Order Status is required.</span>
         }
       }
     </c-col>
@@ -88,7 +88,7 @@
       />
       @if (orderForm.get('order_date')?.invalid && orderForm.get('order_date')?.touched) {
         @if (orderForm.get('order_date')?.errors?.['required']) {
-          <span style="color:red">Guest Guest is required.</span>
+          <span style="color:red">Order Order is required.</span>
         }
       }
     </c-col>

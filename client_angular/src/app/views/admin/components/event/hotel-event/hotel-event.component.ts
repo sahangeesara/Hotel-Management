@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {Router} from "@angular/router";
 import {AllServiceService} from "../../../../../services/all-service.service";
@@ -16,6 +16,7 @@ import {
 } from "@coreui/angular";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {IconDirective} from "@coreui/icons-angular";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-hotel-event',
@@ -193,14 +194,27 @@ export class HotelEventComponent implements OnInit {
   }
 
   clearSearchForm() {
-    this.hotelSearchBookForm.reset();
-    this.getHotelEventBook();
-    this.hotelSearchBookForm.patchValue({
-      hotel_id: '',
-      event_id: '',
-      event_type_id: '',
-      room_id: '',
-      event_date: '',
+    Swal.fire({
+      title: 'Clear Search Filters?',
+      text: "This will reset search criteria and reload all hotel events.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, clear it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.hotelSearchBookForm.reset();
+        this.hotelSearchBookForm.patchValue({
+          hotel_id: '',
+          event_id: '',
+          event_type_id: '',
+          room_id: '',
+          event_date: '',
+        });
+        this.getHotelEventBook();
+        this.showAlert('Search filters cleared successfully.', 'success');
+      }
     });
   }
 
@@ -216,7 +230,6 @@ export class HotelEventComponent implements OnInit {
   }
 
   handleError(error: any) {
-
     if (error?.error?.errors) {
       const firstKey = Object.keys(error.error.errors)[0];
       this.error = error.error.errors[firstKey][0];
@@ -232,18 +245,45 @@ export class HotelEventComponent implements OnInit {
   }
 
   updateHotelBook() {
-    this.formData = new FormData();
     if (this.hotelEvent.valid) {
-      this.hotelData = this.hotelEvent.getRawValue();
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you want to update this hotel event's details?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, update it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.formData = new FormData();
+          this.hotelData = this.hotelEvent.getRawValue();
 
-      this.eventService.updateHotelEvent(this.hotelData, this.hotelData.id).subscribe({
-        next: (response) => {
-          this.getHotelEventBook();
-          this.clearForm();
-          this.showAlert('Hotel event updated successfully!', 'success');
-        },
-        error: (error) => {
-          this.handleError(error);
+          this.eventService.updateHotelEvent(this.hotelData, this.hotelData.id).subscribe({
+            next: (response: any) => {
+              this.getHotelEventBook();
+              this.clearForm();
+
+              const updatedFields: string[] = [];
+              Object.keys(this.hotelEvent.controls).forEach(key => {
+                const control = this.hotelEvent.get(key);
+                if (control && control.dirty) {
+                  const formattedName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                  updatedFields.push(formattedName);
+                }
+              });
+
+              const eventNo = response?.event_no || this.hotelData.event_no || 'Event';
+              if (updatedFields.length > 0) {
+                this.showAlert(`Hotel event "${eventNo}" updated successfully. Updated fields: ${updatedFields.join(', ')}`, 'success');
+              } else {
+                this.showAlert(`Hotel event "${eventNo}" updated successfully.`, 'success');
+              }
+            },
+            error: (error) => {
+              this.handleError(error);
+            }
+          });
         }
       });
     } else {
@@ -320,13 +360,25 @@ export class HotelEventComponent implements OnInit {
   }
 
   deleteHotelBook(id: any) {
-    this.eventService.deleteHotelEvent(id).subscribe({
-      next: (data: any) => {
-        this.getHotelEventBook();
-        this.showAlert('Hotel event deleted successfully!', 'success');
-      },
-      error: (error) => {
-        this.handleError(error);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this hotel event deletion!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.eventService.deleteHotelEvent(id).subscribe({
+          next: (data: any) => {
+            this.getHotelEventBook();
+            this.showAlert('Hotel event deleted successfully!', 'success');
+          },
+          error: (error) => {
+            this.handleError(error);
+          }
+        });
       }
     });
   }

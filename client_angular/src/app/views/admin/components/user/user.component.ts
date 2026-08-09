@@ -118,48 +118,74 @@ export class UserComponent implements OnInit {
   onRoleChange(user: any) {
     if (user.role?.name === 'Admin') return; // Safety check
 
-    const payload = {
-      role_id: user.role_id
-    };
+    Swal.fire({
+      title: 'Update User Role?',
+      text: `Do you want to change the role for ${user.name}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, update it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const payload = {
+          role_id: user.role_id
+        };
 
-    this.allServe.userRoleUpdate(payload, user.id).subscribe({
-      next: () => {
-        this.showAlert(`Role updated successfully for ${user.name}`, 'success');
-        this.getUser();
-      },
-      error: (error) => {
-        this.handleError(error);
-        this.getUser(); // Revert table state on error
+        this.allServe.userRoleUpdate(payload, user.id).subscribe({
+          next: () => {
+            this.showAlert(`Role updated successfully for ${user.name}`, 'success');
+            this.getUser();
+          },
+          error: (error) => {
+            this.handleError(error);
+            this.getUser(); // Revert table state on error
+          }
+        });
+      } else {
+        this.getUser(); // Revert dropdown selection if cancelled
       }
     });
   }
+
   onSubmit() {
     if (this.userForm.valid) {
-      this.formData = new FormData();
-      let user = new User();
+      Swal.fire({
+        title: 'Create User?',
+        text: "Do you want to save this new user record?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, create it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.formData = new FormData();
+          let user = new User();
 
-      user.name = this.userNameField.value;
-      user.password = this.userPasswordField.value;
-      user.email = this.userEmailField.value;
-      // user.role_id = this.userRoleIdField.value; // Include if handled in entity
+          user.name = this.userNameField.value;
+          user.password = this.userPasswordField.value;
+          user.email = this.userEmailField.value;
 
-      this.formData.append('form', JSON.stringify(user));
-      const submissionObservable = from(this.allServe.submitUser(this.formData));
+          this.formData.append('form', JSON.stringify(user));
+          const submissionObservable = from(this.allServe.submitUser(this.formData));
 
-      submissionObservable
-        .pipe(
-          map((data) => {
-            this.getUser();
-            this.clearForm();
-            this.showAlert('User created successfully.', 'success');
-            return data;
-          }),
-          catchError((error) => {
-            this.handleError(error);
-            return throwError(() => error);
-          })
-        )
-        .subscribe();
+          submissionObservable
+            .pipe(
+              map((data) => {
+                this.getUser();
+                this.clearForm();
+                this.showAlert('User created successfully.', 'success');
+                return data;
+              }),
+              catchError((error) => {
+                this.handleError(error);
+                return throwError(() => error);
+              })
+            )
+            .subscribe();
+        }
+      });
     } else {
       this.showAlert('Please fill in all required fields correctly.', 'warning');
       this.userForm.markAllAsTouched();
@@ -207,7 +233,7 @@ export class UserComponent implements OnInit {
   updateUser() {
     if (this.userForm.valid) {
       Swal.fire({
-        title: 'Are you sure?',
+        title: 'Update User?',
         text: "Do you want to update this user's details?",
         icon: 'question',
         showCancelButton: true,
@@ -231,11 +257,25 @@ export class UserComponent implements OnInit {
 
           submissionObservable
             .pipe(
-              map((data) => {
+              map((data: any) => {
                 this.getUser();
                 this.clearForm();
-                const updatedName = user.name || 'User';
-                this.showAlert(`User "${updatedName}" updated successfully.`, 'success');
+
+                const updatedFields: string[] = [];
+                Object.keys(this.userForm.controls).forEach(key => {
+                  const control = this.userForm.get(key);
+                  if (control && control.dirty) {
+                    const formattedName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    updatedFields.push(formattedName);
+                  }
+                });
+
+                const updatedName = data?.name || user.name || 'User';
+                if (updatedFields.length > 0) {
+                  this.showAlert(`User "${updatedName}" updated successfully. Updated fields: ${updatedFields.join(', ')}`, 'success');
+                } else {
+                  this.showAlert(`User "${updatedName}" updated successfully.`, 'success');
+                }
                 return data;
               }),
               catchError((error) => {
@@ -269,11 +309,24 @@ export class UserComponent implements OnInit {
   }
 
   clearForm() {
-    this.userForm.reset();
-    this.userIdField.setValue("");
-    this.userNameField.setValue("");
-    this.userEmailField.setValue("");
-    this.userPasswordField.setValue("");
-    this.userPasswordConfirmationField.setValue("");
+    Swal.fire({
+      title: 'Clear Form?',
+      text: "This will reset all current user inputs.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, clear it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.userForm.reset();
+        this.userIdField.setValue("");
+        this.userNameField.setValue("");
+        this.userEmailField.setValue("");
+        this.userPasswordField.setValue("");
+        this.userPasswordConfirmationField.setValue("");
+        this.showAlert('Form cleared successfully.', 'success');
+      }
+    });
   }
 }

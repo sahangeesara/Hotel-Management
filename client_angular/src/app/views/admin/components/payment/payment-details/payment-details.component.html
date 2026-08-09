@@ -35,75 +35,177 @@
 
         <hr>
 
-        <!-- Other inputs like Order, Room Booking, etc. -->
-        <!-- Order -->
+        <!-- Payment Method -->
         <c-col md="4" class="mb-3">
-          <label cLabel for="order_id">Order</label>
-          <select cSelect id="order_id" formControlName="order_id">
-            <option value="">Select Order</option>
-            <option *ngFor="let order of orderData" [value]="order.id">{{ order.order_no }}</option>
+          <label cLabel for="payment_method_id">Payment Method</label>
+          <select cSelect id="payment_method_id" formControlName="payment_method_id">
+            <option value="">Select Payment Method</option>
+            <option *ngFor="let method of paymentMethods" [value]="method.id">{{ method.name }}</option>
           </select>
         </c-col>
 
-        <!-- Room Booking -->
+        <!-- Payment Status -->
         <c-col md="4" class="mb-3">
-          <label cLabel for="room_book_id">Room Booking</label>
-          <select cSelect id="room_book_id" formControlName="room_book_id">
-            <option value="">Select Room Booking</option>
-            <option *ngFor="let room of roomsBooks" [value]="room.id">{{ room.booking_no }}</option>
+          <label cLabel for="payment_status_id">Payment Status</label>
+          <select cSelect id="payment_status_id" formControlName="payment_status_id">
+            <option value="">Select Payment Status</option>
+            <option *ngFor="let status of paymentStatus" [value]="status.id">{{ status.name }}</option>
           </select>
         </c-col>
+
+        <!-- Amount -->
+        <c-col md="4" class="mb-3">
+          <label cLabel for="amount">Amount</label>
+          <input cFormControl type="number" id="amount" formControlName="amount" placeholder="Enter Amount" />
+        </c-col>
       </c-row>
+
+      <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Save Payment</button> &nbsp;
+        <button type="button" class="btn btn-success" (click)="clearForm()">clear</button>
+      </div>
     </form>
   </c-row>
 </div>
 
-<!-- Payment Details Card (Appears after choosing a Guest, Customer, or Organizer) -->
+<!-- Related Bookings & Events Tables -->
 <c-card *ngIf="payment" class="mt-4">
   <c-card-header class="d-flex justify-content-between align-items-center">
-    <strong>Payment Details</strong>
-    <button class="btn btn-sm btn-primary" (click)="downloadPaymentPdf()">
+    <strong>Payment Details & Summary</strong>
+    <button
+      type="button"
+      class="btn btn-sm btn-primary"
+      (click)="downloadPaymentPdf()">
       Download PDF Report
     </button>
   </c-card-header>
 
   <c-card-body>
-    <div class="row">
-      <!-- Payment Number -->
-      <div class="col-md-6 mb-3">
-        <label class="form-label">Payment No</label>
-        <div class="form-control">{{ payment.payment_no }}</div>
+    <div class="row mb-4">
+      <div class="col-md-4 mb-3">
+        <label class="form-label text-muted">Payment No</label>
+        <div class="form-control fw-bold">{{ payment.payment_no }}</div>
       </div>
-
-      <!-- Payment Date -->
-      <div class="col-md-6 mb-3">
-        <label class="form-label">Payment Date</label>
+      <div class="col-md-4 mb-3">
+        <label class="form-label text-muted">Payment Date</label>
         <div class="form-control">{{ payment.payment_date | date:'yyyy-MM-dd HH:mm' }}</div>
       </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label text-muted">Calculated Amount</label>
+        <div class="form-control text-success fw-bold">{{ payment.amount }}</div>
+      </div>
+    </div>
 
-      <!-- Amount -->
-      <div class="col-md-6 mb-3">
-        <label class="form-label">Amount</label>
-        <div class="form-control">{{ payment.amount }}</div>
+    <!-- Related Bookings & Events Tables -->
+    <div *ngIf="relatedRecords">
+
+      <!-- Room Bookings Preview -->
+      <div *ngIf="relatedRecords?.room_bookings?.length > 0" class="mb-4">
+        <h6 class="text-primary fw-bold">Room Bookings</h6>
+        <table [striped]="true" cTable class="small">
+          <thead>
+          <tr>
+            <th>Booking No</th>
+            <th>Booking Date</th>
+            <th>Rooms Count</th>
+            <th>Amount</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let rb of relatedRecords.room_bookings">
+            <td>{{ rb.booking_no }}</td>
+            <td>{{ rb.booking_Date | date:'yyyy-MM-dd' }}</td>
+            <td>{{ rb.number_of_room }}</td>
+            <td>{{ rb.total_amount }}</td>
+          </tr>
+          </tbody>
+        </table>
       </div>
 
-<!--      &lt;!&ndash; Customer &ndash;&gt;-->
-<!--      <div class="col-md-6 mb-3">-->
-<!--        <label class="form-label">Customer</label>-->
-<!--        <div class="form-control">{{ payment.customer?.name || '-' }}</div>-->
-<!--      </div>-->
+      <!-- Customer Orders Preview -->
+      <div *ngIf="relatedRecords?.orders?.length > 0" class="mb-4">
+        <h6 class="text-primary fw-bold">Customer Orders</h6>
+        <table [striped]="true" cTable class="small">
+          <thead>
+          <tr>
+            <th>Order No</th>
+            <th>Order Date</th>
+            <th>Amount</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let ord of relatedRecords.orders">
+            <td>{{ ord.order_no }}</td>
+            <td>{{ ord.order_date | date:'yyyy-MM-dd' }}</td>
+            <td>{{ ord.order_amount }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
 
-<!--      &lt;!&ndash; Guest &ndash;&gt;-->
-<!--      <div class="col-md-6 mb-3">-->
-<!--        <label class="form-label">Guest</label>-->
-<!--        <div class="form-control">{{ payment.guest?.name || '-' }}</div>-->
-<!--      </div>-->
+      <!-- Organizer Hotel Events Preview -->
+      <div *ngIf="relatedRecords?.hotel_events?.length > 0" class="mb-4">
+        <h6 class="text-primary fw-bold">Hotel Events</h6>
+        <table [striped]="true" cTable class="small">
+          <thead>
+          <tr>
+            <th>Event No</th>
+            <th>Event Date</th>
+            <th>Amount</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let ev of relatedRecords.hotel_events">
+            <td>{{ ev.event_no }}</td>
+            <td>{{ ev.event_date | date:'yyyy-MM-dd' }}</td>
+            <td>{{ ev.total_amount }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
 
-<!--      &lt;!&ndash; Payment Status &ndash;&gt;-->
-<!--      <div class="col-md-6 mb-3">-->
-<!--        <label class="form-label">Payment Status</label>-->
-<!--        <div class="form-control">{{ payment.payment_status.name || '-' }}</div>-->
-<!--      </div>-->
+      <!-- Organizer Restaurant Events Preview -->
+      <div *ngIf="relatedRecords?.restaurant_events?.length > 0" class="mb-4">
+        <h6 class="text-primary fw-bold">Restaurant Events</h6>
+        <table [striped]="true" cTable class="small">
+          <thead>
+          <tr>
+            <th>Event No</th>
+            <th>Event Date</th>
+            <th>Amount</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let ev of relatedRecords.restaurant_events">
+            <td>{{ ev.event_no }}</td>
+            <td>{{ ev.event_date | date:'yyyy-MM-dd' }}</td>
+            <td>{{ ev.total_amount }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Organizer Wedding Events Preview -->
+      <div *ngIf="relatedRecords?.wedding_events?.length > 0" class="mb-4">
+        <h6 class="text-primary fw-bold">Wedding Events</h6>
+        <table [striped]="true" cTable class="small">
+          <thead>
+          <tr>
+            <th>Event No</th>
+            <th>Event Date</th>
+            <th>Amount</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let ev of relatedRecords.wedding_events">
+            <td>{{ ev.event_no }}</td>
+            <td>{{ ev.event_date | date:'yyyy-MM-dd' }}</td>
+            <td>{{ ev.total_amount }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
   </c-card-body>
 </c-card>

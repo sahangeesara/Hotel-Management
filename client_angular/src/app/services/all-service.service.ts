@@ -242,6 +242,10 @@ updateRoomBook(data: FormData, id: any) {
     return this.http.put<OrderStatus>(`${this.besUrl}/orderStatus/${id}`,data,this.getAuthHeaders());
   }
 
+  updateOrdersStatus(data: any, orderId: any) {
+    return this.http.patch(`${this.besUrl}/orderStatusUpdate/${orderId}`, data, this.getAuthHeaders());
+  }
+
 //Food Status
 
   getFoodStatus(){

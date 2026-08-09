@@ -13,6 +13,7 @@ import {
 import {IconDirective} from "@coreui/icons-angular";
 import {NgForOf, NgIf} from "@angular/common";
 import {SearchService} from "../../../../../services/search.service";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-hotel',
@@ -110,18 +111,45 @@ export class HotelComponent implements OnInit {
 
   updateHotel() {
     if (this.hotelForm.valid) {
-      this.hotelData = this.hotelForm.getRawValue();
+      Swal.fire({
+        title: 'Update Hotel?',
+        text: "Do you want to update this hotel's details?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, update it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.hotelData = this.hotelForm.getRawValue();
 
-      this.hotelServe.updateHotel(this.hotelData, this.hotelData.id).subscribe({
-        next: (response) => {
-          this.getHotel();
-          this.clearForm();
-          this.isUpdateVisible = true;
-          this.isSubmitVisible = false;
-          this.showAlert('Hotel updated successfully!', 'success');
-        },
-        error: (error) => {
-          this.handleError(error);
+          this.hotelServe.updateHotel(this.hotelData, this.hotelData.id).subscribe({
+            next: (response: any) => {
+              this.getHotel();
+              this.clearForm();
+              this.isUpdateVisible = true;
+              this.isSubmitVisible = false;
+
+              const updatedFields: string[] = [];
+              Object.keys(this.hotelForm.controls).forEach(key => {
+                const control = this.hotelForm.get(key);
+                if (control && control.dirty) {
+                  const formattedName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                  updatedFields.push(formattedName);
+                }
+              });
+
+              const hotelName = response?.name || this.hotelData.name || 'Hotel';
+              if (updatedFields.length > 0) {
+                this.showAlert(`Hotel "${hotelName}" updated successfully. Updated fields: ${updatedFields.join(', ')}`, 'success');
+              } else {
+                this.showAlert(`Hotel "${hotelName}" updated successfully.`, 'success');
+              }
+            },
+            error: (error) => {
+              this.handleError(error);
+            }
+          });
         }
       });
     } else {
@@ -157,13 +185,26 @@ export class HotelComponent implements OnInit {
   }
 
   clearSearchForm() {
-    this.hotelSearchForm.reset();
-    this.getHotel();
-    this.hotelSearchForm.patchValue({
-      name: '',
-      phone: '',
-      room_setups_id: '',
-      capacity: '',
+    Swal.fire({
+      title: 'Clear Search Filters?',
+      text: "This will reset search criteria and reload all hotels.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, clear it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.hotelSearchForm.reset();
+        this.hotelSearchForm.patchValue({
+          name: '',
+          phone: '',
+          room_setups_id: '',
+          capacity: '',
+        });
+        this.getHotel();
+        this.showAlert('Search filters cleared successfully.', 'success');
+      }
     });
   }
 
@@ -191,16 +232,28 @@ export class HotelComponent implements OnInit {
 
   onSubmit() {
     if (this.hotelForm.valid) {
-      this.hotelData = this.hotelForm.getRawValue();
+      Swal.fire({
+        title: 'Create Hotel?',
+        text: "Do you want to save this new hotel record?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, create it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.hotelData = this.hotelForm.getRawValue();
 
-      this.hotelServe.submitHotel(this.hotelData).subscribe({
-        next: (response) => {
-          this.getHotel();
-          this.clearForm();
-          this.showAlert('Hotel created successfully!', 'success');
-        },
-        error: (error) => {
-          this.handleError(error);
+          this.hotelServe.submitHotel(this.hotelData).subscribe({
+            next: (response) => {
+              this.getHotel();
+              this.clearForm();
+              this.showAlert('Hotel created successfully!', 'success');
+            },
+            error: (error) => {
+              this.handleError(error);
+            }
+          });
         }
       });
     } else {
@@ -212,7 +265,6 @@ export class HotelComponent implements OnInit {
   handleError(error: any) {
     console.error('Backend Error:', error);
 
-    // Safely parse Laravel 10 validation or exception payloads
     if (error?.error?.errors) {
       const firstKey = Object.keys(error.error.errors)[0];
       this.error = error.error.errors[firstKey][0];
@@ -228,15 +280,27 @@ export class HotelComponent implements OnInit {
   }
 
   deleteHotel(id: any) {
-    this.hotelServe.deleteHotel(id).subscribe({
-      next: (data: any) => {
-        this.isUpdateVisible = true;
-        this.isSubmitVisible = false;
-        this.getHotel();
-        this.showAlert('Hotel deleted successfully!', 'success');
-      },
-      error: (error) => {
-        this.handleError(error);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this hotel deletion!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.hotelServe.deleteHotel(id).subscribe({
+          next: (data: any) => {
+            this.isUpdateVisible = true;
+            this.isSubmitVisible = false;
+            this.getHotel();
+            this.showAlert('Hotel deleted successfully!', 'success');
+          },
+          error: (error) => {
+            this.handleError(error);
+          }
+        });
       }
     });
   }

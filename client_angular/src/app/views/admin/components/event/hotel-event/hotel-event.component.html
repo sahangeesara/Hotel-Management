@@ -1,4 +1,4 @@
-<form [formGroup]="hotelEvent" (ngSubmit)="onSubmit()">
+ <form [formGroup]="hotelEvent" (ngSubmit)="onSubmit()">
   <c-row>
     <input cFormControl id="inputId-1" type="hidden" sizing="sm" name="id" formControlName="id">
     <c-alert [color]="alertColor" *ngIf="alertMessage" dismissible (visibleChange)="clearAlert()">

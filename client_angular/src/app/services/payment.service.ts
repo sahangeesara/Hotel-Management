@@ -54,20 +54,19 @@ export class PaymentService {
   getCurrency() {
     return this.http.get(`${this.besUrl}/currencies`, this.getAuthHeaders());
   }
-  downloadPdf(type: string, id: number):  Observable<Blob> {
-    return this.http.get(`${this.besUrl }/payments/download-pdf?type=${type}&id=${id}`, {
-      responseType: 'blob'
-    });
+  downloadPdf(
+    type: string,
+    id: number
+  ) {
+    return this.http.get(
+      `${this.besUrl}/payments/${type}/${id}/pdf`,
+      {
+        responseType: 'blob'
+      }
+    );
   }
 
   getPaymentByPerson(type: string, id: number): Observable<any> {
-    const params = new HttpParams()
-      .set('type', type)
-      .set('id', id.toString());
-
-    return this.http.get(`${this.besUrl}/payments/paymentByPerson`, {
-      ...this.getAuthHeaders(),
-      params: params
-    });
+    return this.http.get(`${this.besUrl}/payments/paymentByPerson/${type}/${id}`, this.getAuthHeaders());
   }
 }

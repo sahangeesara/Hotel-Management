@@ -63,7 +63,7 @@ export class OrderAddComponent implements OnInit {
   foodStatus: FoodStatus[] = [];
   foodItems: Food[] = [];
   rooms: Room[] = [];
-  guests: any[] = [];
+  customers: any[] = [];
   orderStatus: any[] = [];
   formData = new FormData();
   orderForm: FormGroup;
@@ -74,18 +74,16 @@ export class OrderAddComponent implements OnInit {
   alertColor: string = 'success'; // 'success', 'danger', 'warning', 'info'
 
   constructor(
-    private route: ActivatedRoute,
     private allServe: AllServiceService,
-    private router: Router,
     private fb: FormBuilder,
   ) {
     this.orderForm = this.fb.group({
       id: [''],
-      guest_id: ['', [Validators.required]],
+      customer_id: ['', [Validators.required]],
       r_id: [''],
       order_date: ['', [Validators.required]],
       order_amount: ['', [Validators.required]],
-      oder_status_id: ['', [Validators.required]],
+      order_status_id: ['', [Validators.required]],
       item_category_id: [''],
       food_id: [''],
       quantity: [''],
@@ -110,14 +108,14 @@ export class OrderAddComponent implements OnInit {
   get itemCateField(): FormControl {
     return this.orderForm.controls['item_category_id'] as FormControl;
   }
-  get guestIdField(): FormControl {
-    return this.orderForm.controls['guest_id'] as FormControl;
+  get customerIdField(): FormControl {
+    return this.orderForm.controls['customer_id'] as FormControl;
   }
   get foodIdField(): FormControl {
     return this.orderForm.controls['food_id'] as FormControl;
   }
   get orderStatusField(): FormControl {
-    return this.orderForm.controls['oder_status_id'] as FormControl;
+    return this.orderForm.controls['order_status_id'] as FormControl;
   }
 
   getRm() {
@@ -135,10 +133,10 @@ export class OrderAddComponent implements OnInit {
     return obj['year'] + '-' + obj['month'] + '-' + obj['day'];
   }
 
-  getGuest() {
-    this.allServe.getGuests().subscribe({
+  getCustomer() {
+    this.allServe.getCustomer().subscribe({
       next: (response: any) => {
-        this.guests = response.data;
+        this.customers = response.data;
       },
       error: (error) => {
         this.handleError(error);
@@ -238,7 +236,7 @@ export class OrderAddComponent implements OnInit {
   ngOnInit() {
     this.getItemCategory();
     this.getRm();
-    this.getGuest();
+    this.getCustomer();
     this.getOrderStatus();
     this.getFoodStatus();
   }
@@ -264,7 +262,7 @@ export class OrderAddComponent implements OnInit {
     this.itemCateField.setValue("");
     this.roomIdField.setValue("");
     this.orderStatusField.setValue("");
-    this.guestIdField.setValue("");
+    this.customerIdField.setValue("");
   }
 
   onSubmit() {
@@ -275,10 +273,10 @@ export class OrderAddComponent implements OnInit {
 
       let order = new Order();
       order.r_id = data.r_id;
-      order.guest_id = data.guest_id;
+      order.customer_id = data.customer_id;
       order.order_date = this.formatDate(data.order_date);
       order.order_amount = data.order_amount;
-      order.oder_status_id = data.oder_status_id;
+      order.order_status_id = data.order_status_id;
 
       this.formData.append('form', JSON.stringify(order));
       this.formData.append('food', JSON.stringify(data2));

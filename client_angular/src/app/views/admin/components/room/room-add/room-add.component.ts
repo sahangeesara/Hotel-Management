@@ -13,6 +13,7 @@ import {AllServiceService} from "../../../../../services/all-service.service";
 import { IconDirective } from '@coreui/icons-angular';
 import {HotelService} from "../../../../../services/hotel.service";
 import {SearchService} from "../../../../../services/search.service";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-room-add',
@@ -128,13 +129,26 @@ export class RoomAddComponent implements OnInit {
   }
 
   clearSearchForm() {
-    this.roomSearchForm.reset();
-    this.getRm();
-    this.roomSearchForm.patchValue({
-      hotel_id: '',
-      r_no: '',
-      r_capacity: '',
-      r_category_id: '',
+    Swal.fire({
+      title: 'Clear Search Filters?',
+      text: "This will reset search criteria and reload all rooms.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, clear it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.roomSearchForm.reset();
+        this.roomSearchForm.patchValue({
+          hotel_id: '',
+          r_no: '',
+          r_capacity: '',
+          r_category_id: '',
+        });
+        this.getRm();
+        this.showAlert('Search filters cleared successfully.', 'success');
+      }
     });
   }
 
@@ -154,16 +168,43 @@ export class RoomAddComponent implements OnInit {
 
   updateRoom() {
     if (this.roomForm.valid) {
-      this.roomData = this.roomForm.getRawValue();
+      Swal.fire({
+        title: 'Update Room?',
+        text: "Do you want to update this room's details?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, update it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.roomData = this.roomForm.getRawValue();
 
-      this.allServe.roomUpdate(this.roomData, this.roomData.id).subscribe({
-        next: (response) => {
-          this.getRm();
-          this.clearForm();
-          this.showAlert('Room updated successfully!', 'success');
-        },
-        error: (error) => {
-          this.handleError(error);
+          this.allServe.roomUpdate(this.roomData, this.roomData.id).subscribe({
+            next: (response: any) => {
+              this.getRm();
+              this.clearForm();
+
+              const updatedFields: string[] = [];
+              Object.keys(this.roomForm.controls).forEach(key => {
+                const control = this.roomForm.get(key);
+                if (control && control.dirty) {
+                  const formattedName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                  updatedFields.push(formattedName);
+                }
+              });
+
+              const roomNo = response?.r_no || this.roomData.r_no || 'Room';
+              if (updatedFields.length > 0) {
+                this.showAlert(`Room "${roomNo}" updated successfully. Updated fields: ${updatedFields.join(', ')}`, 'success');
+              } else {
+                this.showAlert(`Room "${roomNo}" updated successfully.`, 'success');
+              }
+            },
+            error: (error) => {
+              this.handleError(error);
+            }
+          });
         }
       });
     } else {
@@ -196,16 +237,28 @@ export class RoomAddComponent implements OnInit {
 
   onSubmit() {
     if (this.roomForm.valid) {
-      this.roomData = this.roomForm.getRawValue();
+      Swal.fire({
+        title: 'Create Room?',
+        text: "Do you want to save this new room record?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, create it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.roomData = this.roomForm.getRawValue();
 
-      this.allServe.submitRoom(this.roomData).subscribe({
-        next: (response) => {
-          this.getRm();
-          this.clearForm();
-          this.showAlert('Room created successfully!', 'success');
-        },
-        error: (error) => {
-          this.handleError(error);
+          this.allServe.submitRoom(this.roomData).subscribe({
+            next: (response) => {
+              this.getRm();
+              this.clearForm();
+              this.showAlert('Room created successfully!', 'success');
+            },
+            error: (error) => {
+              this.handleError(error);
+            }
+          });
         }
       });
     } else {
@@ -217,7 +270,6 @@ export class RoomAddComponent implements OnInit {
   handleError(error: any) {
     console.error('Backend Error:', error);
 
-    // Safely parse Laravel 10 validation or exception payloads
     if (error?.error?.errors) {
       const firstKey = Object.keys(error.error.errors)[0];
       this.error = error.error.errors[firstKey][0];
@@ -233,13 +285,25 @@ export class RoomAddComponent implements OnInit {
   }
 
   deleteRoom(id: any) {
-    this.allServe.deleteRoom(id).subscribe({
-      next: (data: any) => {
-        this.getRm();
-        this.showAlert('Room deleted successfully!', 'success');
-      },
-      error: (error) => {
-        this.handleError(error);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this room deletion!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.allServe.deleteRoom(id).subscribe({
+          next: (data: any) => {
+            this.getRm();
+            this.showAlert('Room deleted successfully!', 'success');
+          },
+          error: (error) => {
+            this.handleError(error);
+          }
+        });
       }
     });
   }

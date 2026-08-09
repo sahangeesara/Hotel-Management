@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\Currency;
 use App\Models\HotelEvent;
+use App\Models\Order;
 use App\Models\Payment;
 use App\Models\RestaurantEvent;
 use App\Models\RoomBook;
@@ -12,6 +13,8 @@ use App\Models\WeddingEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class PaymentController extends Controller
 {
@@ -35,67 +38,51 @@ class PaymentController extends Controller
     }
 
 
-    public function getPaymentByPerson(Request $request)
+    public function getPaymentByPerson($type, $id)
     {
         try {
-            $type = $request->query('type'); // 'guest', 'customer', or 'organizer'
-            $id = $request->query('id');
-
             if (!in_array($type, ['guest', 'customer', 'organizer'])) {
                 return response()->json(['message' => 'Invalid type provided'], 400);
             }
 
-            $query = Payment::with([
-                'customer',
-                'guest',
-                'paymentMethod',
-                'paymentStatus',
-                'order',
-                'roomBook'
-            ]);
+            $totalAmount = 0;
+            $relatedDetails = [];
+
+            $query = Payment::with(['paymentStatus', 'paymentMethod', 'currency']);
 
             if ($type === 'guest') {
                 $query->where('guest_id', $id);
-            } elseif ($type === 'customer') {
-                $query->where('customer_id', $id);
-            } elseif ($type === 'organizer') {
-                $query->where('organizer_id', $id);
-            }
-
-            // Safe query fetch
-            $payment = $query->first();
-
-            // Calculate totals for bookings/events even if no direct payment row exists
-            $totalEventOrBookingAmount = 0;
-            $relatedDetails = [];
-
-            if ($type === 'guest') {
-                $roomBookings = RoomBook::where('guest_id', $id)->get();
-                $totalEventOrBookingAmount += $roomBookings->sum('total_amount');
+                $roomBookings = RoomBook::with(['hotel', 'package'])->where('guest_id', $id)->get();
+                $totalAmount += $roomBookings->sum('total_amount');
                 $relatedDetails['room_bookings'] = $roomBookings;
             } elseif ($type === 'organizer') {
-                $hotelEvents = HotelEvent::where('organizer_id', $id)->get();
-                $restaurantEvents = RestaurantEvent::where('organizer_id', $id)->get();
-                $weddingEvents = WeddingEvent::where('organizer_id', $id)->get();
+                $query->where('organizer_id', $id);
+                $hotelEvents = HotelEvent::with(['hotel', 'package'])->where('organizer_id', $id)->get();
+                $restaurantEvents = RestaurantEvent::with(['hotel', 'package'])->where('organizer_id', $id)->get();
+                $weddingEvents = WeddingEvent::with(['hotel', 'package'])->where('organizer_id', $id)->get();
 
-                $totalEventOrBookingAmount += $hotelEvents->sum('total_amount');
-                $totalEventOrBookingAmount += $restaurantEvents->sum('total_amount');
-                $totalEventOrBookingAmount += $weddingEvents->sum('total_amount');
+                $totalAmount += $hotelEvents->sum('total_amount');
+                $totalAmount += $restaurantEvents->sum('total_amount');
+                $totalAmount += $weddingEvents->sum('total_amount');
 
                 $relatedDetails['hotel_events'] = $hotelEvents;
                 $relatedDetails['restaurant_events'] = $restaurantEvents;
                 $relatedDetails['wedding_events'] = $weddingEvents;
+            } elseif ($type === 'customer') {
+                $query->where('customer_id', $id);
+                $orders = Order::with(['room', 'orderStatus'])->where('customer_id', $id)->get();
+                $totalAmount += $orders->sum('order_amount');
+                $relatedDetails['orders'] = $orders;
             }
 
-            $grandTotal = ($payment ? $payment->amount : 0) + $totalEventOrBookingAmount;
+            $payment = $query->first();
 
             return response()->json([
                 'success' => true,
-                'data' => $payment,
-                'calculated_totals' => [
-                    'direct_payment_amount' => $payment?->amount ?? 0,
-                    'bookings_events_total' => $totalEventOrBookingAmount,
-                    'grand_total' => $grandTotal
+                'data' => $payment ? $payment : [
+                    'payment_no' => 'PAY-' . strtoupper($type) . '-' . str_pad($id, 4, '0', STR_PAD_LEFT),
+                    'payment_date' => now(),
+                    'amount' => $totalAmount,
                 ],
                 'related_records' => $relatedDetails
             ]);
@@ -103,111 +90,134 @@ class PaymentController extends Controller
             Log::error('getPaymentByPerson error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'An error occurred while fetching person payment details.',
+                'message' => 'An error occurred.',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
 
-    public function downloadPdf(Request $request)
+    public function downloadPaymentPdf(string $type, int $id)
     {
         try {
-            $type = $request->query('type');
-            $id = $request->query('id');
 
-            $payment = Payment::with(['customer', 'guest', 'paymentMethod', 'paymentStatus'])->where("{$type}_id", $id)->first();
+            // Get payment based on selected person
+            $payment = Payment::where(function ($query) use ($type, $id) {
 
-            // Fetch related totals based on type safely
-            $roomBookings = ($type === 'guest') ? RoomBook::where('guest_id', $id)->get() : collect();
-            $hotelEvents = ($type === 'organizer') ? HotelEvent::where('organizer_id', $id)->get() : collect();
-            $restaurantEvents = ($type === 'organizer') ? RestaurantEvent::where('organizer_id', $id)->get() : collect();
-            $weddingEvents = ($type === 'organizer') ? WeddingEvent::where('organizer_id', $id)->get() : collect();
+                if ($type === 'guest') {
 
-            // Calculate Grand Total including total amounts from events/rooms
-            $totalAmountSum = $payment?->amount ?? 0;
-            $totalAmountSum += $roomBookings->sum('total_amount');
-            $totalAmountSum += $hotelEvents->sum('total_amount');
-            $totalAmountSum += $restaurantEvents->sum('total_amount');
-            $totalAmountSum += $weddingEvents->sum('total_amount');
+                    $query->where('guest_id', $id);
 
-            $data = compact('payment', 'type', 'roomBookings', 'hotelEvents', 'restaurantEvents', 'weddingEvents', 'totalAmountSum');
+                } elseif ($type === 'customer') {
 
-            return response()->json(['success' => true, 'total_calculated' => $totalAmountSum, 'data' => $data]);
+                    $query->where('customer_id', $id);
+
+                } elseif ($type === 'organizer') {
+
+                    $query->where('organizer_id', $id);
+
+                }
+
+            })
+                ->where('is_active', true)
+                ->latest()
+                ->first();
+
+
+            if (!$payment) {
+
+                return response()->json([
+                    'message' => 'Payment not found.'
+                ], 404);
+            }
+
+
+            // Get related records
+            $relatedRecords = $this->getRelatedRecords(
+                $type,
+                $id
+            );
+
+
+            // Generate PDF
+            $pdf = Pdf::loadView(
+                'reports.payment-report',
+                [
+                    'payment' => $payment,
+                    'relatedRecords' => $relatedRecords,
+                    'type' => $type,
+                    'personId' => $id
+                ]
+            );
+
+
+            return $pdf->download(
+                $type . '-payment-report.pdf'
+            );
+
         } catch (\Exception $e) {
-            Log::error('downloadPdf error: ' . $e->getMessage());
+
+            Log::error(
+                'Payment PDF generation failed: ' .
+                $e->getMessage()
+            );
+
+
             return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while generating PDF summary.'
+                'message' => 'Failed to generate payment PDF.',
+                'error' => $e->getMessage()
             ], 500);
         }
-    }
-    /**
+    }    /**
      * Store a newly created resource in storage.
      * @throws \Throwable
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'payment_method_id' => 'required',
-            'payment_status_id' => 'required',
-            'amount' => 'required',
-            'customer_id' => 'nullable',
-            'guest_id' => 'nullable',
-            'order_id' => 'nullable',
-            'hotel_event_id' => 'nullable',
-            'restaurant_event_id' => 'nullable',
-            'wedding_event_id' => 'nullable',
-            'room_book_id' => 'nullable',
-            'payment_date' => 'required',
-            'payment_type' => 'required',
-            'payment_note' => 'nullable',
-
+        $request->validate([
+            'payment_method_id' => 'required|exists:payment_methods,id',
+            'payment_status_id' => 'required|exists:payment_statuses,id',
+            'amount' => 'required|numeric',
+            'payment_type' => 'required|in:guest,customer,organizer',
         ]);
 
-
-        $nextId = Payment::max('id') + 1;
-        $payNo = 'PYK' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
-
-        DB::beginTransaction();
-
-        $currency_name = "LKR";
-
-        $currency_id = Currency::where('currency', $currency_name)->value('id');
-
-
         try {
+            $nextId = (Payment::max('id') ?? 0) + 1;
+            $paymentNo = 'PAY-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
             $payment = new Payment();
-            $payment->payment_no = $payNo;
-            $payment->payment_method_id = $validatedData['payment_method_id'];
-            $payment->payment_status_id = $validatedData['payment_status_id'];
-            $payment->amount = $validatedData['amount'];
-            $payment->customer_id = $validatedData['customer_id'] ?? null;
-            $payment->guest_id = $validatedData['guest_id'] ?? null;
-            $payment->order_id = $validatedData['order_id'] ?? null;
-            $payment->hotel_event_id = $validatedData['hotel_event_id'] ?? null;
-            $payment->restaurant_event_id = $validatedData['restaurant_event_id'] ?? null;
-            $payment->wedding_event_id = $validatedData['wedding_event_id'] ?? null;
-            $payment->room_book_id = $validatedData['room_book_id'] ?? null;
-            $payment->payment_date = $validatedData['payment_date'];
-            $payment->payment_type = $validatedData['payment_type'];
-            $payment->currency_id = $currency_id;
-            $payment->payment_note = $validatedData['payment_note'] ?? null;
+            $payment->payment_no = $paymentNo;
+            $payment->payment_date = now();
+            $payment->amount = $request->amount;
+            $payment->payment_method_id = $request->payment_method_id;
+            $payment->payment_status_id = $request->payment_status_id;
+            $payment->payment_type = $request->payment_type;
 
-            // Save the payment
+            if ($request->payment_type === 'guest') {
+                $payment->guest_id = $request->guest_id;
+            } elseif ($request->payment_type === 'customer') {
+                $payment->customer_id = $request->customer_id;
+            } elseif ($request->payment_type === 'organizer') {
+                $payment->organizer_id = $request->organizer_id;
+            }
+
+            $payment->is_active = true;
             $payment->save();
 
-            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment created successfully.',
+                'data' => $payment
+            ], 201);
 
-            return response()->json($payment, 201);
         } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while creating payment.'], 500);
+            Log::error('Payment store error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error saving payment.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
-
-
     /**
      * Display the specified resource.
      */

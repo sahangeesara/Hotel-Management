@@ -16,6 +16,7 @@ import {HotelService} from "../../../../services/hotel.service";
 import {SearchService} from "../../../../services/search.service";
 import {NgForOf, NgIf} from "@angular/common";
 import {AuthService} from "../../../../services/auth.service";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-package',
@@ -54,6 +55,7 @@ export class PackageComponent implements OnInit {
   isCanModify: boolean = true;
   isUpdate: boolean = true;
   isSubmit: boolean = false;
+
   constructor(
     private hotelServes: HotelService,
     private authService: AuthService,
@@ -62,7 +64,7 @@ export class PackageComponent implements OnInit {
     this.packageForm = this.fb.group({
       id: [''],
       description: ['', [Validators.required]],
-      name: ['',[Validators.required]],
+      name: ['', [Validators.required]],
       package_type_id: ['', [Validators.required]],
       package_amount: ['', [Validators.required]],
       package_no: [{value: '', disabled: true}],
@@ -105,16 +107,30 @@ export class PackageComponent implements OnInit {
 
   onSubmit() {
     if (this.packageForm.valid) {
-      this.packageData = this.packageForm.getRawValue();
+      Swal.fire({
+        title: 'Create Package?',
+        text: "Do you want to save this new package record?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, create it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.packageData = this.packageForm.getRawValue();
 
-      this.hotelServes.submitPackage(this.packageData).subscribe({
-        next: (data) => {
-          this.getPackage();
-          this.clearForm();
-          this.showAlert('Package created successfully!', 'success');
-        },
-        error: (error) => {
-          this.handleError(error);
+          this.hotelServes.submitPackage(this.packageData).subscribe({
+            next: (data) => {
+              this.getPackage();
+              this.clearForm();
+              this.isUpdate = true;
+              this.isSubmit = false;
+              this.showAlert('Package created successfully!', 'success');
+            },
+            error: (error) => {
+              this.handleError(error);
+            }
+          });
         }
       });
     } else {
@@ -126,7 +142,6 @@ export class PackageComponent implements OnInit {
   handleError(error: any) {
     console.error('Backend Error:', error);
 
-    // Safely parse Laravel 10 validation or exception payloads
     if (error?.error?.errors) {
       const firstKey = Object.keys(error.error.errors)[0];
       this.error = error.error.errors[firstKey][0];
@@ -144,34 +159,62 @@ export class PackageComponent implements OnInit {
   clearForm() {
     this.packageForm.reset();
     this.isEditMode = false;
+    this.isUpdate = true;
+    this.isSubmit = false;
   }
 
   ngOnInit() {
     const role = this.authService.getUserRole();
 
-    // Restrict editing capabilities if the role is Receptionist (or read-only roles)
     if (role === 'Receptionist') {
       this.isCanModify = false;
     }
 
     this.getPackage();
     this.getPackageType();
-
-
   }
 
   updatePackage() {
     if (this.packageForm.valid) {
-      this.packageData = this.packageForm.getRawValue();
+      Swal.fire({
+        title: 'Update Package?',
+        text: "Do you want to update this package's details?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, update it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.packageData = this.packageForm.getRawValue();
 
-      this.hotelServes.updateHotel(this.packageData, this.packageData.id).subscribe({
-        next: (response) => {
-          this.getPackage();
-          this.clearForm();
-          this.showAlert('Package updated successfully!', 'success');
-        },
-        error: (error) => {
-          this.handleError(error);
+          this.hotelServes.updateHotel(this.packageData, this.packageData.id).subscribe({
+            next: (response: any) => {
+              this.getPackage();
+              this.clearForm();
+              this.isUpdate = true;
+              this.isSubmit = false;
+
+              const updatedFields: string[] = [];
+              Object.keys(this.packageForm.controls).forEach(key => {
+                const control = this.packageForm.get(key);
+                if (control && control.dirty) {
+                  const formattedName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                  updatedFields.push(formattedName);
+                }
+              });
+
+              const packageName = response?.name || this.packageData.name || 'Package';
+              if (updatedFields.length > 0) {
+                this.showAlert(`Package "${packageName}" updated successfully. Updated fields: ${updatedFields.join(', ')}`, 'success');
+              } else {
+                this.showAlert(`Package "${packageName}" updated successfully.`, 'success');
+              }
+            },
+            error: (error) => {
+              this.handleError(error);
+            }
+          });
         }
       });
     } else {
@@ -183,8 +226,8 @@ export class PackageComponent implements OnInit {
   getPackageById(id: any) {
     this.hotelServes.getPackageById(id).subscribe({
       next: (Package: any) => {
-        this.isUpdate =false;
-        this.isSubmit =true;
+        this.isUpdate = false;
+        this.isSubmit = true;
         this.packageForm.patchValue({
           id: Package.id,
           package_no: Package.package_no,
@@ -203,13 +246,27 @@ export class PackageComponent implements OnInit {
   }
 
   deletePackage(id: any) {
-    this.hotelServes.deletePackage(id).subscribe({
-      next: (data: any) => {
-        this.getPackage();
-        this.showAlert('Package deleted successfully!', 'success');
-      },
-      error: (error) => {
-        this.handleError(error);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this package deletion!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.hotelServes.deletePackage(id).subscribe({
+          next: (data: any) => {
+            this.isUpdate = true;
+            this.isSubmit = false;
+            this.getPackage();
+            this.showAlert('Package deleted successfully!', 'success');
+          },
+          error: (error) => {
+            this.handleError(error);
+          }
+        });
       }
     });
   }

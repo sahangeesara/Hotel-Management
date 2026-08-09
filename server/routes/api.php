@@ -26,6 +26,7 @@ use App\Http\Controllers\api\OrganizerDetailsController;
 use App\Http\Controllers\api\PackageController;
 use App\Http\Controllers\api\PackageTypeController;
 use App\Http\Controllers\api\PaymentController;
+use App\Http\Controllers\api\PaymentMethodController;
 use App\Http\Controllers\api\PaymentStatusController;
 use App\Http\Controllers\api\ProvincesController;
 use App\Http\Controllers\api\ReportController;
@@ -143,10 +144,10 @@ Route::middleware(['auth:api', 'role:Admin,Receptionist,Manager'])->group(functi
         'durations' => DurationController::class,
         'payments' => PaymentController::class,
         'paymentStatus' => PaymentStatusController::class,
-        'paymentMethods' => PaymentStatusController::class,
+        'paymentMethods' => PaymentMethodController::class,
         ]);
 
-
+    Route::patch('/orderStatusUpdate/{order}', [OrderController::class, 'updateStatus']);
     Route::get('countCustomer', [DashboardController::class, 'countCustomer']);
     Route::get('countGuest', [DashboardController::class, 'countGuest']);
     Route::get('countOrder', [DashboardController::class, 'countOrder']);
@@ -165,9 +166,11 @@ Route::middleware(['auth:api', 'role:Admin,Receptionist,Manager'])->group(functi
     Route::get('/room/search', [RoomsController::class, 'searchRoom']);
     Route::get('/roomBook/search', [RoomBookController::class, 'searchRoomBook']);
 
-    Route::get('/payments/download-pdf', [PaymentController::class, 'downloadPdf']);
-    Route::get('/payments/paymentByPerson', [PaymentController::class, 'getPaymentByPerson']);
-
+    Route::get(
+        '/payments/{type}/{id}/pdf',
+        [PaymentController::class, 'downloadPaymentPdf']
+    );
+    Route::get('/payments/paymentByPerson/{type}/{id}', [PaymentController::class, 'getPaymentByPerson']);
 });
 
 Route::middleware(['auth:api', 'role:Admin,User,Receptionist'])->group(function () {

@@ -21,9 +21,11 @@
                 placeholder="Enter Nic"
 
               />
-              <div *ngIf="organizerForm.get('nic')?.invalid && organizerForm.get('nic')?.touched" class="invalid-feedback">
-                Nic is required
-              </div>
+              @if (organizerForm.get('nic')?.invalid && organizerForm.get('nic')?.touched) {
+                @if (organizerForm.get('nic')?.errors?.['required']) {
+                  <span style="color:red">Food nic is required.</span>
+                }
+              }
             </div>
           </c-col>
           <!-- Name -->
@@ -38,9 +40,11 @@
                 formControlName="name"
                 placeholder="Enter name"
               />
-              <div *ngIf="organizerForm.get('name')?.invalid && organizerForm.get('name')?.touched" class="invalid-feedback">
-                Name is required.
-              </div>
+              @if (organizerForm.get('name')?.invalid && organizerForm.get('name')?.touched) {
+                @if (organizerForm.get('name')?.errors?.['required']) {
+                  <span style="color:red">Food name is required.</span>
+                }
+              }
             </div>
           </c-col>
           <c-col [xs]="6">
@@ -55,9 +59,11 @@
                 formControlName="email"
                 placeholder="Enter email"
               />
-              <div *ngIf="organizerForm.get('email')?.invalid && organizerForm.get('email')?.touched" class="invalid-feedback">
-                Enter a valid email address.
-              </div>
+              @if (organizerForm.get('email')?.invalid && organizerForm.get('email')?.touched) {
+                @if (organizerForm.get('email')?.errors?.['required']) {
+                  <span style="color:red">Food email is required.</span>
+                }
+              }
             </div>
           </c-col>
           <c-col [xs]="6">
@@ -72,6 +78,11 @@
                 </option>
               </select>
             </div>
+            @if (organizerForm.get('gender_id')?.invalid && organizerForm.get('gender_id')?.touched) {
+              @if (organizerForm.get('gender_id')?.errors?.['required']) {
+                <span style="color:red">Organizer Gender is required.</span>
+              }
+            }
           </c-col>
           <c-col [xs]="6">
             <!-- Phone Number -->
@@ -86,9 +97,11 @@
                 placeholder="Enter Phone Number"
 
               />
-              <div *ngIf="organizerForm.get('phone')?.invalid && organizerForm.get('phone')?.touched" class="invalid-feedback">
-                Phone Number is required
-              </div>
+            @if (organizerForm.get('phone')?.invalid && organizerForm.get('phone')?.touched) {
+              @if (organizerForm.get('phone')?.errors?.['required']) {
+                <span style="color:red">Organizer Phone Number is required.</span>
+              }
+            }
             </div>
           </c-col>
           <c-col [xs]="6">
@@ -104,9 +117,11 @@
                 placeholder="Enter Address"
 
               />
-              <div *ngIf="organizerForm.get('address')?.invalid && organizerForm.get('address')?.touched" class="invalid-feedback">
-                Address is required
-              </div>
+              @if (organizerForm.get('address')?.invalid && organizerForm.get('address')?.touched) {
+                @if (organizerForm.get('address')?.errors?.['required']) {
+                  <span style="color:red">Organizer Address is required.</span>
+                }
+              }
             </div>
           </c-col>
         </c-row>

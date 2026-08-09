@@ -14,6 +14,7 @@ import {AllServiceService} from "../../../../../services/all-service.service";
 import {SearchService} from "../../../../../services/search.service";
 import {IconDirective} from "@coreui/icons-angular";
 import {EventService} from "../../../../../services/event.service";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-organizer',
@@ -117,29 +118,53 @@ export class OrganizerComponent implements OnInit {
   }
 
   organizerDelete(id: any) {
-    this.eventServe.deleteOrganizer(id).subscribe({
-      next: (data: any) => {
-        this.getOrganizer();
-        this.clearForm();
-        this.showAlert('Organizer deleted successfully!', 'success');
-      },
-      error: (error) => {
-        this.handleError(error);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this organizer deletion!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.eventServe.deleteOrganizer(id).subscribe({
+          next: (data: any) => {
+            this.getOrganizer();
+            this.clearForm();
+            this.showAlert('Organizer deleted successfully!', 'success');
+          },
+          error: (error) => {
+            this.handleError(error);
+          }
+        });
       }
     });
   }
 
   onSubmit() {
     if (this.organizerForm.valid) {
-      this.organizerData = this.organizerForm.getRawValue();
-      this.eventServe.submitOrganizer(this.organizerData).subscribe({
-        next: (response) => {
-          this.getOrganizer();
-          this.clearForm();
-          this.showAlert('Organizer registered successfully!', 'success');
-        },
-        error: (error) => {
-          this.handleError(error);
+      Swal.fire({
+        title: 'Register Organizer?',
+        text: "Do you want to save this new organizer record?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, register!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.organizerData = this.organizerForm.getRawValue();
+          this.eventServe.submitOrganizer(this.organizerData).subscribe({
+            next: (response) => {
+              this.getOrganizer();
+              this.clearForm();
+              this.showAlert('Organizer registered successfully!', 'success');
+            },
+            error: (error) => {
+              this.handleError(error);
+            }
+          });
         }
       });
     } else {
@@ -150,15 +175,42 @@ export class OrganizerComponent implements OnInit {
 
   organizerUpdate() {
     if (this.organizerForm.valid) {
-      this.organizerData = this.organizerForm.getRawValue();
-      this.eventServe.updateOrganizer(this.organizerData, this.organizerData.id).subscribe({
-        next: (response) => {
-          this.getOrganizer();
-          this.clearForm();
-          this.showAlert('Organizer updated successfully!', 'success');
-        },
-        error: (error) => {
-          this.handleError(error);
+      Swal.fire({
+        title: 'Update Organizer?',
+        text: "Do you want to update this organizer's details?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, update it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.organizerData = this.organizerForm.getRawValue();
+          this.eventServe.updateOrganizer(this.organizerData, this.organizerData.id).subscribe({
+            next: (response: any) => {
+              this.getOrganizer();
+              this.clearForm();
+
+              const updatedFields: string[] = [];
+              Object.keys(this.organizerForm.controls).forEach(key => {
+                const control = this.organizerForm.get(key);
+                if (control && control.dirty) {
+                  const formattedName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                  updatedFields.push(formattedName);
+                }
+              });
+
+              const organizerName = response?.name || this.organizerData.name || 'Organizer';
+              if (updatedFields.length > 0) {
+                this.showAlert(`Organizer "${organizerName}" updated successfully. Updated fields: ${updatedFields.join(', ')}`, 'success');
+              } else {
+                this.showAlert(`Organizer "${organizerName}" updated successfully.`, 'success');
+              }
+            },
+            error: (error) => {
+              this.handleError(error);
+            }
+          });
         }
       });
     } else {
@@ -213,7 +265,6 @@ export class OrganizerComponent implements OnInit {
   handleError(error: any) {
     console.error('Backend Error:', error);
 
-    // Safely parse Laravel 10 validation or exception payloads
     if (error?.error?.errors) {
       const firstKey = Object.keys(error.error.errors)[0];
       this.error = error.error.errors[firstKey][0];

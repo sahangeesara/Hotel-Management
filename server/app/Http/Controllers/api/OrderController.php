@@ -22,7 +22,7 @@ class OrderController extends Controller
     public function index()
     {
         try {
-            $orders = Order::with(['room','guest','orderStatus','OrderItems.order'])
+            $orders = Order::with(['room','customer','orderStatus','OrderItems.order'])
                 ->where('is_active',1)
                 ->orderBy('created_at',"DESC")
                 ->get();
@@ -47,7 +47,7 @@ class OrderController extends Controller
 
         $validator = Validator::make($data, [
             'r_id' => 'nullable|exists:rooms,id',
-            'guest_id' => 'required|exists:guests,id',
+            'customer_id' => 'required|exists:customers,id',
             'order_date' => 'required|date',
             'order_amount' => 'required|numeric',
             'order_status_id' => 'required|exists:order_statuses,id',
@@ -76,7 +76,7 @@ class OrderController extends Controller
                 ], 404);
             }
 
-            if ($food->quantity < $item['quantity']) {
+            if ($food->quantity > 0  &&$food->quantity < $item['quantity'] ) {
                 return response()->json([
                     'message' => $food->name . ' stock is not available.'
                 ], 422);
@@ -94,7 +94,7 @@ class OrderController extends Controller
             $order = new Order();
             $order->order_no = $orderNo;
             $order->r_id = $data['r_id'] ?? null;
-            $order->guest_id = $data['guest_id'];
+            $order->customer_id = $data['customer_id'];
             $order->order_date = $data['order_date'];
             $order->order_amount = $data['order_amount'];
             $order->order_status_id = $data['order_status_id'];
@@ -120,7 +120,7 @@ class OrderController extends Controller
 
             return response()->json([
                 'message' => 'Order created successfully.',
-                'order' => Order::with('room', 'guest', 'orderStatus')
+                'order' => Order::with('room', 'customer', 'orderStatus')
                     ->find($order->id)
             ], 201);
 
@@ -137,13 +137,36 @@ class OrderController extends Controller
         }
     }
 
+
+    public function updateStatus(Request $request, Order $order)
+    {
+        $request->validate([
+            'order_status_id' => 'required|exists:order_statuses,id',
+            'is_active' => 'nullable|boolean'
+        ]);
+
+        $order->order_status_id = $request->order_status_id;
+
+        // Update active status if provided in request
+        if ($request->has('is_active')) {
+            $order->is_active = $request->is_active;
+        }
+
+        $order->save();
+
+        return response()->json([
+            'message' => 'Order status updated successfully.',
+            'order' => $order->load('orderStatus')
+        ]);
+    }
+
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
         try {
-            $orders = Order::with('room','guest','orderStatus')
+            $orders = Order::with('room','customer','orderStatus')
                             ->findOrFail($id);
             return response()->json($orders);
         } catch (\Exception $e) {
@@ -164,10 +187,10 @@ class OrderController extends Controller
 
         $validatedData = Validator::make($data, [
             'r_id' => '',
-            'guest_id' => 'required',
+            'customer_id' => 'required',
             'order_date' => 'required',
             'order_amount' => 'required',
-            'oder_status_id' => 'required',
+            'order_status_id' => 'required',
         ]);
         if ($validatedData->fails()) {
             return response()->json($validatedData->errors());
@@ -190,7 +213,7 @@ class OrderController extends Controller
             if($orderDate->equalTo($today)) {
                 $order =Order::findOrFail($id);
                 $order->r_id = $data['r_id'] ?? null;
-                $order->guest_id = $data['guest_id'];
+                $order->customer_id = $data['customer_id'];
                 $order->order_date = $data['order_date'];
                 $order->order_amount = $data['order_amount'];
                 $order->order_status_id = $data['oder_status_id'];

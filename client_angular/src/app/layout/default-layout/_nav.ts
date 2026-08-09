@@ -127,7 +127,7 @@ export const navItems: INavData[] = [
   {
     name: 'package',
     url: '/package',
-    iconComponent: { name: 'cil-spreadsheet' },
+    iconComponent: { name: 'cil-layers' },
     children: [
       {
         name: 'Package View',
@@ -148,7 +148,7 @@ export const navItems: INavData[] = [
   {
     name: 'Order',
     url: '/order',
-    iconComponent: { name: 'cil-bell' },
+    iconComponent: { name: 'cil-basket' },
     children: [
       {
         name: 'Order Add',
@@ -165,7 +165,7 @@ export const navItems: INavData[] = [
   {
     name: 'Food',
     url: '/food',
-    iconComponent: { name: 'cil-bell' },
+    iconComponent: { name: 'cil-tags' },
     children: [
       {
         name: 'Food Add',
@@ -198,7 +198,7 @@ export const navItems: INavData[] = [
   {
     name: 'Payment Details',
     url: '/payments',
-    iconComponent: { name: 'cil-location-pin' },
+    iconComponent: { name: 'cil-tags' },
     children: [
       {
         name: 'Payment view',
