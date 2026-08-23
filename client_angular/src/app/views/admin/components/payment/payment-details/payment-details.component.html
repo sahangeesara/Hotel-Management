@@ -38,7 +38,7 @@
         <!-- Payment Method -->
         <c-col md="4" class="mb-3">
           <label cLabel for="payment_method_id">Payment Method</label>
-          <select cSelect id="payment_method_id" formControlName="payment_method_id">
+          <select cSelect id="payment_method_id" formControlName="payment_method_id" (change)="seletMethod($event)">
             <option value="">Select Payment Method</option>
             <option *ngFor="let method of paymentMethods" [value]="method.id">{{ method.name }}</option>
           </select>
@@ -56,7 +56,12 @@
         <!-- Amount -->
         <c-col md="4" class="mb-3">
           <label cLabel for="amount">Amount</label>
-          <input cFormControl type="number" id="amount" formControlName="amount" placeholder="Enter Amount" />
+          <input cFormControl type="number" id="amount" formControlName="amount" placeholder="Enter Amount" readonly/>
+        </c-col>
+
+        <c-col md="4" class="mb-3">
+          <label cLabel for="discount">Discount</label>
+          <input cFormControl type="number" id="discount" formControlName="discount" placeholder="Enter Discount"  readonly/>
         </c-col>
       </c-row>
 
@@ -92,7 +97,7 @@
       </div>
       <div class="col-md-4 mb-3">
         <label class="form-label text-muted">Calculated Amount</label>
-        <div class="form-control text-success fw-bold">{{ payment.amount }}</div>
+        <div class="form-control text-success fw-bold" >{{ payment.amount }}</div>
       </div>
     </div>
 

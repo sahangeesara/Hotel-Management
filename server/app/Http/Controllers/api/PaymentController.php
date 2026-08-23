@@ -177,6 +177,7 @@ class PaymentController extends Controller
             'payment_method_id' => 'required|exists:payment_methods,id',
             'payment_status_id' => 'required|exists:payment_statuses,id',
             'amount' => 'required|numeric',
+            'discount' => 'required|numeric',
             'payment_type' => 'required|in:guest,customer,organizer',
         ]);
 
@@ -188,6 +189,7 @@ class PaymentController extends Controller
             $payment->payment_no = $paymentNo;
             $payment->payment_date = now();
             $payment->amount = $request->amount;
+            $payment->discount = $request->discount;
             $payment->payment_method_id = $request->payment_method_id;
             $payment->payment_status_id = $request->payment_status_id;
             $payment->payment_type = $request->payment_type;
@@ -244,6 +246,7 @@ class PaymentController extends Controller
             'payment_method_id'   => 'required',
             'payment_status_id'   => 'required',
             'amount'              => 'required',
+            'discount'              => 'required',
             'customer_id'         => 'nullable',
             'guest_id'            => 'nullable',
             'order_id'            => 'nullable',

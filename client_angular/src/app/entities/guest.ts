@@ -9,6 +9,7 @@ export class Guest{
   email?:any;
   city?:string;
   nic?:string;
+  foreign_nic?:string;
   tel_no?:string;
   guest_type?:string;
   gender_id?:Gender;

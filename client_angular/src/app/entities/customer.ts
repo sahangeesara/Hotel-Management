@@ -8,6 +8,7 @@ export class Customer{
   address?:any;
   city?:string;
   nic?:string;
+  foreign_nic?:string;
   tel_no?:string;
   custom_type?:string;
   gender_id?:Gender;

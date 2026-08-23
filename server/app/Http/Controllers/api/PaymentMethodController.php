@@ -39,7 +39,16 @@ class PaymentMethodController extends Controller
      */
     public function show(string $id)
     {
-        //
+     info($id);
+        try {
+            $paymentMethods = PaymentMethod::with('payment')
+                ->findOrFail($id);
+            return response()->json($paymentMethods);
+
+        } catch (\Exception $e) {
+            // Log the error and return an appropriate response
+            \Illuminate\Support\Facades\Log::error($e->getMessage());
+        }
     }
 
     /**

@@ -47,6 +47,10 @@ export class PaymentService {
     return this.http.get(`${this.besUrl}/paymentMethods`, this.getAuthHeaders());
   }
 
+  paymentMethodById(data:any) {
+    return this.http.get(`${this.besUrl}/paymentMethods/` + data, this.getAuthHeaders());
+  }
+
   paymentStatus() {
     return this.http.get(`${this.besUrl}/paymentStatus`, this.getAuthHeaders());
   }

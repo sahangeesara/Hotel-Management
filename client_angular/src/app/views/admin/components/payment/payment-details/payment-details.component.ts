@@ -33,7 +33,6 @@ import Swal from 'sweetalert2';
   standalone: true,
 
   imports: [
-    AlertComponent,
     FormLabelDirective,
     FormSelectDirective,
     NgForOf,
@@ -56,7 +55,7 @@ import Swal from 'sweetalert2';
 export class PaymentDetailsComponent implements OnInit {
 
   @Input() payment: Payment | null = null;
-
+  discount =10;
   // Related Records
   relatedRecords: any = {
     room_bookings: [],
@@ -75,6 +74,7 @@ export class PaymentDetailsComponent implements OnInit {
   weddingEvents: any[] = [];
 
   paymentMethods: any[] = [];
+  paymentMethod: any[] =[];
   paymentStatus: any[] = [];
 
   customers: any[] = [];
@@ -91,7 +91,9 @@ export class PaymentDetailsComponent implements OnInit {
   public error: any = null;
   alertMessage: string = '';
   alertColor: string = 'success';
-
+  method ='';
+  discount_amount: number = 0;
+  totalAmount: number = 0;
   constructor(
     private paymentService: PaymentService,
     private service: AllServiceService,
@@ -111,7 +113,8 @@ export class PaymentDetailsComponent implements OnInit {
       wedding_event_id: [''],
       payment_method_id: [''],
       payment_status_id: [''],
-      amount: ['']
+      amount: [''],
+      discount: ['']
     });
   }
 
@@ -148,6 +151,42 @@ export class PaymentDetailsComponent implements OnInit {
       return response.data;
     }
     return [];
+  }
+
+  seletMethod(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    if (!target || !target.value) {
+      this.paymentForm.patchValue({ payment_method_id: '' });
+      return;
+    }
+
+    const methodId = Number(target.value);
+    this.paymentService.paymentMethodById(methodId).subscribe({
+      next: (response:any) => {
+        this.paymentMethod = response;
+        this.method = response.name;
+        console.log(this.method)
+        if(this.method ==="Cash"){
+          const amount =this.paymentForm.get('amount')?.value;
+          const val =Number(amount);
+          this.discount_amount= val *10/100;
+          console.log(this.discount_amount);
+          this.totalAmount= val -this.discount_amount;
+
+          this.paymentForm.patchValue({
+            discount:this.discount_amount,
+            amount: this.totalAmount
+          });
+          console.log(this.discount_amount);
+          console.log(this.totalAmount);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading method:', error);
+        this.orderData = [];
+      }
+      }
+    )
   }
 
   onPersonChange(
@@ -203,15 +242,19 @@ export class PaymentDetailsComponent implements OnInit {
             wedding_events: Array.isArray(records?.wedding_events) ? records.wedding_events : []
           };
 
+
           if (
             response?.data &&
             response.data.amount !== null &&
             response.data.amount !== undefined
           ) {
             this.paymentForm.patchValue({
-              amount: response.data.amount
+              // discount:this.discount_amount,
+              amount: response.data.amount,
             });
           }
+
+
         },
         error: (error) => {
           console.error('Error fetching payment details:', error);
