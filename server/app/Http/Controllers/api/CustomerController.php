@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
+use App\Http\Requests\StoreCustomerRequest;
+use App\Http\Requests\UpdateCustomerRequest;
+
 
 class CustomerController extends Controller
 {
@@ -37,28 +39,10 @@ class CustomerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCustomerRequest  $request)
     {
 
-        $data = $request->all(); // Decode JSON data from request
-
-        // Validate request data
-        $validatedData = Validator::make($data, [
-            'name' => 'required',
-            'address' => 'required',
-            'city' => 'required',
-            'nic' => 'nullable|unique:customers',
-            'foreign_nic' => 'nullable|unique:customers',
-            'email' => 'required|email',
-            'tel_no' => 'required',
-            'gender_id' => 'required',
-            'country_id' => 'required',
-            'cuntry_code_id' => 'required',
-        ]);
-
-        if ($validatedData->fails()) {
-            return response()->json($validatedData->errors());
-        }
+        $data = $request->validated();
 
         $nextId = Customer::max('id') + 1; // Get the next available ID
         $cNo = 'CN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'custom_no'
@@ -144,7 +128,7 @@ class CustomerController extends Controller
      * Update the specified resource in storage.
      * @throws \Throwable
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCustomerRequest $request, $id)
     {
         $customer = Customer::findOrFail($id);
 
@@ -154,27 +138,7 @@ class CustomerController extends Controller
             ], 404);
         }
 
-        $validatedData = $request->validate([
-            'name' => 'required',
-            'address' => 'required',
-            'city' => 'required',
-            'nic' => [
-                'nullable',
-                Rule::unique('customers', 'nic')->ignore($customer->id),
-            ],
-            'email' => [
-                'required',
-                'email',
-                Rule::unique('customers', 'email')->ignore($customer->id),
-            ],
-            'tel_no' => 'required',
-            'foreign_nic' => 'nullable|unique:customers',
-            'gender_id' => 'required',
-            'country_id' => 'required',
-            'cuntry_code_id' => 'required',
-            'custom_no' => '',
-            'custom_type' => 'nullable',
-        ]);
+        $validatedData = $request->validated();
 
         DB::beginTransaction();
 

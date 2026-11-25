@@ -10,8 +10,10 @@ use App\Models\Guides;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 use function Illuminate\Events\queueable;
+use App\Http\Requests\StoreGuestRequest;
+use App\Http\Requests\UpdateGuestRequest;
+
 
 class GuestController extends Controller
 {
@@ -44,122 +46,106 @@ class GuestController extends Controller
      * Store a newly created resource in storage.
      * @throws \Throwable
      */
-    public function store(Request $request)
-    {
-        $data = json_decode($request->form, true);
-        $details = json_decode($request->guestDetails, true);
+  public function store(StoreGuestRequest $request)
+{
+    $validatedData = $request->validated();
 
+    $details = $validatedData['guestDetails'] ?? [];
 
-        // Validate request data
-        $validatedData = Validator::make($data, [
-            'name' => 'required|max:255',
-            'address' => '',
-            'email' => 'required|email',
-            'city' => 'required',
-            'nic' => '',
-            'foreign_nic' => '',
-            'guide_id' => '', // Allow empty guide_id
-            'tel_no' => 'required',
-            'gender_id' => 'required',
-            'country_id' => 'required',
-            'cuntry_code_id' => 'required',
-            'guest_type' => 'required',
-            'adults' => 'required',
-            'children' => '',
-            'infants' => '',
-        ]);
+    unset(
+        $validatedData['guestDetails'],
+        $validatedData['_form_json_valid'],
+        $validatedData['_details_json_valid']
+    );
 
-        if ($validatedData->fails()) {
-            return response()->json($validatedData->errors());
+    $data = $validatedData;
+
+    $nextId = Guest::max('id') + 1;
+
+    $rNo = 'GSN' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+
+    DB::beginTransaction();
+
+    try {
+
+        // Create Guest
+        $guest = new Guest();
+
+        $guest->name = $data['name'];
+        $guest->address = $data['address'] ?? null;
+        $guest->email = $data['email'];
+        $guest->city = $data['city'];
+        $guest->nic = $data['nic'] ?? null;
+        $guest->foreign_nic = $data['foreign_nic'] ?? null;
+        $guest->tel_no = $data['tel_no'];
+        $guest->guide_id = $data['guide_id'] ?? null;
+        $guest->gender_id = $data['gender_id'];
+        $guest->country_id = $data['country_id'];
+        $guest->cuntry_code_id = $data['cuntry_code_id'];
+        $guest->guest_type = $data['guest_type'];
+        $guest->guest_no = $rNo;
+
+        $guest->save();
+
+        // Save Guest Counts
+        $adults = (int) ($data['adults'] ?? 0);
+        $children = (int) ($data['children'] ?? 0);
+        $infants = (int) ($data['infants'] ?? 0);
+
+        $guestcount = new BookingGuestCounts();
+
+        $guestcount->guest_id = $guest->id;
+        $guestcount->adults = $adults;
+        $guestcount->children = $children;
+        $guestcount->infants = $infants;
+        $guestcount->total_amount = $adults + $children + $infants;
+
+        $guestcount->save();
+
+        // Save Guest Dependent Details
+        if (!empty($details)) {
+
+            foreach ($details as $item) {
+
+                $guestDetails = new GuestDependentDetail();
+
+                $guestDetails->guest_id = $guest->id;
+                $guestDetails->dependent_name = $item['dependent_name'];
+                $guestDetails->dependent_relationship = $item['dependent_relationship'];
+                $guestDetails->age = $item['age'];
+                $guestDetails->dependent_id = $item['dependent_id'] ?? null;
+
+                $guestDetails->save();
+            }
         }
-        $existingNic='';
 
-            if ($data['nic']) {
-                $existingNic = Guest::where('nic', $data['nic'])
-                    ->first();
-            }
+        // Update Guide Status
+        if (!empty($guest->guide_id)) {
 
+            $guides = Guides::findOrFail($guest->guide_id);
 
+            $guides->guide_status = "Assign";
 
-        // If the booking exists, return an error message or handle the situation as needed
-        if ($existingNic) {  return response()->json(['error' => 'Nic already exists.']); }
-
-        if ($data['guide_id'] != null) {
-            // Check for existing booking with the same guide_id
-            $existingGuide = Guest::where('guide_id', $data['guide_id'])
-                ->where('is_active', true)
-                ->first();
-
-            if ($existingGuide) {
-                return response()->json(['error' => 'Guide already exists.']);
-            }
+            $guides->save();
         }
 
-        $nextId = Guest::max('id') + 1; // Get the next available ID
-        $rNo = 'GSN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
+        DB::commit();
 
-        DB::beginTransaction();
+        return response()->json([
+            'message' => 'Successfully submitted.',
+            'guest' => $guest
+        ], 201);
 
-        try {
+    } catch (\Exception $e) {
 
+        DB::rollBack();
 
-            $guest = new Guest();
-            $guest->name = $data['name'];
-            $guest->address = $data['address'];
-            $guest->email = $data['email'];
-            $guest->city = $data['city'];
-            $guest->nic = !empty($data['nic']) ? $data['nic'] : null;
-            $guest->foreign_nic = !empty($data['foreign_nic']) ? $data['foreign_nic'] : null;
-            $guest->tel_no = $data['tel_no'];
-            // Set guide_id to null if empty
-            $guest->guide_id = empty($data['guide_id']) ? null : $data['guide_id'];
-            $guest->gender_id = $data['gender_id'];
-            $guest->country_id = $data['country_id'];
-            $guest->cuntry_code_id = $data['cuntry_code_id'];
-            $guest->guest_type = $data['guest_type'];
-            $guest->guest_no = $rNo;
-
-            $guest->save();
-
-            $adults = (int) ($data['adults'] ?? 0);
-            $children = (int) ($data['children'] ?? 0);
-            $infants = (int) ($data['infants'] ?? 0);
-
-            $guestcount = new BookingGuestCounts();
-            $guestcount->guest_id = $guest->id;
-            $guestcount->adults = $adults;
-            $guestcount->children = $children;
-            $guestcount->infants = $infants;
-            $guestcount->total_amount = $adults + $children + $infants;
-
-            $guestcount->save();
-
-            if (!empty($details)) {
-                foreach ($details as $item) {
-                    $guestDetails = new GuestDependentDetail();
-                    $guestDetails->guest_id = $guest->id;
-                    $guestDetails->dependent_name = $item['dependent_name'];
-                    $guestDetails->dependent_relationship = $item['dependent_relationship'];
-                    $guestDetails->age = $item['age'];
-                    $guestDetails->dependent_id = $item['dependent_id'];
-                    $guestDetails->save();
-                }
-            }
-
-            if (!empty($guest->guide_id)) {
-                $guides = Guides::findOrFail($guest->guide_id);
-                $guides->guide_status = "Assign";
-                $guides->save();
-            }
-
-            DB::commit();
-
-            return response()->json(['message' => 'Successfully submitted.', 'guest' => $guest]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json(['error' => 'An error occurred while processing the request.', 'exception' => $e->getMessage()]);
-        }
+        return response()->json([
+            'error' => 'An error occurred while processing the request.',
+            'exception' => $e->getMessage()
+        ], 500);
     }
+}
 
     /**
      * Display the specified resource.
@@ -246,125 +232,118 @@ class GuestController extends Controller
      * Update the specified resource in storage.
      * @throws \Throwable
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateGuestRequest $request, string $id)
     {
+    $guest = Guest::findOrFail($id);
 
-        $data = json_decode($request->form, true);
-        $details = json_decode($request->guestDetails, true);
+    $validatedData = $request->validated();
 
-        $validatedData = Validator::make($data, [
+    $details = $validatedData['guestDetails'] ?? [];
 
-            'name' => 'required|max:255',
-            'address' => '',
-            'guest_no' => '',
-            'email' => 'required|email',
-            'city' => 'required',
-            'nic' => '',
-            'foreign_nic' => '',
-            'tel_no' => 'required',
-            'gender_id' => 'required',
-            'country_id' => 'required',
-            'cuntry_code_id' => 'required',
-            'guide_id' => '',
-            'guest_type' => 'required',
-            'guide_status' => '',
-            'adults' => 'required',
-            'children' => '',
-            'infants' => '',
-        ]);
-        if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
+    unset(
+        $validatedData['guestDetails'],
+        $validatedData['_form_json_valid'],
+        $validatedData['_details_json_valid']
+    );
 
-        if($data['nic']) {
-            $existingNic = Guest::where('nic', $data['nic'])
-                ->where('id', '<>', $id) // Exclude the current guest's ID
-                ->first();
+    $data = $validatedData;
 
-            if ($existingNic) {
-                return response()->json(['error' => 'Nic already exists.']);
+    DB::beginTransaction();
+
+    try {
+
+        // Get previous guide ID
+        $oldGuideID = $guest->guide_id;
+
+        // Update Guest
+        $guest->name = $data['name'];
+        $guest->address = $data['address'] ?? null;
+        $guest->email = $data['email'];
+        $guest->city = $data['city'];
+        $guest->nic = $data['nic'] ?? null;
+        $guest->foreign_nic = $data['foreign_nic'] ?? null;
+        $guest->tel_no = $data['tel_no'];
+        $guest->guide_id = $data['guide_id'] ?? null;
+        $guest->gender_id = $data['gender_id'];
+        $guest->country_id = $data['country_id'];
+        $guest->cuntry_code_id = $data['cuntry_code_id'];
+        $guest->guest_type = $data['guest_type'];
+
+        $guest->save();
+
+        // Update Guide Status
+        if (!empty($oldGuideID)) {
+            $oldGuide = Guides::find($oldGuideID);
+
+            if ($oldGuide) {
+                $oldGuide->guide_status = $data['guide_status'] ?? $oldGuide->guide_status;
+
+                $oldGuide->save();
             }
-
         }
-        if ($data['guide_id'] != null){
-            // Check if the guest_id and r_book combination already exists
-            $existingGuide = Guest::where('guide_id', $data['guide_id'])
-                ->where('is_active', true)
-                ->where('id', '<>', $id)
-                ->first();
-            // If the booking exists, return an error message or handle the situation as needed
-            if ($existingGuide) {
-                return response()->json(['error' => 'Guide already exists.']);
-            }
 
-        }
-        DB::beginTransaction();
+        // Update Guest Counts
+        $adults = (int) ($data['adults'] ?? 0);
+        $children = (int) ($data['children'] ?? 0);
+        $infants = (int) ($data['infants'] ?? 0);
 
-        try {
+        BookingGuestCounts::updateOrCreate(
+            ['guest_id' => $guest->id],
+            [
+                'adults' => $adults,
+                'children' => $children,
+                'infants' => $infants,
+                'total_amount' => $adults + $children + $infants,
+            ]
+        );
 
-            $guest = Guest::findOrFail($id);
-            $oldGuideID = !empty($data['guide_id'])
-                ? $data['guide_id']
-                : ($guest->guide_id ?? null);
-            $guest->name = $data['name'];
-            $guest->address = $data['address'];
-            $guest->email = $data['email'];
-            $guest->city = $data['city'];
-            $guest->nic = $data['nic'];
-            $guest->foreign_nic = $data['foreign_nic'];
-            $guest->tel_no = $data['tel_no'];
-            // Set guide_id to null if empty
-            $guest->guide_id = empty($data['guide_id']) ? null : $data['guide_id']; // Ensure null is set
-            $guest->gender_id = $data['gender_id'];
-            $guest->country_id = $data['country_id'];
-            $guest->cuntry_code_id = $data['cuntry_code_id'];
-            $guest->guest_type = $data['guest_type'];
+        // Update or Create Dependent Details
+        if (!empty($details)) {
 
-            $guest->save();
+            foreach ($details as $item) {
 
-            if (!empty($oldGuideID)) {
-                $guides = Guides::find($oldGuideID);
-                if ($guides) {
-                    $guides->guide_status = $data['guide_status'] ?? $guides->guide_status;
-                    $guides->save();
-                }
-            }
+                if (!empty($item['dependent_id'])) {
 
-            $guestcount = BookingGuestCounts::where('guest_id', $id)->first();
+                    // Update existing dependent
+                    $guestDetails = GuestDependentDetail::where(
+                        'id',
+                        $item['dependent_id']
+                    )
+                    ->where('guest_id', $guest->id)
+                    ->firstOrFail();
 
-            if ($guestcount) {
-                $guestcount->adults = $data['adults'];
-                $guestcount->children = $data['children'];
-                $guestcount->infants = $data['infants'];
-                $guestcount->total_amount = intval($data['infants']) + intval($data['children']) + intval($data['adults']);
-                $guestcount->save();
-            } else {
-                // Optionally create a new record if it doesn't exist yet
-                $guestcount = new BookingGuestCounts();
-                $guestcount->guest_id = $guest->id;
-                $guestcount->adults = $data['adults'];
-                $guestcount->children = $data['children'];
-                $guestcount->infants = $data['infants'];
-                $guestcount->total_amount = intval($data['infants']) + intval($data['children']) + intval($data['adults']);
-                $guestcount->save();
-            }
+                } else {
 
-            if (!empty($details)) {
-                foreach ($details as $item) {
-                    $guestDetails = GuestDependentDetail::findOrFail($id);
+                    // Create new dependent
+                    $guestDetails = new GuestDependentDetail();
+
                     $guestDetails->guest_id = $guest->id;
-                    $guestDetails->dependent_name = $item['dependent_name'];
-                    $guestDetails->age = $item['age'];
-                    $guestDetails->dependent_relationship = $item['dependent_relationship'];
-                    $guestDetails->dependent_id = $item['dependent_id'];
-                    $guestDetails->save();
                 }
+
+                $guestDetails->dependent_name = $item['dependent_name'];
+                $guestDetails->dependent_relationship = $item['dependent_relationship'];
+                $guestDetails->age = $item['age'];
+                $guestDetails->dependent_id = $item['dependent_id'] ?? null;
+
+                $guestDetails->save();
             }
+        }
 
-            DB::commit();
+        DB::commit();
 
-            return response()->json(['massage' => 'Successfully Update.', $guest]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json(['error' => 'An error occurred while processing the request.', 'exception' => $e->getMessage()]);
+        return response()->json([
+            'message' => 'Successfully Updated.',
+            'guest' => $guest
+        ], 200);
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return response()->json([
+            'error' => 'An error occurred while processing the request.',
+            'exception' => $e->getMessage()
+        ], 500);
         }
     }
 
