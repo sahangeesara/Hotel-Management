@@ -4,8 +4,10 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\OrganizerDetails;
-use Illuminate\Http\Request;
+use App\Http\Requests\UpdateOrganizerDetailsRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Requests\StoreOrganizerDetailsRequest;
 
 class OrganizerDetailsController extends Controller
 {
@@ -32,23 +34,17 @@ class OrganizerDetailsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreOrganizerDetailsRequest $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required|email',
-            'nic' => 'required|unique:organizer_details,nic',
-            'phone' => 'required',
-            'address' => 'required',
-            'gender_id' => 'required|integer',
-        ]);
+        $validatedData = $request->validated();
 
         try {
-            $nextId = OrganizerDetails::max('id') + 1;
+            $organizerDetails = DB::transaction(function () use ($validatedData) {
+            $nextId = (OrganizerDetails::lockForUpdate()->max('id') ?? 0) + 1;
             $orgNo = 'ORD' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
 
-            $organizerDetails = OrganizerDetails::create(
+            return OrganizerDetails::create(
                 [
                     'gender_id' => $validatedData['gender_id'],
                     'name' => $validatedData['name'],
@@ -59,7 +55,7 @@ class OrganizerDetailsController extends Controller
                     'organizer_code' => $orgNo,
                 ]
             );
-
+        });
             return response()->json(['message' => 'organizerDetails create successfully', 'organizerDetails' => $organizerDetails], 200);
         } catch (\Exception $e) {
             Log::error('organizerDetails update error: ' . $e->getMessage());
@@ -87,28 +83,20 @@ class OrganizerDetailsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateOrganizerDetailsRequest $request, string $id)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required|email',
-            'nic' => 'required|unique:organizer_details,nic,'. $id,
-            'phone' => 'required',
-            'address' => 'required',
-            'gender_id' => 'required|integer',
-            'organizer_code' => 'required|unique:organizer_details,organizer_code,' . $id,
-        ]);
+        $validatedData = $request->validated();
+
         try {
             $organizerDetails = OrganizerDetails::findOrFail($id);
-
-            // Update organizerDetails details
             $organizerDetails->update($validatedData);
 
             return response()->json(['message' => 'organizerDetails updated successfully', 'organizerDetails' => $organizerDetails], 200);
         } catch (\Exception $e) {
             Log::error('organizerDetails update error: ' . $e->getMessage());
             return response()->json(['message' => 'An error occurred while updating the organizerDetails.'], 500);
-        }    }
+        }
+    }
 
     /**
      * Remove the specified resource from storage.

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\api;
 
+use App\Http\Requests\StoreGuidesRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Guides;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\UpdateGuidesRequest;
 
 class GuideController extends Controller
 {
@@ -25,57 +27,46 @@ class GuideController extends Controller
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving guide.'], 500);
+            return response()->json(['message' => 'An error occurred while retrieving guide details.'], 500);
         }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreGuidesRequest $request)
     {
-        $data = $request->all();
-        $validatedData = Validator::make($data, [
+        $validatedData = $request->validated();
 
-            'name' => 'required|max:255',
-            'address' => '',
-            'email' => 'required|email',
-            'city' => 'required',
-            'nic' => 'required',
-            'tel_no' => 'required',
-            'gender_id' => 'required',
-        ]);
-        if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
-
-        // Check if the nic already exists
-        $existingBooking = Guides::where('nic', $data['nic'])
-                                ->first();
-        // If the booking exists, return an error message or handle the situation as needed
-        if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
-
-        $nextId = Guides::max('id') + 1; // Get the next available ID
-        $rNo = 'GIN' . str_pad($nextId, 5, '0', STR_PAD_LEFT); // Generate the 'r_no'
-
-        $guideStatus ="No_Assign";
         try{
-        $guides = new Guides();
-        $guides->name = $data['name'];
-        $guides->address = $data['address'];
-        $guides->email = $data['email'];
-        $guides->city = $data['city'];
-        $guides->nic = $data['nic'];
-        $guides->tel_no = $data['tel_no'];
-        $guides->gender_id = $data['gender_id'];
-        $guides->guide_status = $guideStatus;
-        $guides->guide_no = $rNo;
 
-        $guides->save();
 
-        return response()->json(['massage' => 'Successfully submit.', $guides]);
+            $guides = DB::transaction(function () use ($validatedData) {
+                    $nextId = (Guides::lockForUpdate()->max('id') ?? 0) + 1;
+                    $rNo = 'GIN' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+                    $guideStatus ='No_Assign';
+
+                    $guides = new Guides();
+                    $guides->name = $validatedData['name'];
+                    $guides->address = $validatedData['address'];
+                    $guides->email = $validatedData['email'];
+                    $guides->city = $validatedData['city'];
+                    $guides->nic = $validatedData['nic'];
+                    $guides->tel_no = $validatedData['tel_no'];
+                    $guides->gender_id = $validatedData['gender_id'];
+                    $guides->guide_status = $guideStatus;
+                    $guides->guide_no = $rNo;
+
+                    $guides->save();
+
+                return $guides;
+            });
+
+            return response()->json(['massage' => 'Successfully submit.', $guides]);
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving guide.'], 500);
+            return response()->json(['message' => 'An error occurred while store guide.'], 500);
         }
     }
 
@@ -91,7 +82,7 @@ class GuideController extends Controller
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving guide.'], 500);
+            return response()->json(['message' => 'An error occurred while show guide.'], 500);
         }
     }
 
@@ -125,7 +116,7 @@ class GuideController extends Controller
             Log::error($e->getMessage());
 
             return response()->json([
-                'message' => 'An error occurred while retrieving employees.'
+                'message' => 'An error occurred while search Guide employees.'
             ], 500);
         }
     }
@@ -134,42 +125,25 @@ class GuideController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateGuidesRequest $request, string $id)
     {
-        $data = $request->all();
-        $validatedData = Validator::make($data, [
 
-            'name' => 'required|max:255',
-            'address' => '',
-            'email' => 'required|email',
-            'city' => 'required',
-            'nic' => 'required',
-            'tel_no' => 'required',
-            'gender_id' => 'required',
-            'guide_no' => 'required',
-        ]);
-        if ($validatedData->fails()) { return response()->json($validatedData->errors());   }
-
-        // Check if the nic already exists
-        $existingBooking = Guides::where('nic', $data['nic'])
-                                ->where('id', '<>', $id)
-                                ->first();
-        // If the booking exists, return an error message or handle the situation as needed
-        if ($existingBooking) {  return response()->json(['error' => 'Nic already exists.']); }
+        $validatedData = $request->validated();
 
         try{
-        $guides = Guides::findOrFail($id);
-        $guideStatus =$guides->guide_status;
-        $guides->name = $data['name'];
-        $guides->address = $data['address'];
-        $guides->email = $data['email'];
-        $guides->city = $data['city'];
-        $guides->nic = $data['nic'];
-        $guides->tel_no = $data['tel_no'];
-        $guides->gender_id = $data['gender_id'];
-        $guides->guide_no = $data['guide_no'];
-        $guides->guide_status = $guideStatus;
-        $guides->save();
+            $guides = Guides::findOrFail($id);
+            $guideStatus =$guides->guide_status;
+
+            $guides->name = $validatedData['name'];
+            $guides->address = $validatedData['address'];
+            $guides->email = $validatedData['email'];
+            $guides->city = $validatedData['city'];
+            $guides->nic = $validatedData['nic'];
+            $guides->tel_no = $validatedData['tel_no'];
+            $guides->gender_id = $validatedData['gender_id'];
+            $guides->guide_no = $validatedData['guide_no'];
+            $guides->guide_status = $guideStatus;
+            $guides->save();
 
         return response()->json(['massage' => 'Successfully Update.', $guides]);
         } catch (\Exception $e) {

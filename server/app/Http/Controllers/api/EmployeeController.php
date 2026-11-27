@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Employees;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StoreEmployeeRequest;
+use App\Http\Requests\UpdateEmployeeRequest;
+
 
 class EmployeeController extends Controller
 {
@@ -25,26 +27,17 @@ class EmployeeController extends Controller
         } catch (\Exception $e) {
             // Log the error and return an appropriate response
             Log::error($e->getMessage());
-            return response()->json(['message' => 'An error occurred while retrieving employees.'], 500);
+            return response()->json(['message' => 'An error occurred while retrieving employees details.'], 500);
         }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreEmployeeRequest  $request)
     {
-        // Validate request data directly
-        $validatedData = $request->validate([
-            'name' => 'required|max:255',
-            'address' => 'required',
-            'email' => 'required|email',
-            'city' => 'required',
-            'nic' => 'required|unique:employees,nic',
-            'tel_no' => 'required',
-            'employee_type_id' => 'required|integer',
-            'gender_id' => 'required|integer',
-        ]);
+
+        $validatedData = $request->validated();
 
         try {
             // Generate 'emp_no' based on the next auto-incremented 'id'
@@ -121,20 +114,10 @@ class EmployeeController extends Controller
         /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateEmployeeRequest $request, string $id)
     {
-        // Validate request data directly
-        $validatedData = $request->validate([
-            'name' => 'required|max:255',
-            'address' => 'required',
-            'email' => 'required|email',
-            'city' => 'required',
-            'nic' => 'required|unique:employees,nic,' . $id,
-            'tel_no' => 'required',
-            'employee_type_id' => 'required|integer',
-            'gender_id' => 'required|integer',
-            'emp_no' => 'required|unique:employees,emp_no,' . $id,
-        ]);
+
+        $validatedData = $request->validated();
 
         try {
             $employee = Employees::findOrFail($id);
